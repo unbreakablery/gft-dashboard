@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Linehaul_Trips extends Model
+{
+    use HasFactory;
+
+    protected $table = 'linehaul_trips';
+
+    protected $fillable = [
+        'year_num',
+        'week_num',
+        'date',
+        'vehicle',
+        'trip_id',
+        'leg_org',
+        'leg_dest',
+        'zip_postal',
+        'miles_qty',
+        'vmr_rate',
+        'mileage_plus',
+        'premiums',
+        'fuel',
+        'total_rate',
+        'amt_1',
+        'pkgs',
+        'amt_2',
+        'd_and_h',
+        'tolls',
+        'flat_rate',
+        'daily_gross_amt',
+        'driver_1',
+        'driver_2'
+    ];
+
+    public $timestamps = false;
+}
