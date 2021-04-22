@@ -55,7 +55,7 @@ class PayrollController extends Controller
             $this->week_num = $request->input('week-num');    
         } else {
             $this->year_num = Date("Y");
-            $this->week_num = Date("W");
+            $this->week_num = Date("W") - 1;
         }
         
         $drivers = DB::select("
@@ -65,9 +65,9 @@ class PayrollController extends Controller
                                     SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN t.miles_qty ELSE 0 END) AS miles_fix_rate,
                                     SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 0 ELSE t.miles_qty END) AS miles_other,
                                     SUM(t.miles_qty) AS total_miles,
-                                    (SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 1 ELSE 0 END)) * d.fixed_rate AS payroll_fix_rate,
+                                    (SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 1 ELSE 0 END)) / 2* d.fixed_rate AS payroll_fix_rate,
                                     (SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 0 ELSE t.miles_qty END)) * d.price_per_mile AS payroll_per_mile,
-                                    ((SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 1 ELSE 0 END)) * d.fixed_rate + (SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 0 ELSE t.miles_qty END)) * d.price_per_mile) AS total_payroll
+                                    ((SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 1 ELSE 0 END)) / 2 * d.fixed_rate + (SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 0 ELSE t.miles_qty END)) * d.price_per_mile) AS total_payroll
                                 FROM
                                     linehaul_drivers AS d
                                 INNER JOIN linehaul_trips AS t ON t.driver_1 = d.driver_id
@@ -105,9 +105,9 @@ class PayrollController extends Controller
                                             SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN t.miles_qty ELSE 0 END) AS miles_fix_rate,
                                             SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 0 ELSE t.miles_qty END) AS miles_other,
                                             SUM(t.miles_qty) AS total_miles,
-                                            (SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 1 ELSE 0 END)) * d.fixed_rate AS payroll_fix_rate,
+                                            (SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 1 ELSE 0 END)) / 2 * d.fixed_rate AS payroll_fix_rate,
                                             (SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 0 ELSE t.miles_qty END)) * d.price_per_mile AS payroll_per_mile,
-                                            ((SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 1 ELSE 0 END)) * d.fixed_rate + (SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 0 ELSE t.miles_qty END)) * d.price_per_mile) AS total_payroll
+                                            ((SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 1 ELSE 0 END)) / 2 * d.fixed_rate + (SUM(CASE WHEN t.miles_qty BETWEEN {$this->from_m_fr} AND {$this->to_m_fr} THEN 0 ELSE t.miles_qty END)) * d.price_per_mile) AS total_payroll
                                         FROM
                                             linehaul_drivers AS d
                                         INNER JOIN linehaul_trips AS t ON t.driver_1 = d.driver_id

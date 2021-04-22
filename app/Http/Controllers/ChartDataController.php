@@ -9,7 +9,7 @@ use DB;
 class ChartDataController extends Controller
 {
     //last weeks to show on charts
-    private $limit = 4;
+    private $limit = 6;
     
     public function total_miles_week(Request $request) {
         if (null !== $request->get('selected-year')) {
@@ -20,7 +20,7 @@ class ChartDataController extends Controller
         if (null !== $request->get('selected-week')) {
             $week_num = $request->get('selected-week');
         } else {
-            $week_num = date("W");
+            $week_num = date("W") - 1;
         }
 
         $limit = $this->limit;
@@ -74,7 +74,7 @@ class ChartDataController extends Controller
         if (null !== $request->get('selected-week')) {
             $week_num = $request->get('selected-week');
         } else {
-            $week_num = date("W");
+            $week_num = date("W") - 1;
         }
 
         $limit = $this->limit;
@@ -117,7 +117,7 @@ class ChartDataController extends Controller
         if (null !== $request->get('selected-week')) {
             $week_num = $request->get('selected-week');
         } else {
-            $week_num = date("W");
+            $week_num = date("W") - 1;
         }
 
         $limit = $this->limit;
@@ -158,7 +158,7 @@ class ChartDataController extends Controller
         if (null !== $request->get('selected-week')) {
             $week_num = $request->get('selected-week');
         } else {
-            $week_num = date("W");
+            $week_num = date("W") - 1;
         }
 
         $limit = $this->limit;
@@ -218,7 +218,7 @@ class ChartDataController extends Controller
         if (null !== $request->get('selected-week')) {
             $week_num = $request->get('selected-week');
         } else {
-            $week_num = date("W");
+            $week_num = date("W") - 1;
         }
 
         $limit = $this->limit;
@@ -270,7 +270,7 @@ class ChartDataController extends Controller
         if (null !== $request->get('selected-week')) {
             $week_num = $request->get('selected-week');
         } else {
-            $week_num = date("W");
+            $week_num = date("W") - 1;
         }
 
         $limit = $this->limit;
@@ -312,7 +312,7 @@ class ChartDataController extends Controller
         if (null !== $request->get('selected-week')) {
             $week_num = $request->get('selected-week');
         } else {
-            $week_num = date("W");
+            $week_num = date("W") - 1;
         }
 
         $limit = $this->limit;
