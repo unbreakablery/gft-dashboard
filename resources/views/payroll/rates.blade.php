@@ -80,10 +80,10 @@
                         </td>
                         <td class="text-center">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-primary edit-rate" data-toggle="tooltip" title="Edit Rate" data-id="{{ $rate->id }}">
+                                <button type="button" class="btn btn-sm btn-dark edit-rate" data-toggle="tooltip" title="Edit Rate" data-id="{{ $rate->id }}">
                                     <i class="fa fa-fw fa-pencil-alt"></i>
                                 </button>
-                                <button type="button" class="btn btn-sm btn-primary remove-rate" data-toggle="tooltip" title="Delete Rate" data-id="{{ $rate->id }}">
+                                <button type="button" class="btn btn-sm btn-dark remove-rate" data-toggle="tooltip" title="Delete Rate" data-id="{{ $rate->id }}">
                                     <i class="fa fa-fw fa-times"></i>
                                 </button>
                             </div>

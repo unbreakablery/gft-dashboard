@@ -8,6 +8,7 @@ use App\Http\Controllers\ScorecardsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TractorsController;
 use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\UtilController;
 
 /*
 |--------------------------------------------------------------------------
@@ -172,5 +173,30 @@ Route::middleware(['auth:sanctum', 'verified'])->get('payroll/miles-setting', [P
     return route('login');
 });
 Route::middleware(['auth:sanctum', 'verified'])->post('payroll/miles-setting/save', [PayrollController::class, 'save_miles_setting'], function () {
+    return route('login');
+});
+
+Route::middleware(['auth:sanctum', 'verified'])->get('util/ext-links', [UtilController::class, 'get_ext_links'], function () {
+    return route('login');
+})->name('util.ext-links');
+Route::middleware(['auth:sanctum', 'verified'])->post('util/ext-links/get', [UtilController::class, 'get_ext_link'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('util/ext-links/add', function () {
+    return view('util.ext_links.link');
+});
+Route::middleware(['auth:sanctum', 'verified'])->post('util/ext-links/save', [UtilController::class, 'save_ext_link'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('util/ext-links/edit/{id}', [UtilController::class, 'edit_ext_link'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('util/ext-links/remove/{id}', [UtilController::class, 'remove_ext_link'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('util/ext-links/truncate', [UtilController::class, 'truncate_ext_links'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->post('util/ext-links/upload', [UtilController::class, 'upload_ext_links'], function () {
     return route('login');
 });
