@@ -132,6 +132,12 @@
                         <span class="nav-main-link-name">Favorite Websites</span>
                     </a>
                 </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link" href="{{ route('util.download-data') }}">
+                        <i class="nav-main-link-icon fa fa-download"></i>
+                        <span class="nav-main-link-name">Download Data</span>
+                    </a>
+                </li>
             </ul>
         </div>
         <!-- END Side Navigation -->
