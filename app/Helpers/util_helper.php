@@ -2,53 +2,191 @@
 
 use Illuminate\Support\Facades\DB;
 
-if (!function_exists('get_data_mile_total')) {
-    function get_data_mile_total($search, $limit) {
-        if ($search->week_num < $limit) {
-            $limit = $search->week_num;
+if (!function_exists('get_data_revenue')) {
+    function get_data_revenue($search) {
+        $grosses            = DB::select("
+                                SELECT 
+                                    year_num,
+                                    week_num,
+                                    CONCAT('WK-', week_num, ', ', year_num) AS week_name,
+                                    SUM(daily_gross_amt) AS gross
+                                FROM 
+                                    linehaul_trips
+                                WHERE
+                                    CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
+                                    CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                    CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
+                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                GROUP BY year_num, week_num
+                                ORDER BY year_num ASC, week_num ASC");
+        $o_s_adjustments    = DB::select("
+                                SELECT 
+                                    year_num,
+                                    week_num,
+                                    CONCAT('WK-', week_num, ', ', year_num) AS week_name,
+                                    SUM(amt) AS o_s_adjustments
+                                FROM 
+                                    other_settlement_adjustments
+                                WHERE
+                                    CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
+                                    CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                    CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
+                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                GROUP BY year_num, week_num
+                                ORDER BY year_num ASC, week_num ASC");
+        $fuels              = DB::select("
+                                SELECT 
+                                    year_num,
+                                    week_num,
+                                    CONCAT('WK-', week_num, ', ', year_num) AS week_name,
+                                    -SUM(auth_chgbk_net) AS fuel_cost
+                                FROM 
+                                    fuel_purchases
+                                WHERE
+                                    CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
+                                    CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                    CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
+                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                GROUP BY year_num, week_num
+                                ORDER BY year_num ASC, week_num ASC");
+        $repairs            = DB::select("
+                                SELECT 
+                                    year_num,
+                                    week_num,
+                                    CONCAT('WK-', week_num, ', ', year_num) AS week_name,
+                                    -SUM(repair_misc_amt) AS repair_cost
+                                FROM 
+                                    tractor_repairs_misc
+                                WHERE
+                                    CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
+                                    CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+	                                CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
+                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                GROUP BY year_num, week_num
+                                ORDER BY year_num ASC, week_num ASC");
+        
+        $headers = array();
+                
+        foreach ($grosses as $gross) {
+            if (!in_array($gross->week_name, $headers)) {
+                array_push($headers, $gross->week_name);
+            }
+            $gross->gross = round($gross->gross, 2);
         }
+        foreach ($o_s_adjustments as $adjustment) {
+            if (!in_array($adjustment->week_name, $headers)) {
+                array_push($headers, $adjustment->week_name);
+            }
+            $adjustment->o_s_adjustments = round($adjustment->o_s_adjustments, 2);
+        }
+        foreach ($fuels as $fuel) {
+            if (!in_array($fuel->week_name, $headers)) {
+                array_push($headers, $fuel->week_name);
+            }
+            $fuel->fuel_cost = round($fuel->fuel_cost, 2);
+        }
+        foreach ($repairs as $repair) {
+            if (!in_array($repair->week_name, $headers)) {
+                array_push($headers, $repair->week_name);
+            }
+            $repair->repair_cost = round($repair->repair_cost, 2);
+        }
+        
+        $revenues = array();
+        foreach ($headers as $week) {
+            $revenue = 0;
+            foreach ($grosses as $gross) {
+                if ($gross->week_name == $week) {
+                    $revenue += $gross->gross;
+                    break;
+                }
+            }
+            foreach ($o_s_adjustments as $adjustment) {
+                if ($adjustment->week_name == $week) {
+                    $revenue += $adjustment->o_s_adjustments;
+                    break;
+                }
+            }
+            foreach ($fuels as $fuel) {
+                if ($fuel->week_name == $week) {
+                    $revenue -= $fuel->fuel_cost;
+                    break;
+                }
+            }
+            foreach ($repairs as $repair) {
+                if ($repair->week_name == $week) {
+                    $revenue -= $repair->repair_cost;
+                    break;
+                }
+            }
+
+            array_push($revenues, round($revenue, 2));
+        }
+
+        $total_revenue = 0;
+        foreach($revenues as $revenue) {
+            $total_revenue += $revenue;
+        }
+        
+        array_push($headers, 'Total');
+        array_push($revenues, $total_revenue);
+
+        $excel_data = new \stdClass();
+        $excel_data->header = $headers;
+        $excel_data->data = $revenues;
+        return $excel_data;
+    }
+}
+
+if (!function_exists('get_data_mile_total')) {
+    function get_data_mile_total($search) {
         $weeks = DB::select("
                             SELECT 
                                 year_num,
                                 week_num,
+                                CONCAT('WK-', week_num, ', ', year_num) AS week_name,
                                 SUM(miles_qty) AS total_miles
                             FROM 
                                 linehaul_trips
                             WHERE
-                                year_num = {$search->year_num} AND
-                                week_num <= {$search->week_num} AND
-                                week_num > {$search->week_num} - {$limit}
+                                CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
+                                CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
+                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
                             GROUP BY year_num, week_num
-                            ORDER BY year_num ASC, week_num ASC
-                            LIMIT {$limit}");
-        $categories = array();
-        for ($i = $search->week_num - $limit + 1; $i <= $search->week_num; $i++) {
-            array_push($categories, 'WK-' . $i . ', ' . $search->year_num);
+                            ORDER BY year_num ASC, week_num ASC");
+        $headers = array();
+        foreach ($weeks as $week) {
+            if (!in_array($week->week_name, $headers)) {
+                array_push($headers, $week->week_name);
+            }
         }
+        
         $values = array();
-        foreach ($categories as $cat) {
+        $total_miles = 0;
+        foreach ($headers as $week_name) {
             $value = 0;
             foreach ($weeks as $week) {
-                if ($cat == 'WK-' . $week->week_num . ', ' . $week->year_num) {
+                if ($week_name == 'WK-' . $week->week_num . ', ' . $week->year_num) {
                     $value = $week->total_miles;
+                    $total_miles += $week->total_miles;
                     break;
                 };
             }
             $values[] = $value;
         }
-
+        array_push($headers, 'Total');
+        array_push($values, $total_miles);
+        
         $excel_data = new \stdClass();
-        $excel_data->header = $categories;
+        $excel_data->header = $headers;
         $excel_data->data = $values;
         return $excel_data;
     }
 }
 
 if (!function_exists('get_data_mile_driver')) {
-    function get_data_mile_driver($search, $limit) {
-        if ($search->week_num < $limit) {
-            $limit = $search->week_num;
-        }
+    function get_data_mile_driver($search) {
         $weeks = DB::select("
                             SELECT 
                                 t.year_num,
@@ -60,9 +198,10 @@ if (!function_exists('get_data_mile_driver')) {
                                 linehaul_trips AS t
                             LEFT JOIN linehaul_drivers AS d ON d.driver_id = t.driver_1
                             WHERE
-                                t.year_num = {$search->year_num} AND
-                                t.week_num <= {$search->week_num} AND
-                                t.week_num > {$search->week_num} - {$limit}
+                                CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) <= 
+                                CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) >= 
+                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
                             GROUP BY t.year_num, t.week_num, t.driver_1
                             ORDER BY t.year_num ASC, t.week_num ASC");
 
@@ -106,10 +245,7 @@ if (!function_exists('get_data_mile_driver')) {
 }
 
 if (!function_exists('get_data_mile_vehicle')) {
-    function get_data_mile_vehicle($search, $limit) {
-        if ($search->week_num < $limit) {
-            $limit = $search->week_num;
-        }
+    function get_data_mile_vehicle($search) {
         $weeks = DB::select("
                             SELECT 
                                 year_num,
@@ -119,9 +255,10 @@ if (!function_exists('get_data_mile_vehicle')) {
                             FROM 
                                 linehaul_trips AS t
                             WHERE
-                                year_num = {$search->year_num} AND
-                                week_num <= {$search->week_num} AND
-                                week_num > {$search->week_num} - {$limit}
+                                CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) <= 
+                                CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) >= 
+                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
                             GROUP BY year_num, week_num, vehicle
                             ORDER BY year_num ASC, week_num ASC");
         $headers = array();
@@ -163,160 +300,8 @@ if (!function_exists('get_data_mile_vehicle')) {
     }
 }
 
-if (!function_exists('get_data_revenue')) {
-    function get_data_revenue($search, $limit) {
-        if ($search->week_num < $limit) {
-            $limit = $search->week_num;
-        }
-        
-        $grosses            = DB::select("
-                                SELECT 
-                                    year_num,
-                                    week_num,
-                                    SUM(daily_gross_amt) AS gross
-                                FROM 
-                                    linehaul_trips
-                                WHERE
-                                    year_num = {$search->year_num} AND
-                                    week_num <= {$search->week_num} AND
-                                    week_num > {$search->week_num} - {$limit}
-                                GROUP BY year_num, week_num
-                                ORDER BY year_num ASC, week_num ASC
-                                LIMIT {$limit}");
-        $o_s_adjustments    = DB::select("
-                                SELECT 
-                                    year_num,
-                                    week_num,
-                                    SUM(amt) AS o_s_adjustments
-                                FROM 
-                                    other_settlement_adjustments
-                                WHERE
-                                    year_num = {$search->year_num} AND
-                                    week_num <= {$search->week_num} AND
-                                    week_num > {$search->week_num} - {$limit}
-                                GROUP BY year_num, week_num
-                                ORDER BY year_num ASC, week_num ASC
-                                LIMIT {$limit}");
-        $fuels              = DB::select("
-                                SELECT 
-                                    year_num,
-                                    week_num,
-                                    -SUM(auth_chgbk_net) AS fuel_cost
-                                FROM 
-                                    fuel_purchases
-                                WHERE
-                                    year_num = {$search->year_num} AND
-                                    week_num <= {$search->week_num} AND
-                                    week_num > {$search->week_num} - {$limit}
-                                GROUP BY year_num, week_num
-                                ORDER BY year_num ASC, week_num ASC
-                                LIMIT {$limit}");
-        $repairs            = DB::select("
-                                SELECT 
-                                    year_num,
-                                    week_num,
-                                    -SUM(repair_misc_amt) AS repair_cost
-                                FROM 
-                                    tractor_repairs_misc
-                                WHERE
-                                    year_num = {$search->year_num} AND
-                                    week_num <= {$search->week_num} AND
-                                    week_num > {$search->week_num} - {$limit}
-                                GROUP BY year_num, week_num
-                                ORDER BY year_num ASC, week_num ASC
-                                LIMIT {$limit}");
-        $weeks = array();
-        for ($i = $search->week_num - $limit + 1; $i <= $search->week_num; $i++) {
-            array_push($weeks, 'WK-' . $i . ', ' . $search->year_num);
-        }
-        
-        foreach ($grosses as $gross) {
-            $gross->week = 'WK-' . $gross->week_num . ', ' . $gross->year_num;
-            $gross->gross = round($gross->gross, 2);
-        }
-        foreach ($o_s_adjustments as $adjustment) {
-            $adjustment->week = 'WK-' . $adjustment->week_num . ', ' . $adjustment->year_num;
-            $adjustment->o_s_adjustments = round($adjustment->o_s_adjustments, 2);
-        }
-        foreach ($fuels as $fuel) {
-            $fuel->week = 'WK-' . $fuel->week_num . ', ' . $fuel->year_num;
-            $fuel->fuel_cost = round($fuel->fuel_cost, 2);
-        }
-        foreach ($repairs as $repair) {
-            $repair->week = 'WK-' . $repair->week_num . ', ' . $repair->year_num;
-            $repair->repair_cost = round($repair->repair_cost, 2);
-        }
-        
-        $revenues = array();
-        foreach ($weeks as $week) {
-            $revenue = 0;
-            foreach ($grosses as $gross) {
-                if ($gross->week == $week) {
-                    $revenue += $gross->gross;
-                    break;
-                }
-            }
-            foreach ($o_s_adjustments as $adjustment) {
-                if ($adjustment->week == $week) {
-                    $revenue += $adjustment->o_s_adjustments;
-                    break;
-                }
-            }
-            foreach ($fuels as $fuel) {
-                if ($fuel->week == $week) {
-                    $revenue -= $fuel->fuel_cost;
-                    break;
-                }
-            }
-            foreach ($repairs as $repair) {
-                if ($repair->week == $week) {
-                    $revenue -= $repair->repair_cost;
-                    break;
-                }
-            }
-
-            array_push($revenues, round($revenue, 2));
-        }
-
-        $ytd_revenue = DB::select("
-                            SELECT 
-                                {$search->year_num} as year_num,
-                                (gross + o_s_adjustments - fuel_cost - repair_cost) AS revenue
-                            FROM
-                                (SELECT 
-                                    (SELECT 
-                                        IFNULL(SUM(t.daily_gross_amt), 0)
-                                    FROM linehaul_trips AS t
-                                    WHERE YEAR(t.date) = {$search->year_num}) AS gross,
-                                    (SELECT 
-                                        IFNULL(SUM(t.amt), 0)
-                                    FROM other_settlement_adjustments AS t
-                                    WHERE YEAR(t.date) = {$search->year_num}) AS o_s_adjustments,
-                                    (SELECT 
-                                        IFNULL(-SUM(t.auth_chgbk_net), 0)
-                                    FROM fuel_purchases AS t
-                                    WHERE YEAR(t.date) = {$search->year_num}) AS fuel_cost,
-                                    (SELECT 
-                                        IFNULL(-SUM(t.repair_misc_amt), 0)
-                                    FROM tractor_repairs_misc AS t
-                                    WHERE YEAR(t.date) = {$search->year_num}) AS repair_cost) AS t");
-        
-        array_push($weeks, 'YTD');
-        array_push($revenues, (count($ytd_revenue) != 1) ? 0 : round($ytd_revenue[0]->revenue, 2));
-
-        $excel_data = new \stdClass();
-        $excel_data->header = $weeks;
-        $excel_data->data = $revenues;
-        return $excel_data;
-    }
-}
-
 if (!function_exists('get_data_trips_driver')) {
-    function get_data_trips_driver($search, $limit) {
-        if ($search->week_num < $limit) {
-            $limit = $search->week_num;
-        }
-
+    function get_data_trips_driver($search) {
         $trips = DB::select("
                             SELECT 
                                 t.year_num,
@@ -329,9 +314,10 @@ if (!function_exists('get_data_trips_driver')) {
                                 linehaul_trips AS t 
                             INNER JOIN linehaul_drivers AS d ON d.driver_id = t.driver_1 
                             WHERE 
-                                t.year_num = {$search->year_num} AND 
-                                t.week_num <= {$search->week_num} AND 
-                                t.week_num > {$search->week_num} - {$limit}
+                                CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) <= 
+                                CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) >= 
+                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
                             GROUP BY 
                                 t.year_num, t.week_num, t.driver_1 
                             ORDER BY t.year_num, t.week_num, t.driver_1");
@@ -375,11 +361,7 @@ if (!function_exists('get_data_trips_driver')) {
 }
 
 if (!function_exists('get_data_mpg_vehicle')) {
-    function get_data_mpg_vehicle($search, $limit) {
-        if ($search->week_num < $limit) {
-            $limit = $search->week_num;
-        }
-
+    function get_data_mpg_vehicle($search) {
         $week_miles = DB::select("
                                 SELECT 
                                     year_num,
@@ -390,9 +372,10 @@ if (!function_exists('get_data_mpg_vehicle')) {
                                 FROM 
                                     linehaul_trips AS t
                                 WHERE
-                                    year_num = {$search->year_num} AND
-                                    week_num <= {$search->week_num} AND
-                                    week_num > {$search->week_num} - {$limit}
+                                    CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) <= 
+                                    CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                    CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) >= 
+                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
                                 GROUP BY year_num, week_num, vehicle
                                 ORDER BY year_num ASC, week_num ASC");
         
@@ -406,9 +389,10 @@ if (!function_exists('get_data_mpg_vehicle')) {
                                 FROM 
                                     fuel_purchases
                                 WHERE
-                                    year_num = {$search->year_num} AND
-                                    week_num <= {$search->week_num} AND
-                                    week_num > {$search->week_num} - {$limit}
+                                    CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
+                                    CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                    CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
+                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
                                 GROUP BY year_num, week_num, vehicle
                                 ORDER BY year_num ASC, week_num ASC");
         
@@ -491,11 +475,7 @@ if (!function_exists('get_data_mpg_vehicle')) {
 }
 
 if (!function_exists('get_data_fuelcost_total')) {
-    function get_data_fuelcost_total($search, $limit) {
-        if ($search->week_num < $limit) {
-            $limit = $search->week_num;
-        }
-        
+    function get_data_fuelcost_total($search) {
         $weeks = DB::select("
                             SELECT 
                                 year_num,
@@ -505,9 +485,10 @@ if (!function_exists('get_data_fuelcost_total')) {
                             FROM 
                                 fuel_purchases
                             WHERE
-                                year_num = {$search->year_num} AND
-                                week_num <= {$search->week_num} AND
-                                week_num > {$search->week_num} - {$limit}
+                                CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
+                                CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
+                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
                             GROUP BY year_num, week_num
                             ORDER BY year_num ASC, week_num ASC");
 
@@ -518,12 +499,19 @@ if (!function_exists('get_data_fuelcost_total')) {
             }
         }
 
-        // dd($headers);
-        // dd($weeks);
+        $values = array();
+        $total_cost = 0;
+        foreach ($weeks as $week) {
+            array_push($values, $week->cost);
+            $total_cost += $week->cost;
+        }
+
+        array_push($headers, 'Total');
+        array_push($values, $total_cost);
 
         $excel_data = new \stdClass();
         $excel_data->header = $headers;
-        $excel_data->data = $weeks;
+        $excel_data->data = $values;
         return $excel_data;
     }
 }

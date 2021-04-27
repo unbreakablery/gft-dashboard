@@ -202,11 +202,8 @@ Route::middleware(['auth:sanctum', 'verified'])->post('util/ext-links/upload', [
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->get('util/download-data', function () {
-    return view('util.download_data.data');
+    return view('util.download_data.search_form');
 })->name('util.download-data');
-Route::middleware(['auth:sanctum', 'verified'])->post('util/download-data/search', [UtilController::class, 'search_download_data'], function () {
-    return route('login');
-})->name('util.download-data.search');
 Route::middleware(['auth:sanctum', 'verified'])->post('util/download-data/download', [UtilController::class, 'download_data'], function () {
     return route('login');
 })->name('util.download-data.download');

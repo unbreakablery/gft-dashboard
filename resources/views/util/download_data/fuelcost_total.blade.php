@@ -12,9 +12,9 @@
             <td class="text-center text-success">
                 <strong>Total Fuel Cost</strong>
             </td>
-            @foreach ($values as $idx => $value)
+            @foreach ($values as $value)
             <td class="text-center">
-                $ {{ $value->cost }}
+                $ {{ $value }}
             </td>    
             @endforeach
         </tr>
