@@ -175,6 +175,9 @@ Route::middleware(['auth:sanctum', 'verified'])->get('payroll/miles-setting', [P
 Route::middleware(['auth:sanctum', 'verified'])->post('payroll/miles-setting/save', [PayrollController::class, 'save_miles_setting'], function () {
     return route('login');
 });
+Route::middleware(['auth:sanctum', 'verified'])->get('payroll/work-status/save/{id}', [PayrollController::class, 'save_workstatus'], function () {
+    return route('login');
+})->name('payroll-workstatus-save');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('util/ext-links', [UtilController::class, 'get_ext_links'], function () {
     return route('login');

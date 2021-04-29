@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\linehaul_drivers;
+use App\Models\Linehaul_Drivers;
 use DateTime;
 use DB;
 
@@ -75,6 +75,7 @@ class PayrollController extends Controller
                                     t.year_num = {$this->year_num} AND
                                     t.week_num = {$this->week_num}
                                 GROUP BY d.driver_id
+                                ORDER BY d.work_status DESC
                             ");
         $total = 0;
         foreach ($drivers as $driver) {
@@ -134,6 +135,7 @@ class PayrollController extends Controller
     public function get_rates()
     {
         $rates = DB::table('linehaul_drivers')
+                    ->orderBy('work_status', 'desc')
                     ->get()
                     ->all();
         return view('payroll.rates', [
@@ -212,6 +214,28 @@ class PayrollController extends Controller
         $this->get_setting();
 
         $request->session()->flash('status', 'Updated miles setting for fixed rate!');
+        return redirect()->route('get-rates');
+    }
+
+    public function save_workstatus(Request $request)
+    {
+        $id = $request->route()->parameter('id');
+        $driver = Linehaul_Drivers::select([
+                                                'id', 'work_status'
+                                            ])
+                                    ->where([
+                                                'id' => $id
+                                            ])
+                                    ->get()
+                                    ->first();
+        // dd($driver);
+        Linehaul_Drivers::where([
+                                    'id' => $id
+                                ])
+                        ->update([
+                                    'work_status' => ($driver->work_status == 0 ? 1 : 0)
+                                ]);
+                        
         return redirect()->route('get-rates');
     }
 }

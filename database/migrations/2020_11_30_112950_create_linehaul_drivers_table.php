@@ -19,6 +19,7 @@ class CreateLinehaulDriversTable extends Migration
             $table->char('driver_name', 255);
             $table->float('fixed_rate', 8, 4)->nullable();
             $table->float('price_per_mile', 8, 4)->nullable();
+            $table->tinyInteger('work_status')->default('1');
             //$table->timestamps();
         });
     }

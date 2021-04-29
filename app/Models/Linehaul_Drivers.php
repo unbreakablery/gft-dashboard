@@ -15,7 +15,8 @@ class Linehaul_Drivers extends Model
         'driver_id',
         'driver_name',
         'fixed_rate',
-        'price_per_mile'
+        'price_per_mile',
+        'work_status'
     ];
 
     public $timestamps = false;

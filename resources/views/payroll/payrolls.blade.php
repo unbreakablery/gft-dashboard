@@ -75,6 +75,9 @@
                         </td>
                         <td class="font-w600 font-size-sm text-left">
                             <a href="/payroll/get/{{ $driver->id }}/{{ $year_num }}/{{ $week_num }}">{{ $driver->driver_name }}</a>
+                            @if ($driver->work_status == 0)
+                                <span class="badge badge-pill badge-danger">No longer working</span>
+                            @endif
                         </td>
                         <td class="d-none d-sm-table-cell font-size-sm text-right">
                             $ {{ number_format($driver->fixed_rate, 2) }}

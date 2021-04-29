@@ -70,7 +70,10 @@
                             {{ $rate->driver_id }}
                         </td>
                         <td class="font-w600 font-size-sm text-left">
-                            <a href="#">{{ $rate->driver_name }}</a>
+                            {{ $rate->driver_name }}
+                            @if ($rate->work_status == 0)
+                                <span class="badge badge-pill badge-danger">No longer working</span>
+                            @endif
                         </td>
                         <td class="d-none d-sm-table-cell font-size-sm text-right">
                             $ {{ number_format($rate->fixed_rate, 2) }}
@@ -85,6 +88,9 @@
                                 </button>
                                 <button type="button" class="btn btn-sm btn-dark remove-rate" data-toggle="tooltip" title="Delete Rate" data-id="{{ $rate->id }}">
                                     <i class="fa fa-fw fa-times"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-dark change-workstatus" data-toggle="tooltip" title="Change Work Status" data-id="{{ $rate->id }}">
+                                    <i class="fa fa-exchange-alt"></i>
                                 </button>
                             </div>
                         </td>
@@ -110,6 +116,11 @@ jQuery(function($){
         
         $("button.miles-setting").click(function() {
             window.location.href = "/payroll/miles-setting";
+        });
+
+        $("button.change-workstatus").click(function() {
+            let id = $(this).data("id");
+            window.location.href = "/payroll/work-status/save/" + id;
         });
     });
 });
