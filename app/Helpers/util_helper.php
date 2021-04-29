@@ -2,6 +2,109 @@
 
 use Illuminate\Support\Facades\DB;
 
+if (!function_exists('get_data_compare')) {
+    function get_data_compare($search, $compare_list) {
+        $compare_data = DB::select("
+                                SELECT
+                                    gt.week_name, 
+                                    (gt.gross + (CASE WHEN osa.o_s_adjustments IS NULL THEN 0 ELSE osa.o_s_adjustments END) - (CASE WHEN fp.fuel_cost IS NULL THEN 0 ELSE fp.fuel_cost END) - (CASE WHEN trm.repair_cost IS NULL THEN 0 ELSE trm.repair_cost END)) AS revenue, 
+                                    gt.miles, 
+                                    fp.f_cost AS fuel_cost
+                                FROM
+                                    (SELECT 
+                                        CONCAT('WK-', week_num, ', ', year_num) AS week_name,
+                                        SUM(daily_gross_amt) AS gross,
+                                        SUM(miles_qty) AS miles
+                                    FROM 
+                                        linehaul_trips
+
+                                    WHERE
+                                        CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
+                                        CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                        CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
+                                        CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                    GROUP BY year_num, week_num
+                                    ORDER BY year_num ASC, week_num ASC) AS gt
+                                LEFT JOIN
+                                    (SELECT 
+                                        CONCAT('WK-', week_num, ', ', year_num) AS week_name,
+                                        SUM(amt) AS o_s_adjustments
+                                    FROM 
+                                        other_settlement_adjustments
+                                    WHERE
+                                        CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
+                                        CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                        CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
+                                        CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                    GROUP BY year_num, week_num
+                                    ORDER BY year_num ASC, week_num ASC) AS osa
+                                ON gt.week_name = osa.week_name
+                                LEFT JOIN
+                                    (SELECT 
+                                        CONCAT('WK-', week_num, ', ', year_num) AS week_name,
+                                        -SUM(auth_chgbk_net) AS fuel_cost,
+                                        SUM(pur_amt) AS f_cost
+                                    FROM 
+                                        fuel_purchases
+                                    WHERE
+                                        CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
+                                        CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                        CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
+                                        CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                    GROUP BY year_num, week_num
+                                    ORDER BY year_num ASC, week_num ASC) AS fp
+                                ON gt.week_name = fp.week_name
+                                LEFT JOIN
+                                    (SELECT 
+                                        CONCAT('WK-', week_num, ', ', year_num) AS week_name,
+                                        -SUM(repair_misc_amt) AS repair_cost
+                                        FROM 
+                                        tractor_repairs_misc AS trm
+                                    WHERE
+                                        CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
+                                        CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
+                                        CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
+                                        CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                    GROUP BY year_num, week_num
+                                    ORDER BY year_num ASC, week_num ASC) AS trm
+                                ON gt.week_name = trm.week_name
+                            ");
+
+        $headers = array("week_name" => "Week #");
+        foreach ($compare_list as $item) {
+            if ($item == 'revenue') {
+                $headers[$item] = "Total Revenue";
+            }
+            if ($item == 'miles-total') {
+                $headers[$item] = "Total Miles";
+            }
+            if ($item == 'fuelcost-total') {
+                $headers[$item] = "Total Fuel Cost";
+            }
+        }
+        $total_revenue = 0;
+        $total_miles = 0;
+        $total_fuelcost = 0;
+        foreach ($compare_data as $data) {
+            $total_revenue += $data->revenue;
+            $total_miles += $data->miles;
+            $total_fuelcost += $data->fuel_cost;
+        }
+
+        $total = new \stdClass();
+        $total->week_name = 'Total';
+        $total->revenue = $total_revenue;
+        $total->miles = $total_miles;
+        $total->fuel_cost = $total_fuelcost;
+        array_push($compare_data, $total);
+
+        $excel_data = new \stdClass();
+        $excel_data->header = $headers;
+        $excel_data->data = $compare_data;
+        return $excel_data;
+    }
+}
+
 if (!function_exists('get_data_revenue')) {
     function get_data_revenue($search) {
         $grosses            = DB::select("

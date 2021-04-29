@@ -23,13 +23,23 @@ class HistoricalDataExport implements WithMultipleSheets
     {
         $sheets = [];
 
+        $compare_list = array();
+        $sheet_names = array();
         foreach ($this->search->key_metrics as $key_metric) {
-            switch ($key_metric) {
-                case 'revenue':
-                    $sheets[] = new RevenueExport($this->search, 'Revenue');
-                    break;
-                case 'miles-total':
-                    $sheets[] = new MileTotalExport($this->search, 'Total Miles');
+            if ($key_metric == 'revenue' || $key_metric == 'miles-total' || $key_metric == 'fuelcost-total') {
+                array_push($compare_list, $key_metric);
+            } else {
+                array_push($sheet_names, $key_metric);
+            }
+        }
+        if (!empty($compare_list)) {
+            array_unshift($sheet_names, 'compare');
+        }
+
+        foreach ($sheet_names as $sheet_name) {
+            switch ($sheet_name) {
+                case 'compare':
+                    $sheets[] = new CompareExport($this->search, $compare_list, 'Compare');
                     break;
                 case 'miles-driver':
                     $sheets[] = new MileDriverExport($this->search, 'Miles by driver');
@@ -42,9 +52,6 @@ class HistoricalDataExport implements WithMultipleSheets
                     break;
                 case 'mpg-vehicle':
                     $sheets[] = new MpgVehicleExport($this->search, 'MPG by vehicle');
-                    break;
-                case 'fuelcost-total':
-                    $sheets[] = new FuelcostTotalExport($this->search, 'Total Fuel Cost');
                     break;
             }
         }
