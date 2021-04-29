@@ -15,7 +15,7 @@
             </td>
             @foreach ($value as $v)
             <td class="text-right">
-                {{ $v }} mi.
+                {{ number_format($v, 2) }} mi.
             </td>    
             @endforeach
         </tr>

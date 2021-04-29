@@ -16,17 +16,17 @@
             </td>
             @if (in_array("revenue", $compare_list))
             <td class="text-center">
-                $ {{ $value->revenue }}
+                $ {{ number_format($value->revenue, 2) }}
             </td>
             @endif
             @if (in_array("miles-total", $compare_list))
             <td class="text-center">
-                {{ $value->miles }} mi.
+                {{ number_format($value->miles, 2) }} mi.
             </td>
             @endif
             @if (in_array("fuelcost-total", $compare_list))
             <td class="text-center">
-                $ {{ $value->fuel_cost }}
+                $ {{ number_format($value->fuel_cost, 2) }}
             </td>
             @endif
         </tr>

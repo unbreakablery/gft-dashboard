@@ -12,6 +12,8 @@ if (!function_exists('get_data_compare')) {
                                     fp.f_cost AS fuel_cost
                                 FROM
                                     (SELECT 
+                                        year_num,
+                                        week_num,
                                         CONCAT('WK-', week_num, ', ', year_num) AS week_name,
                                         SUM(daily_gross_amt) AS gross,
                                         SUM(miles_qty) AS miles
@@ -68,6 +70,7 @@ if (!function_exists('get_data_compare')) {
                                     GROUP BY year_num, week_num
                                     ORDER BY year_num ASC, week_num ASC) AS trm
                                 ON gt.week_name = trm.week_name
+                                ORDER BY gt.year_num, gt.week_num
                             ");
 
         $headers = array("week_name" => "Week #");
