@@ -95,6 +95,10 @@
                     @endforeach
                 </tbody>
             </table>
+
+            <p class="text-right">
+                <strong class="text-success">Total Payroll Amount: <span class="text-danger">$ {{ number_format($total, 2) }}</span></strong>
+            </p>
         </div>
     </div>
 </div>

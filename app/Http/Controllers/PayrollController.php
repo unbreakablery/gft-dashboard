@@ -76,11 +76,16 @@ class PayrollController extends Controller
                                     t.week_num = {$this->week_num}
                                 GROUP BY d.driver_id
                             ");
+        $total = 0;
+        foreach ($drivers as $driver) {
+            $total += $driver->total_payroll;
+        }
         
         return view('payroll.payrolls', [
             'year_num'          => $this->year_num,
             'week_num'          => $this->week_num,
-            'drivers'           => $drivers
+            'drivers'           => $drivers,
+            'total'             => $total
         ]);
     }
 
