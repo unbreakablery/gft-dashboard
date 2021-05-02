@@ -22,7 +22,7 @@ class MpgVehicleExport implements FromView, ShouldAutoSize, WithStyles, WithTitl
     
     public function view(): View
     {
-        $excel_data = get_data_mpg_vehicle($this->search, $this->sheet_name);
+        $excel_data = get_data_mpg_vehicle($this->search);
         return view('util.download_data.mpg_vehicle', [
             'headers'   => $excel_data->header,
             'values'    => $excel_data->data

@@ -157,4 +157,53 @@ class UtilController extends Controller
         return Excel::download($exports, 'HD_WK' . $search->from_week_num . '-' . $search->from_year_num 
                                         . '_WK' . $search->to_week_num . '-' . $search->to_year_num . '.xlsx');
     }
+    public function view_data(Request $request)
+    {
+        $search = new stdClass();
+        $search->from_year_num  = $request->input('from-year-num');
+        $search->from_week_num  = $request->input('from-week-num');
+        $search->to_year_num    = $request->input('to-year-num');
+        $search->to_week_num    = $request->input('to-week-num');
+        $search->key_metrics    = $request->input('key-metrics');
+        
+        $compare_list = [];
+        $view_names = [];
+        foreach ($search->key_metrics as $key_metric) {
+            if ($key_metric == 'revenue' || $key_metric == 'miles-total' || $key_metric == 'fuelcost-total') {
+                array_push($compare_list, $key_metric);
+            } else {
+                array_push($view_names, $key_metric);
+            }
+        }
+        if (!empty($compare_list)) {
+            array_unshift($view_names, 'compare');
+        }
+
+        $data = array();
+        foreach ($view_names as $view_name) {
+            switch ($view_name) {
+                case 'compare':
+                    $data[$view_name] = get_data_compare($search, $compare_list);
+                    break;
+                case 'miles-driver':
+                    $data[$view_name] = get_data_mile_driver($search);
+                    break;
+                case 'miles-vehicle':
+                    $data[$view_name] = get_data_mile_vehicle($search);
+                    break;
+                case 'trips-driver':
+                    $data[$view_name] = get_data_trips_driver($search);
+                    break;
+                case 'mpg-vehicle':
+                    $data[$view_name] = get_data_mpg_vehicle($search);
+                    break;
+            }
+        }
+        return view('util.download_data.search_form', [
+            'search'        => $search,
+            'data'          => $data,
+            'compare_list'  => $compare_list,
+            'view_names'    => $view_names
+        ]);
+    }
 }

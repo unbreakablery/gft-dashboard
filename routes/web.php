@@ -210,3 +210,6 @@ Route::middleware(['auth:sanctum', 'verified'])->get('util/download-data', funct
 Route::middleware(['auth:sanctum', 'verified'])->post('util/download-data/download', [UtilController::class, 'download_data'], function () {
     return route('login');
 })->name('util.download-data.download');
+Route::middleware(['auth:sanctum', 'verified'])->post('util/download-data/view', [UtilController::class, 'view_data'], function () {
+    return route('login');
+})->name('util.download-data.view');

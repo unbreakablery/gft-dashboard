@@ -39,7 +39,7 @@
                         </div>
                     @endif
                     <div class="container">
-                        <form id="search-form" action="{{ route('util.download-data.download') }}" method="POST" autocomplete="off">
+                        <form id="search-form" action="" method="POST" autocomplete="off">
                             @csrf
                             <div class="table-responsive" style="overflow-x: hidden;">
                                 <table class="table table-striped table-vcenter" id="download-form-table">
@@ -51,14 +51,14 @@
                                                     <div class="col-6">
                                                         <select class="form-control" id="from-year-num" name="from-year-num" required>
                                                             @for ($i = 2019; $i <= date('Y'); $i++)
-                                                            <option value="{{ $i }}" {{ (isset($from_year_num)) ? ($i == $from_year_num ? "selected" : "") : ($i == Date("Y") ? "selected" : "")}}>{{ $i }}</option>
+                                                            <option value="{{ $i }}" {{ (isset($search->from_year_num)) ? ($i == $search->from_year_num ? "selected" : "") : ($i == Date("Y") ? "selected" : "")}}>{{ $i }}</option>
                                                             @endfor
                                                         </select>
                                                     </div>
                                                     <div class="col-6">
                                                         <select class="form-control" id="from-week-num" name="from-week-num" required>
                                                             @for ($i = 1; $i <= 52; $i++)
-                                                            <option value="{{ $i }}" {{ (isset($from_week_num)) ? ($i == $from_week_num ? "selected" : "") : ($i == Date("W") - 1 ? "selected" : "")}}>{{ $i }}</option>
+                                                            <option value="{{ $i }}" {{ (isset($search->from_week_num)) ? ($i == $search->from_week_num ? "selected" : "") : ($i == Date("W") - 1 ? "selected" : "")}}>{{ $i }}</option>
                                                             @endfor
                                                         </select>
                                                     </div>
@@ -72,14 +72,14 @@
                                                     <div class="col-6">
                                                         <select class="form-control" id="to-year-num" name="to-year-num" required>
                                                             @for ($i = 2019; $i <= date('Y'); $i++)
-                                                            <option value="{{ $i }}" {{ (isset($to_year_num)) ? ($i == $to_year_num ? "selected" : "") : ($i == Date("Y") ? "selected" : "")}}>{{ $i }}</option>
+                                                            <option value="{{ $i }}" {{ (isset($search->to_year_num)) ? ($i == $search->to_year_num ? "selected" : "") : ($i == Date("Y") ? "selected" : "")}}>{{ $i }}</option>
                                                             @endfor
                                                         </select>
                                                     </div>
                                                     <div class="col-6">
                                                         <select class="form-control" id="to-week-num" name="to-week-num" required>
                                                             @for ($i = 1; $i <= 52; $i++)
-                                                            <option value="{{ $i }}" {{ (isset($to_week_num)) ? ($i == $to_week_num ? "selected" : "") : ($i == Date("W") - 1 ? "selected" : "")}}>{{ $i }}</option>
+                                                            <option value="{{ $i }}" {{ (isset($search->to_week_num)) ? ($i == $search->to_week_num ? "selected" : "") : ($i == Date("W") - 1 ? "selected" : "")}}>{{ $i }}</option>
                                                             @endfor
                                                         </select>
                                                     </div>
@@ -90,31 +90,31 @@
                                             <td class="font-w800 text-right">Key Metrics<span class="text-danger">*</span> : </td>
                                             <td class="text-left">
                                                 <div class="form-check push">
-                                                    <input class="form-check-input" type="checkbox" value="revenue" id="revenue" name="key-metrics[]">
+                                                    <input class="form-check-input" type="checkbox" value="revenue" id="revenue" name="key-metrics[]" @if (isset($search->key_metrics) && in_array('revenue', $search->key_metrics)) checked @endif>
                                                     <label class="form-check-label" for="revenue">Revenue</label>
                                                 </div>
                                                 <div class="form-check push">
-                                                    <input class="form-check-input" type="checkbox" value="miles-total" id="miles-total" name="key-metrics[]">
+                                                    <input class="form-check-input" type="checkbox" value="miles-total" id="miles-total" name="key-metrics[]" @if (isset($search->key_metrics) && in_array('miles-total', $search->key_metrics)) checked @endif>
                                                     <label class="form-check-label" for="miles-total">Total Miles</label>
                                                 </div>
                                                 <div class="form-check push">
-                                                    <input class="form-check-input" type="checkbox" value="miles-driver" id="miles-driver" name="key-metrics[]">
+                                                    <input class="form-check-input" type="checkbox" value="miles-driver" id="miles-driver" name="key-metrics[]" @if (isset($search->key_metrics) && in_array('miles-driver', $search->key_metrics)) checked @endif>
                                                     <label class="form-check-label" for="miles-driver">Miles by driver</label>
                                                 </div>
                                                 <div class="form-check push">
-                                                    <input class="form-check-input" type="checkbox" value="miles-vehicle" id="miles-vehicle" name="key-metrics[]">
+                                                    <input class="form-check-input" type="checkbox" value="miles-vehicle" id="miles-vehicle" name="key-metrics[]" @if (isset($search->key_metrics) && in_array('miles-vehicle', $search->key_metrics)) checked @endif>
                                                     <label class="form-check-label" for="miles-vehicle">Miles by vehicle</label>
                                                 </div>
                                                 <div class="form-check push">
-                                                    <input class="form-check-input" type="checkbox" value="mpg-vehicle" id="mpg-vehicle" name="key-metrics[]">
+                                                    <input class="form-check-input" type="checkbox" value="mpg-vehicle" id="mpg-vehicle" name="key-metrics[]" @if (isset($search->key_metrics) && in_array('mpg-vehicle', $search->key_metrics)) checked @endif>
                                                     <label class="form-check-label" for="mpg-vehicle">MPG by vehicle</label>
                                                 </div>
                                                 <div class="form-check push">
-                                                    <input class="form-check-input" type="checkbox" value="trips-driver" id="trips-driver" name="key-metrics[]">
+                                                    <input class="form-check-input" type="checkbox" value="trips-driver" id="trips-driver" name="key-metrics[]" @if (isset($search->key_metrics) && in_array('trips-driver', $search->key_metrics)) checked @endif>
                                                     <label class="form-check-label" for="trips-driver">Trips by driver</label>
                                                 </div>
                                                 <div class="form-check push">
-                                                    <input class="form-check-input" type="checkbox" value="fuelcost-total" id="fuelcost-total" name="key-metrics[]">
+                                                    <input class="form-check-input" type="checkbox" value="fuelcost-total" id="fuelcost-total" name="key-metrics[]" @if (isset($search->key_metrics) && in_array('fuelcost-total', $search->key_metrics)) checked @endif>
                                                     <label class="form-check-label" for="fuelcost-total">Total Fuelcost</label>
                                                 </div>
                                             </td>
@@ -124,7 +124,10 @@
                                             <td class="font-w800 text-right"></td>
                                             <td class="text-left form-group">
                                                 <button type="button" class="btn btn-primary" id="download-data">
-                                                    <i class="fa fa-download text-mute"></i> Donwload Data
+                                                    <i class="fa fa-download text-mute"></i> Download Data
+                                                </button>
+                                                <button type="button" class="btn btn-success" id="view-data">
+                                                    <i class="fa fa-search text-mute"></i> View Data
                                                 </button>
                                             </td>
                                         </tr>
@@ -132,6 +135,63 @@
                                 </table>
                             </div>
                         </form>
+                        <div class="table-responsive">
+                        @if (isset($view_names))
+                        @foreach ($view_names as $view_name)
+                            @switch($view_name)
+                                @case('compare')
+                                    <h4>
+                                        <span class="text-danger">Total Revenue/Miles/Fuel Cost: </span>
+                                        <span class="text-warning">WK-{{ $search->from_week_num }}, {{ $search->from_year_num }} ~ WK-{{ $search->to_week_num }}, {{ $search->to_year_num }}</span>
+                                    </h4>
+                                    @include('util.download_data.compare', ['headers' => $data[$view_name]->header, 'values' => $data[$view_name]->data, 'compare_list' => $compare_list])
+                                    @break
+
+                                @case('miles-driver')
+                                    <h4>
+                                        <span class="text-danger">Miles By Driver: </span>
+                                        <span class="text-warning">WK-{{ $search->from_week_num }}, {{ $search->from_year_num }} ~ WK-{{ $search->to_week_num }}, {{ $search->to_year_num }}</span>
+                                    </h4>
+                                    @include('util.download_data.mile_driver', ['headers' => $data[$view_name]->header, 'values' => $data[$view_name]->data])
+                                    @break
+
+                                @case('miles-vehicle')
+                                    <h4>
+                                        <span class="text-danger">Miles By Vehicle: </span>
+                                        <span class="text-warning">WK-{{ $search->from_week_num }}, {{ $search->from_year_num }} ~ WK-{{ $search->to_week_num }}, {{ $search->to_year_num }}</span>
+                                    </h4>
+                                    @include('util.download_data.mile_vehicle', ['headers' => $data[$view_name]->header, 'values' => $data[$view_name]->data])
+                                    @break
+
+                                @case('trips-driver')
+                                    <h4>
+                                        <span class="text-danger">Trips By Driver: </span>
+                                        <span class="text-warning">WK-{{ $search->from_week_num }}, {{ $search->from_year_num }} ~ WK-{{ $search->to_week_num }}, {{ $search->to_year_num }}</span>
+                                    </h4>
+                                    @include('util.download_data.trips_driver', ['headers' => $data[$view_name]->header, 'values' => $data[$view_name]->data])
+                                    @break
+
+                                @case('mpg-vehicle')
+                                    <h4>
+                                        <span class="text-danger">MPG By Vehicle: </span>
+                                        <span class="text-warning">WK-{{ $search->from_week_num }}, {{ $search->from_year_num }} ~ WK-{{ $search->to_week_num }}, {{ $search->to_year_num }}</span>
+                                    </h4>
+                                    @include('util.download_data.mpg_vehicle', ['headers' => $data[$view_name]->header, 'values' => $data[$view_name]->data])
+                                    @break
+
+                                @default
+                                    InActive
+                            @endswitch
+                        @endforeach
+                        @else
+                            <div class="alert alert-info alert-dismissable" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <p style="margin-bottom: 0;"><i class="fa fa-fw fa-info-circle"></i> You can search historical data and download as Excel file !</p>
+                            </div>
+                        @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -142,7 +202,7 @@
 <script type="text/javascript">
 jQuery(function($){
     $(document).ready(function() {
-        $('button#download-data').click(function() {
+        function checkForm() {
             let from_year_num = $('#from-year-num').val();
             let to_year_num = $('#to-year-num').val();
             let from_week_num = $('#from-week-num').val();
@@ -156,9 +216,7 @@ jQuery(function($){
 
 
             if (from > to) {
-                alert("Invalid time period !");
-                $('#from-year-num').focus();
-                return;
+                return {'message': "Invalid time period !", 'checked': false};
             }
 
             let hasKeyMetrics = false;
@@ -167,10 +225,31 @@ jQuery(function($){
             });
 
             if (!hasKeyMetrics) {
-                alert("Invalid Key Metrics !");
+                return {'message': "Invalid Key Metrics !", 'checked': false};
+            }
+
+            return {'checked': true};
+        }
+        $('button#download-data').click(function() {
+            let cf = checkForm();
+            if (!cf.checked) {
+                alert(cf.message);
+                $('#from-year-num').focus();
                 return;
             }
 
+            $('form#search-form').attr('action', "{{ route('util.download-data.download') }}");
+            $('form#search-form').submit();
+        });
+        $('button#view-data').click(function() {
+            let cf = checkForm();
+            if (!cf.checked) {
+                alert(cf.message);
+                $('#from-year-num').focus();
+                return;
+            }
+
+            $('form#search-form').attr('action', "{{ route('util.download-data.view') }}");
             $('form#search-form').submit();
         });
     });
