@@ -1,4 +1,4 @@
-<table class="table table-bordered table-striped table-vcenter table-dark">
+<table class="table table-bordered table-striped table-vcenter table-dark mb-0">
     <thead>
         <tr>
             @foreach ($headers as $key => $header)
@@ -31,5 +31,10 @@
             @endif
         </tr>
         @endforeach
+        @if (count($values) == 0)
+            <tr>
+                <td class="text-left">No historical data!</td>
+            </tr>
+        @endif
     </tbody>
 </table>

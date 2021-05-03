@@ -39,6 +39,12 @@
                         </div>
                     @endif
                     <div class="container">
+                        <div class="alert alert-info alert-dismissable" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <p style="margin-bottom: 0;"><i class="fa fa-fw fa-info-circle"></i> You can search historical data and download as Excel file !</p>
+                        </div>
                         <form id="search-form" action="" method="POST" autocomplete="off">
                             @csrf
                             <div class="table-responsive" style="overflow-x: hidden;">
@@ -135,63 +141,6 @@
                                 </table>
                             </div>
                         </form>
-                        <div class="table-responsive">
-                        @if (isset($view_names))
-                        @foreach ($view_names as $view_name)
-                            @switch($view_name)
-                                @case('compare')
-                                    <h4>
-                                        <span class="text-danger">Total Revenue/Miles/Fuel Cost: </span>
-                                        <span class="text-warning">WK-{{ $search->from_week_num }}, {{ $search->from_year_num }} ~ WK-{{ $search->to_week_num }}, {{ $search->to_year_num }}</span>
-                                    </h4>
-                                    @include('util.download_data.compare', ['headers' => $data[$view_name]->header, 'values' => $data[$view_name]->data, 'compare_list' => $compare_list])
-                                    @break
-
-                                @case('miles-driver')
-                                    <h4>
-                                        <span class="text-danger">Miles By Driver: </span>
-                                        <span class="text-warning">WK-{{ $search->from_week_num }}, {{ $search->from_year_num }} ~ WK-{{ $search->to_week_num }}, {{ $search->to_year_num }}</span>
-                                    </h4>
-                                    @include('util.download_data.mile_driver', ['headers' => $data[$view_name]->header, 'values' => $data[$view_name]->data])
-                                    @break
-
-                                @case('miles-vehicle')
-                                    <h4>
-                                        <span class="text-danger">Miles By Vehicle: </span>
-                                        <span class="text-warning">WK-{{ $search->from_week_num }}, {{ $search->from_year_num }} ~ WK-{{ $search->to_week_num }}, {{ $search->to_year_num }}</span>
-                                    </h4>
-                                    @include('util.download_data.mile_vehicle', ['headers' => $data[$view_name]->header, 'values' => $data[$view_name]->data])
-                                    @break
-
-                                @case('trips-driver')
-                                    <h4>
-                                        <span class="text-danger">Trips By Driver: </span>
-                                        <span class="text-warning">WK-{{ $search->from_week_num }}, {{ $search->from_year_num }} ~ WK-{{ $search->to_week_num }}, {{ $search->to_year_num }}</span>
-                                    </h4>
-                                    @include('util.download_data.trips_driver', ['headers' => $data[$view_name]->header, 'values' => $data[$view_name]->data])
-                                    @break
-
-                                @case('mpg-vehicle')
-                                    <h4>
-                                        <span class="text-danger">MPG By Vehicle: </span>
-                                        <span class="text-warning">WK-{{ $search->from_week_num }}, {{ $search->from_year_num }} ~ WK-{{ $search->to_week_num }}, {{ $search->to_year_num }}</span>
-                                    </h4>
-                                    @include('util.download_data.mpg_vehicle', ['headers' => $data[$view_name]->header, 'values' => $data[$view_name]->data])
-                                    @break
-
-                                @default
-                                    InActive
-                            @endswitch
-                        @endforeach
-                        @else
-                            <div class="alert alert-info alert-dismissable" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                                <p style="margin-bottom: 0;"><i class="fa fa-fw fa-info-circle"></i> You can search historical data and download as Excel file !</p>
-                            </div>
-                        @endif
-                        </div>
                     </div>
                 </div>
             </div>
@@ -238,6 +187,7 @@ jQuery(function($){
                 return;
             }
 
+            $('form#search-form').attr('target', '');
             $('form#search-form').attr('action', "{{ route('util.download-data.download') }}");
             $('form#search-form').submit();
         });
@@ -249,6 +199,7 @@ jQuery(function($){
                 return;
             }
 
+            $('form#search-form').attr('target', '_blank');
             $('form#search-form').attr('action', "{{ route('util.download-data.view') }}");
             $('form#search-form').submit();
         });

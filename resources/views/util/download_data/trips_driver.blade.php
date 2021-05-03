@@ -1,4 +1,4 @@
-<table class="table table-bordered table-striped table-vcenter table-dark">
+<table class="table table-bordered table-striped table-vcenter table-dark mb-0">
     <thead>
         <tr>
         <th class="text-center">Driver ID</th>
@@ -24,5 +24,10 @@
             @endforeach
         </tr>
         @endforeach
+        @if (count($values) == 0)
+            <tr>
+                <td class="text-center " colspan="2">No historical data.</td>
+            </tr>
+        @endif
     </tbody>
 </table>

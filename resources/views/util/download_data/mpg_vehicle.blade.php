@@ -1,4 +1,4 @@
-<table class="table table-bordered table-striped table-vcenter table-dark">
+<table class="table table-bordered table-striped table-vcenter table-dark mb-0">
     <thead>
         <tr>
             <th class="text-center">Vehicle #</th>
@@ -16,9 +16,14 @@
             @foreach ($value as $v)
             <td class="text-right">
                 {{ number_format($v, 2) }}
-            </td>    
+            </td>
             @endforeach
         </tr>
         @endforeach
+        @if (count($values) == 0)
+            <tr>
+                <td class="text-center " colspan="2">No historical data.</td>
+            </tr>
+        @endif
     </tbody>
 </table>

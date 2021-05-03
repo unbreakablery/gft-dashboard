@@ -199,7 +199,7 @@ class UtilController extends Controller
                     break;
             }
         }
-        return view('util.download_data.search_form', [
+        return view('util.download_data.view_data', [
             'search'        => $search,
             'data'          => $data,
             'compare_list'  => $compare_list,
