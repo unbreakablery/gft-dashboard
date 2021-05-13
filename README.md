@@ -1,7 +1,8 @@
 # Dashboard For GroundForceTrucking
 
 This project was built by Laravel 8.
-- [Lanched Live Site](http://dashboard.groundforcetrucking.com/).
+
+## [Lanched Live Site](http://dashboard.groundforcetrucking.com/).
 
 - Laravel v8
 - PHP v8 & MySQL Server: 10.4.17-MariaDB
