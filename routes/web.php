@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TractorsController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\UtilController;
+use App\Http\Controllers\WeeklyScheduleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -213,3 +214,20 @@ Route::middleware(['auth:sanctum', 'verified'])->post('util/download-data/downlo
 Route::middleware(['auth:sanctum', 'verified'])->post('util/download-data/view', [UtilController::class, 'view_data'], function () {
     return route('login');
 })->name('util.download-data.view');
+
+// routes for weekly schedule
+Route::middleware(['auth:sanctum', 'verified'])->get('schedule/upload', [WeeklyScheduleController::class, 'index'], function () {
+    return route('login');
+})->name('ws');
+Route::middleware(['auth:sanctum', 'verified'])->post('schedule/upload', [WeeklyScheduleController::class, 'upload'], function () {
+    return route('login');
+})->name('ws.upload');
+Route::middleware(['auth:sanctum', 'verified'])->get('schedule/search', [WeeklyScheduleController::class, 'search'], function () {
+    return route('login');
+})->name('ws.search_form');
+Route::middleware(['auth:sanctum', 'verified'])->post('schedule/search', [WeeklyScheduleController::class, 'search'], function () {
+    return route('login');
+})->name('ws.search');
+Route::middleware(['auth:sanctum', 'verified'])->get('schedule/get/{s_id}', [WeeklyScheduleController::class, 'getSchedule'], function () {
+    return route('login');
+});
