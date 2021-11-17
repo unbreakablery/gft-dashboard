@@ -21,18 +21,23 @@ class CreateWeeklyScheduleTable extends Migration
             $table->string('to_date');
             $table->string('driver_id');
             $table->string('driver_name')->nullable();
-            $table->string('tractor_id');
             $table->string('tcheck')->nullable();
             $table->string('spare_unit')->nullable();
             $table->string('fleet_net');
-            $table->string('saturday')->default('OFF');
-            $table->string('sunday')->default('OFF');
-            $table->string('monday')->default('OFF');
-            $table->string('tuesday')->default('OFF');
-            $table->string('wednesday')->default('OFF');
-            $table->string('thursday')->default('OFF');
-            $table->string('friday')->default('OFF');
-            $table->timestamps();
+            $table->string('sat_start_time')->default('OFF');
+            $table->string('sat_tractor_id')->nullable();
+            $table->string('sun_start_time')->default('OFF');
+            $table->string('sun_tractor_id')->nullable();
+            $table->string('mon_start_time')->default('OFF');
+            $table->string('mon_tractor_id')->nullable();
+            $table->string('tue_start_time')->default('OFF');
+            $table->string('tue_tractor_id')->nullable();
+            $table->string('wed_start_time')->default('OFF');
+            $table->string('wed_tractor_id')->nullable();
+            $table->string('thu_start_time')->default('OFF');
+            $table->string('thu_tractor_id')->nullable();
+            $table->string('fri_start_time')->default('OFF');
+            $table->string('fri_tractor_id')->nullable();
         });
     }
 

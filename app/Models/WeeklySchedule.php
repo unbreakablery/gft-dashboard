@@ -33,6 +33,8 @@ class WeeklySchedule extends Model
         'friday'
     ];
 
+    public $timestamps = false;
+
     public function driver()
     {
         return $this->hasOne(Linehaul_Drivers::class, 'driver_id', 'driver_id');

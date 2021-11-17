@@ -1,5 +1,9 @@
 <x-app-layout>
-
+<style type="text/css">
+    .badge {
+        font-size: 100%;
+    }
+</style>
 <div class="bg-body-light">
     <div class="content content-full">
         <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
@@ -81,7 +85,7 @@
                         </th>
                         <th class="text-center"><strong>Driver Name</strong></th>
                         <th class="d-none d-md-table-cell text-center" style="width: 10%;"><strong>Driver ID</strong></th>
-                        <th class="d-none d-sm-table-cell text-center" style="width: 20%;"><strong>Tractor ID</strong></th>
+                        <th class="d-none d-sm-table-cell text-center" style="width: 20%;"><strong>Dates</strong></th>
                         <th class="d-none d-sm-table-cell text-center" style="width: 10%;"><strong>TCheck #</strong></th>
                         <th class="d-none d-sm-table-cell text-center" style="width: 15%;"><strong>Spare Unit</strong></th>
                         <th class="d-none d-sm-table-cell text-center" style="width: 15%;"><strong>Road Side Service</strong></th>
@@ -103,7 +107,7 @@
                             {{ $schedule->driver_id }}
                         </td>
                         <td class="d-none d-sm-table-cell font-size-sm text-center">
-                            {{ $schedule->tractor_id }}
+                            {{ $schedule->from_date }} - {{ $schedule->to_date }}
                         </td>
                         <td class="d-none d-sm-table-cell text-center">
                             <span class="badge badge-primary">&nbsp;{{ $schedule->tcheck }}&nbsp;</strong>

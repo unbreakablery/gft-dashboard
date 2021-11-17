@@ -18,6 +18,16 @@
                                 Weekly Schedule For Driver
                             </h1>
                         </div>
+                        @if (empty($schedule))
+                        <div class="alert alert-danger" role="alert">
+                            <p class="mb-0"><strong>Sorry, we can't find the schedule data you required.</strong></p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a class="btn btn-lg btn-alt-primary" href="javascript:window.history.back(-1);">
+                                <i class="fa fa-arrow-left mr-1"></i> Schedule List
+                            </a>
+                        </div>
+                        @else
                         <div class="d-flex justify-content-between">
                             <a class="btn btn-lg btn-alt-primary" href="javascript:window.history.back(-1);">
                                 <i class="fa fa-arrow-left mr-1"></i> Schedule List
@@ -51,10 +61,6 @@
                             <li class="list-group-item d-flex justify-content-between align-items-center bg-gray-light">
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Tractor ID:
-                                <span class="badge badge-pill badge-primary">{{ $schedule->tractor_id }}</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
                                 TCheck #:
                                 <span class="badge badge-info">{{ $schedule->tcheck }}</span>
                             </li>
@@ -63,63 +69,21 @@
                                 <span class="font-w600">{{ $schedule->spare_unit }}</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center bg-gray-light">
+                                <span class="col-4 px-0 text-primary text-left">Day</span>
+                                <span class="col-4 px-0 text-primary text-center">Tractor ID</span>
+                                <span class="col-4 px-0 text-primary text-right">Start Time</span>
                             </li>
+                            @foreach ($weekly as $w)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Saturday:
-                                @if ($schedule->saturday == 'OFF')
-                                    <span class="badge badge-dark">{{ $schedule->saturday }}</span>
+                                <span class="col-4 px-0 text-left">{{ $w->day }}</span>
+                                <span class="col-4 px-0 text-center">{{ $w->tractor_id }}</span>
+                                @if ($w->start_time == 'OFF')
+                                    <span class="badge badge-dark">{{ $w->start_time }}</span>
                                 @else
-                                    <span class="font-w600">{{ $schedule->saturday }}</span>
+                                    <span class="col-4 px-0 text-right font-w600">{{ $w->start_time }}</span>
                                 @endif
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Sunday:
-                                @if ($schedule->sunday == 'OFF')
-                                    <span class="badge badge-dark">{{ $schedule->sunday }}</span>
-                                @else
-                                    <span class="font-w600">{{ $schedule->sunday }}</span>
-                                @endif
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Monday:
-                                @if ($schedule->monday == 'OFF')
-                                    <span class="badge badge-dark">{{ $schedule->monday }}</span>
-                                @else
-                                    <span class="font-w600">{{ $schedule->monday }}</span>
-                                @endif
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Tuesday:
-                                @if ($schedule->tuesday == 'OFF')
-                                    <span class="badge badge-dark">{{ $schedule->tuesday }}</span>
-                                @else
-                                    <span class="font-w600">{{ $schedule->tuesday }}</span>
-                                @endif
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Wednesday:
-                                @if ($schedule->wednesday == 'OFF')
-                                    <span class="badge badge-dark">{{ $schedule->wednesday }}</span>
-                                @else
-                                    <span class="font-w600">{{ $schedule->wednesday }}</span>
-                                @endif
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Thursday:
-                                @if ($schedule->thursday == 'OFF')
-                                    <span class="badge badge-dark">{{ $schedule->thursday }}</span>
-                                @else
-                                    <span class="font-w600">{{ $schedule->thursday }}</span>
-                                @endif
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Friday:
-                                @if ($schedule->friday == 'OFF')
-                                    <span class="badge badge-dark">{{ $schedule->friday }}</span>
-                                @else
-                                    <span class="font-w600">{{ $schedule->friday }}</span>
-                                @endif
-                            </li>
+                            @endforeach
                             <li class="list-group-item d-flex justify-content-between align-items-center bg-gray-light">
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -127,6 +91,7 @@
                                 <span class="font-w600 text-primary">{{ $schedule->fleet_net }}</span>
                             </li>
                         </ul>
+                        @endif
                     </div>
                 </div>
             </div>
