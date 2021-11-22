@@ -65,6 +65,12 @@
                         <span class="nav-main-link-name">GF Statements</span>
                     </a>
                 </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link" href="/drivers">
+                        <i class="nav-main-link-icon fa fa-users"></i>
+                        <span class="nav-main-link-name">Drivers</span>
+                    </a>
+                </li>
                 <li class="nav-main-item open">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
                         <i class="nav-main-link-icon far fa-calendar"></i>
