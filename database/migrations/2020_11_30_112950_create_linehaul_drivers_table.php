@@ -15,10 +15,13 @@ class CreateLinehaulDriversTable extends Migration
     {
         Schema::create('linehaul_drivers', function (Blueprint $table) {
             $table->id();
-            $table->char('driver_id', 255);
-            $table->char('driver_name', 255);
-            $table->float('fixed_rate', 8, 4)->nullable();
-            $table->float('price_per_mile', 8, 4)->nullable();
+            $table->string('driver_id');
+            $table->string('driver_name');
+            $table->string('phone')->nullable();
+            $table->string('license')->nullable();
+            $talbe->string('address')->nullable();
+            $table->float('fixed_rate', 8, 4)->default(0.0000);
+            $table->float('price_per_mile', 8, 4)->default(0.0000);
             $table->tinyInteger('work_status')->default('1');
             //$table->timestamps();
         });

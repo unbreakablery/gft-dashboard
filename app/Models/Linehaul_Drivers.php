@@ -14,6 +14,9 @@ class Linehaul_Drivers extends Model
     protected $fillable = [
         'driver_id',
         'driver_name',
+        'phone',
+        'license',
+        'address',
         'fixed_rate',
         'price_per_mile',
         'work_status'
