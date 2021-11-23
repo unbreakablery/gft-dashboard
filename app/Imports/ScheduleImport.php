@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeSheet;
 
 use App\Models\WeeklySchedule;
+use App\Models\Linehaul_Drivers;
 
 class ScheduleImport implements ToArray, WithEvents
 {
@@ -41,30 +42,32 @@ class ScheduleImport implements ToArray, WithEvents
             $to                 = $array[$i][3];
             $driver_name        = $array[$i][4];
             $driver_id          = $array[$i][5];
-            $tcheck             = $array[$i][6];
-            $spare_unit         = $array[$i][7];
+            $driver_phone       = $array[$i][6];
+            $tcheck             = $array[$i][7];
+            $spare_unit         = $array[$i][8];
 
-            $sat_tractor_id     = $array[$i][8];
-            $sat_start_time     = $array[$i][9];
-            $sun_tractor_id     = $array[$i][10];
-            $sun_start_time     = $array[$i][11];
-            $mon_tractor_id     = $array[$i][12];
-            $mon_start_time     = $array[$i][13];
-            $tue_tractor_id     = $array[$i][14];
-            $tue_start_time     = $array[$i][15];
-            $wed_tractor_id     = $array[$i][16];
-            $wed_start_time     = $array[$i][17];
-            $thu_tractor_id     = $array[$i][18];
-            $thu_start_time     = $array[$i][19];
-            $fri_tractor_id     = $array[$i][20];
-            $fri_start_time     = $array[$i][21];
+            $sat_tractor_id     = $array[$i][9];
+            $sat_start_time     = $array[$i][10];
+            $sun_tractor_id     = $array[$i][11];
+            $sun_start_time     = $array[$i][12];
+            $mon_tractor_id     = $array[$i][13];
+            $mon_start_time     = $array[$i][14];
+            $tue_tractor_id     = $array[$i][15];
+            $tue_start_time     = $array[$i][16];
+            $wed_tractor_id     = $array[$i][17];
+            $wed_start_time     = $array[$i][18];
+            $thu_tractor_id     = $array[$i][19];
+            $thu_start_time     = $array[$i][20];
+            $fri_tractor_id     = $array[$i][21];
+            $fri_start_time     = $array[$i][22];
 
             $schedules = WeeklySchedule::where('year_num', $year)
                                         ->where('week_num', $week)
                                         ->where('driver_id', $driver_id)
                                         ->get()
                                         ->all();
-            
+
+            // save data into weekly_schedule table
             if (empty($schedules)) {
                 // insert new data from csv/xlsx into database
                 WeeklySchedule::insert([
@@ -74,6 +77,7 @@ class ScheduleImport implements ToArray, WithEvents
                     'to_date'           => $to,
                     'driver_id'         => $driver_id,
                     'driver_name'       => $driver_name,
+                    'driver_phone'      => $driver_phone,
                     'tcheck'            => $tcheck,
                     'spare_unit'        => $spare_unit,
                     'fleet_net'         => $fleet_net,
@@ -99,6 +103,7 @@ class ScheduleImport implements ToArray, WithEvents
                 $s->from_date       = $from;
                 $s->to_date         = $to;
                 $s->driver_name     = $driver_name;
+                $s->driver_phone    = $driver_phone;
                 $s->tcheck          = $tcheck;
                 $s->spare_unit      = $spare_unit;
                 $s->fleet_net       = $fleet_net;
@@ -118,6 +123,28 @@ class ScheduleImport implements ToArray, WithEvents
                 $s->fri_start_time  = $fri_start_time;
 
                 $s->save();
+            }
+
+            // save data into linehaul_drivers table
+            $drivers = Linehaul_Drivers::where('driver_id', $driver_id)->get()->all();
+
+            if (empty($drivers)) {
+                // insert driver info
+                Linehaul_Drivers::insert([
+                    'driver_id'     => $driver_id,
+                    'driver_name'   => $driver_name,
+                    'phone'         => $driver_phone
+                ]);
+            } else {
+                // update driver info
+                $driver = $drivers[0];
+
+                if ($driver->driver_name != $driver_name || $driver->phone != $driver_phone) {
+                    $driver->driver_name    = $driver_name;
+                    $driver->phone          = empty($driver_phone) ? $driver->phone : $driver_phone;
+
+                    $driver->save();
+                }
             }
         }
     }
