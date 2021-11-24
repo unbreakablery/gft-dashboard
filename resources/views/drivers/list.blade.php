@@ -266,8 +266,8 @@ jQuery(function($){
                         $('#t_phone').html('<span class="badge badge-pill badge-violet">' + (data.driver.phone ? '+' + data.driver.phone : '' )+ '</span>');
                         $('#t_license').html('<span class="badge badge-success">' + (data.driver.license ? data.driver.license : '') + '</span>');
                         $('#t_address').html(data.driver.address);
-                        $('#t_fixed_rate').html(data.driver.fixed_rate.toFixed(2));
-                        $('#t_price_per_mile').html(data.driver.price_per_mile.toFixed(2));
+                        $('#t_fixed_rate').html(data.driver.fixed_rate);
+                        $('#t_price_per_mile').html(data.driver.price_per_mile);
                         $('#t_work_status').html(data.driver.work_status ? 'Working' : '<span class="font-w600 text-danger">No longer working</span>');
                     } else {
                         inital_modal();
