@@ -29,7 +29,7 @@ class ScheduleImport implements ToArray, WithEvents
         //$this->sheetData[$this->sheetNames[count($this->sheetNames)-1]] = $array;
 
         $name = $this->sheetNames[count($this->sheetNames)-1];
-        $fleet_net = $array[0][1];
+        $fleet_net = (string)$array[0][1];
 
         $start = 5;
         for ($i = $start; $i < count($array); $i++) {
@@ -38,28 +38,28 @@ class ScheduleImport implements ToArray, WithEvents
             
             // $from = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($array[$i][2])->format('Y-m-d');
             // $to = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($array[$i][3])->format('Y-m-d');
-            $from               = $array[$i][2];
-            $to                 = $array[$i][3];
-            $driver_name        = $array[$i][4];
-            $driver_id          = $array[$i][5];
-            $driver_phone       = $array[$i][6];
-            $tcheck             = $array[$i][7];
-            $spare_unit         = $array[$i][8];
+            $from               = (string)$array[$i][2];
+            $to                 = (string)$array[$i][3];
+            $driver_name        = (string)$array[$i][4];
+            $driver_id          = (string)$array[$i][5];
+            $driver_phone       = (string)$array[$i][6];
+            $tcheck             = (string)$array[$i][7];
+            $spare_unit         = (string)$array[$i][8];
 
-            $sat_tractor_id     = $array[$i][9];
-            $sat_start_time     = $array[$i][10];
-            $sun_tractor_id     = $array[$i][11];
-            $sun_start_time     = $array[$i][12];
-            $mon_tractor_id     = $array[$i][13];
-            $mon_start_time     = $array[$i][14];
-            $tue_tractor_id     = $array[$i][15];
-            $tue_start_time     = $array[$i][16];
-            $wed_tractor_id     = $array[$i][17];
-            $wed_start_time     = $array[$i][18];
-            $thu_tractor_id     = $array[$i][19];
-            $thu_start_time     = $array[$i][20];
-            $fri_tractor_id     = $array[$i][21];
-            $fri_start_time     = $array[$i][22];
+            $sat_tractor_id     = (string)$array[$i][9];
+            $sat_start_time     = (string)$array[$i][10];
+            $sun_tractor_id     = (string)$array[$i][11];
+            $sun_start_time     = (string)$array[$i][12];
+            $mon_tractor_id     = (string)$array[$i][13];
+            $mon_start_time     = (string)$array[$i][14];
+            $tue_tractor_id     = (string)$array[$i][15];
+            $tue_start_time     = (string)$array[$i][16];
+            $wed_tractor_id     = (string)$array[$i][17];
+            $wed_start_time     = (string)$array[$i][18];
+            $thu_tractor_id     = (string)$array[$i][19];
+            $thu_start_time     = (string)$array[$i][20];
+            $fri_tractor_id     = (string)$array[$i][21];
+            $fri_start_time     = (string)$array[$i][22];
 
             $schedules = WeeklySchedule::where('year_num', $year)
                                         ->where('week_num', $week)

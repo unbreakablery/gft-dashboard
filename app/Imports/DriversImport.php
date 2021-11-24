@@ -27,11 +27,11 @@ class DriversImport implements ToArray, WithEvents
         
         $start = 1;
         for ($i = $start; $i < count($array); $i++) {
-            $driver_id          = $array[$i][0];
-            $driver_name        = $array[$i][1];
-            $phone              = $array[$i][2];
-            $license            = $array[$i][3];
-            $address            = $array[$i][4];
+            $driver_id          = (string)$array[$i][0];
+            $driver_name        = (string)$array[$i][1];
+            $phone              = (string)$array[$i][2];
+            $license            = (string)$array[$i][3];
+            $address            = (string)$array[$i][4];
             $fixed_rate         = $array[$i][5];
             $price_per_mile     = $array[$i][6];
             $work_status        = $array[$i][7];
