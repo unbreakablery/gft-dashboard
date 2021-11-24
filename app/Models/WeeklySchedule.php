@@ -20,6 +20,7 @@ class WeeklySchedule extends Model
         'to_date',
         'driver_id',
         'driver_name',
+        'driver_phone',
         'tractor_id',
         'tcheck',
         'spare_unit',
@@ -30,7 +31,9 @@ class WeeklySchedule extends Model
         'tuesday',
         'wednesday',
         'thursday',
-        'friday'
+        'friday',
+        'sent_sms',
+        'response'
     ];
 
     public $timestamps = false;

@@ -21,6 +21,7 @@ class CreateWeeklyScheduleTable extends Migration
             $table->string('to_date');
             $table->string('driver_id');
             $table->string('driver_name')->nullable();
+            $table->string('driver_phone')->nullable();
             $table->string('tcheck')->nullable();
             $table->string('spare_unit')->nullable();
             $table->string('fleet_net');
@@ -38,6 +39,8 @@ class CreateWeeklyScheduleTable extends Migration
             $table->string('thu_tractor_id')->nullable();
             $table->string('fri_start_time')->default('OFF');
             $table->string('fri_tractor_id')->nullable();
+            $table->tinyInteger('sent_sms')->default(0);
+            $table->tinyInteger('response')->default(0);
         });
     }
 
