@@ -3,6 +3,10 @@
     .badge {
         font-size: 100%;
     }
+    .badge-violet {
+        color: #fff;
+        background-color: #7F00FF;
+    }
 </style>
 <div class="hero-static d-flex align-items-center">
     <div class="w-100">
@@ -57,6 +61,10 @@
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Driver ID:
                                 <span class="badge badge-success">{{ $schedule->driver_id }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Driver Phone #:
+                                <span class="badge badge-pill badge-violet">{{ '+' . $schedule->driver_phone }}</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center bg-gray-light">
                             </li>

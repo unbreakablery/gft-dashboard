@@ -114,13 +114,6 @@
                                                 @endforeach
                                             </select>
                                         </td>
-                                        <td class="font-w800 text-right" style="width: 15%;">Sent SMS : </td>
-                                        <td class="text-left" style="width: 35%;">
-                                            <select class="form-control" id="sent_sms" name="sent_sms">
-                                                <option value="0" @if (isset($schedule) && $schedule->sent_sms == 0) selected @elseif (old('sent_sms') == 0) selected @endif>Not sent yet</option>
-                                                <option value="1" @if (isset($schedule) && $schedule->sent_sms == 1) selected @elseif (old('sent_sms') == 1) selected @endif>Sent</option>
-                                            </select>
-                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="font-w800 text-right" style="width: 15%;">Phone : </td>
@@ -163,6 +156,25 @@
                                                     value="@if (isset($schedule)){{ $schedule->fleet_net }}@else{{ old('fleet_net') }}@endif" 
                                                     placeholder="Enter fleet net.." 
                                                     required />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-w800 text-right" style="width: 15%;">Sent SMS : </td>
+                                        <td class="text-left" style="width: 35%;">
+                                            <select class="form-control" id="sent_sms" name="sent_sms">
+                                                <option value="0" @if (isset($schedule) && $schedule->sent_sms == 0) selected @elseif (old('sent_sms') == 0) selected @endif>Not sent yet</option>
+                                                <option value="1" @if (isset($schedule) && $schedule->sent_sms == 1) selected @elseif (old('sent_sms') == 1) selected @endif>Sent</option>
+                                            </select>
+                                        </td>
+                                        <td class="font-w800 text-right" style="width: 15%;">Response : </td>
+                                        <td class="text-left" style="width: 35%;">
+                                            <select class="form-control" id="response" name="response">
+                                                <option value="0" 
+                                                    @if (isset($schedule) && $schedule->response != 1 && $schedule->response != 2) selected 
+                                                    @elseif (old('response') != 1 && old('response') != 2) selected @endif>Not response yet</option>
+                                                <option value="1" @if (isset($schedule) && $schedule->response == 1) selected @elseif (old('response') == 1) selected @endif>Accept</option>
+                                                <option value="2" @if (isset($schedule) && $schedule->response == 2) selected @elseif (old('response') == 2) selected @endif>Reject</option>
+                                            </select>
                                         </td>
                                     </tr>
                                     <tr>
@@ -334,7 +346,6 @@ jQuery(function($){
 
     $('button.view-schedules').click(function() {
         location.href = "/schedule/search";
-        // window.history.go(-1);
     });
 });
 </script>

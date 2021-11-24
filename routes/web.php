@@ -10,6 +10,7 @@ use App\Http\Controllers\TractorsController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\UtilController;
 use App\Http\Controllers\WeeklyScheduleController;
+use App\Http\Controllers\DriverController;
 
 /*
 |--------------------------------------------------------------------------
@@ -229,5 +230,52 @@ Route::middleware(['auth:sanctum', 'verified'])->post('schedule/search', [Weekly
     return route('login');
 })->name('ws.search');
 Route::middleware(['auth:sanctum', 'verified'])->get('schedule/get/{s_id}', [WeeklyScheduleController::class, 'getSchedule'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->post('schedule/get', [WeeklyScheduleController::class, 'getSchedulePost'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('schedule/edit/{id}', [WeeklyScheduleController::class, 'editSchedule'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('schedule/add', [WeeklyScheduleController::class, 'addSchedule'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->post('schedule/save', [WeeklyScheduleController::class, 'saveSchedule'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('schedule/remove/{id}', [WeeklyScheduleController::class, 'removeSchedule'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->post('schedule/remove-bulk', [WeeklyScheduleController::class, 'removeBulkSchedules'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->post('schedule/send-sms', [WeeklyScheduleController::class, 'sendSMS'], function () {
+    return route('login');
+});
+
+// routes for drivers
+Route::middleware(['auth:sanctum', 'verified'])->get('drivers', [DriverController::class, 'getDrivers'], function () {
+    return route('login');
+})->name('drivers');
+Route::middleware(['auth:sanctum', 'verified'])->post('drivers/get', [DriverController::class, 'getDriver'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('drivers/edit/{id}', [DriverController::class, 'editDriver'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('drivers/remove/{id}', [DriverController::class, 'removeDriver'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('drivers/add', function () {
+    return view('drivers.edit');
+});
+Route::middleware(['auth:sanctum', 'verified'])->post('drivers/remove-bulk', [DriverController::class, 'removeBulkDrivers'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->post('drivers/save', [DriverController::class, 'saveDriver'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->post('drivers/upload', [DriverController::class, 'uploadDrivers'], function () {
     return route('login');
 });
