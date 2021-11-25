@@ -366,6 +366,8 @@ class WeeklyScheduleController extends Controller
                 $sms .= "Wednesday: " . $s->wed_start_time . ", " . $s->wed_tractor_id . "\n";
                 $sms .= "Thursday: " . $s->thu_start_time . ", " . $s->thu_tractor_id . "\n";
                 $sms .= "Friday: " . $s->fri_start_time . ", " . $s->fri_tractor_id . "\n";
+                $sms .= "------\n";
+                $sms .= "Reply '1' to accept or '2' to reject schedule.";
 
                 $client->messages->create(
                     $to,
