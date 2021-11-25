@@ -64,7 +64,7 @@
                                                     <div class="col-6">
                                                         <select class="form-control" id="from-week-num" name="from-week-num" required>
                                                             @for ($i = 1; $i <= 52; $i++)
-                                                            <option value="{{ $i }}" {{ (isset($search->from_week_num)) ? ($i == $search->from_week_num ? "selected" : "") : ($i == Date("W") - 1 ? "selected" : "")}}>{{ $i }}</option>
+                                                            <option value="{{ $i }}" {{ (isset($search->from_week_num)) ? ($i == $search->from_week_num ? "selected" : "") : ($i == Date("W") ? "selected" : "")}}>{{ $i }}</option>
                                                             @endfor
                                                         </select>
                                                     </div>
@@ -85,7 +85,7 @@
                                                     <div class="col-6">
                                                         <select class="form-control" id="to-week-num" name="to-week-num" required>
                                                             @for ($i = 1; $i <= 52; $i++)
-                                                            <option value="{{ $i }}" {{ (isset($search->to_week_num)) ? ($i == $search->to_week_num ? "selected" : "") : ($i == Date("W") - 1 ? "selected" : "")}}>{{ $i }}</option>
+                                                            <option value="{{ $i }}" {{ (isset($search->to_week_num)) ? ($i == $search->to_week_num ? "selected" : "") : ($i == Date("W") ? "selected" : "")}}>{{ $i }}</option>
                                                             @endfor
                                                         </select>
                                                     </div>

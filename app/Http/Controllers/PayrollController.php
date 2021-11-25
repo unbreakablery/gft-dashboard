@@ -55,7 +55,7 @@ class PayrollController extends Controller
             $this->week_num = $request->input('week-num');    
         } else {
             $this->year_num = Date("Y");
-            $this->week_num = Date("W") - 1;
+            $this->week_num = Date("W");
         }
         
         $drivers = DB::select("
