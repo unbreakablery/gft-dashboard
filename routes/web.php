@@ -6,7 +6,7 @@ use App\Http\Controllers\UploadDataController;
 use App\Http\Controllers\ChartDataController;
 use App\Http\Controllers\ScorecardsController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\TractorsController;
+use App\Http\Controllers\FleetController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\UtilController;
 use App\Http\Controllers\WeeklyScheduleController;
@@ -132,24 +132,41 @@ Route::middleware(['auth:sanctum', 'verified'])->get('scorecards/person/remove/{
     return route('login');
 })->name('remove-person');
 
-Route::middleware(['auth:sanctum', 'verified'])->get('tractors', [TractorsController::class, 'get_tractors'], function () {
+// Fleet
+Route::middleware(['auth:sanctum', 'verified'])->get('fleet/list', [FleetController::class, 'getFleets'], function () {
     return route('login');
-})->name('tractors');
-Route::middleware(['auth:sanctum', 'verified'])->get('tractors/edit/{id}', [TractorsController::class, 'edit_tractor'], function () {
-    return route('login');
-});
-Route::middleware(['auth:sanctum', 'verified'])->get('tractors/remove/{id}', [TractorsController::class, 'remove_tractor'], function () {
+})->name('fleets');
+Route::middleware(['auth:sanctum', 'verified'])->post('fleet/list', [FleetController::class, 'getFleets'], function () {
     return route('login');
 });
-Route::middleware(['auth:sanctum', 'verified'])->post('tractors/get-tractor', [TractorsController::class, 'get_tractor'], function () {
+Route::middleware(['auth:sanctum', 'verified'])->get('fleet/edit/{id}', [FleetController::class, 'editFleet'], function () {
     return route('login');
 });
-Route::middleware(['auth:sanctum', 'verified'])->get('tractors/add', function () {
-    return view('tractors.tractor');
-});
-Route::middleware(['auth:sanctum', 'verified'])->post('tractors/save', [TractorsController::class, 'save_tractor'], function () {
+Route::middleware(['auth:sanctum', 'verified'])->get('fleet/remove/{id}', [FleetController::class, 'removeFleet'], function () {
     return route('login');
 });
+Route::middleware(['auth:sanctum', 'verified'])->post('fleet/get', [FleetController::class, 'getFleet'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('fleet/add', function () {
+    return view('fleets.fleet');
+});
+Route::middleware(['auth:sanctum', 'verified'])->post('fleet/save', [FleetController::class, 'saveFleet'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->post('fleet/upload', [FleetController::class, 'uploadFleets'], function () {
+    return route('login');
+});
+
+// MMR
+Route::middleware(['auth:sanctum', 'verified'])->get('mmr', [FleetController::class, 'mmrIndex'], function () {
+    return route('login');
+})->name('mmr');
+Route::middleware(['auth:sanctum', 'verified'])->post('mmr/upload-signs', [FleetController::class, 'uploadSigns'], function () {
+    return route('login');
+})->name('mmr-upload-signs');
+
+// Payroll
 Route::middleware(['auth:sanctum', 'verified'])->get('payroll', [PayrollController::class, 'index'], function () {
     return route('login');
 });
@@ -181,6 +198,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('payroll/work-status/save/{
     return route('login');
 })->name('payroll-workstatus-save');
 
+// Utils
 Route::middleware(['auth:sanctum', 'verified'])->get('util/ext-links', [UtilController::class, 'get_ext_links'], function () {
     return route('login');
 })->name('util.ext-links');

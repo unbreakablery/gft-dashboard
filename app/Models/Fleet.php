@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Tractors extends Model
+class Fleet extends Model
 {
     use HasFactory;
 
-    protected $table = 'tractors';
+    protected $table = 'fleets';
 
     protected $fillable = [
         'tractor_id',
@@ -17,14 +17,16 @@ class Tractors extends Model
         'vin',
         'year',
         'license_plate',
-        'last_bit_miles',
-        'bit',
-        'oil_changes',
-        'insurance_book_value',
-        'smart_witness_serial',
-        'omnitracs_device_id',
+        't_check',
         'pre_pass',
-        't_check'
+        'service_provider',
+        'qiv',
+        'bit',
+        'domicile',
+        'domicile_email',
+        'book_value',
+        'vedr',
+        'eld'
     ];
 
     public $timestamps = false;
