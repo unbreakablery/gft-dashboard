@@ -117,7 +117,7 @@ class DriverController extends Controller
             $Imports = new DriversImport();
             $ts = Excel::import($Imports, $file);
 
-            $request->session()->flash('success', 'Drivers were imported from <b>' . $file_name . '</b> successfully !');
+            $request->session()->flash('success', 'Drivers were imported from <strong>' . $file_name . '</strong> successfully !');
         } else {
             $request->session()->flash('error', 'Please choose a file to submit.');
         }
