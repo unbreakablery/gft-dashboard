@@ -31,7 +31,7 @@ class WeeklyScheduleController extends Controller
             $Imports = new ScheduleImport();
             $ts = Excel::import($Imports, $file);
 
-            $request->session()->flash('status', 'Weekly Schedules were imported from <b>' . $file_name . '</b> successfully !');
+            $request->session()->flash('success', 'Weekly Schedules were imported from <b>' . $file_name . '</b> successfully !');
         } else {
             $request->session()->flash('error', 'Please choose a file to submit.');
         }

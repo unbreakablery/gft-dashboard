@@ -29,12 +29,12 @@
                             </button>
                             <p>You can choose a <strong>Excel</strong> or <strong>CSV</strong> file with weekly schedule.</p>
                         </div>
-                    @if (session('status'))
+                    @if (session('success'))
                         <div class="alert alert-success alert-dismissable" role="alert">
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">×</span>
                             </button>
-                            <p>{!! session('status') !!}</p>
+                            <p>{!! session('success') !!}</p>
                         </div>
                     @endif
                     @if (session('error'))

@@ -40,7 +40,15 @@
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
-                    <p class="font-w600 m-1"><i class="fa fa-fw fa-info-circle"></i> {{ session('success') }}</p>
+                    <p class="mb-0"><i class="fa fa-fw fa-info-circle"></i> {!! session('success') !!}</p>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissable" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <p class="mb-0"><i class="fa fa-fw fa-info-circle"></i> {!! session('error') !!}</p>
                 </div>
             @endif
             <form action="/schedule/search" method="POST" autocomplete="off" id="search-form">
@@ -98,7 +106,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row justify-content-end">
                     <div class="col-lg-2 col-md-2">
                         <div class="form-group">
                             <button type="button" class="form-control btn btn-dark ml-auto mr-3" id="add-schedule" name="add-schedule">
