@@ -13,7 +13,8 @@ class SignImage extends Model
 
     protected $fillable = [
         'name',
-        'extension'
+        'extension',
+        'path'
     ];
 
     public $timestamps = true;

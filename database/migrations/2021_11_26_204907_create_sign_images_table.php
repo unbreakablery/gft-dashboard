@@ -17,6 +17,7 @@ class CreateSignImagesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('extension');
+            $table->string('path');
             $table->timestamps();
         });
     }
