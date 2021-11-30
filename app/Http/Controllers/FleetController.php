@@ -301,7 +301,8 @@ class FleetController extends Controller
                 $tractor->cMileage = $cMileages[$i];
 
                 $m = new \stdClass();
-                $m->mDate = date('n-j-Y', strtotime($maintDates[$i]));
+                // $m->mDate = date('n-j-Y', strtotime($maintDates[$i]));
+                $m->mDate = $maintDates[$i];
                 $m->mDesc = $maintDescs[$i];
                 array_push($tractor->maints, $m);
             }
@@ -316,7 +317,8 @@ class FleetController extends Controller
             $data = [
                 'mYearMonth'    => $mYearMonth,
                 'sign'          => $sign,
-                'cDate'         => date('n-j-Y', strtotime($completedDate)),
+                // 'cDate'         => date('n-j-Y', strtotime($completedDate)),
+                'cDate'         => $completedDate,
                 'tractor'       => $t
             ];
 

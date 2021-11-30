@@ -1,14 +1,14 @@
 <tr>
     <td class="text-center">
         <select name="maintenance[]" class="form-control">
-            <option value="1">Yes</option>
             <option value="0">No</option>
+            <option value="1">Yes</option>
         </select>
     </td>
     <td class="text-center">
         <select name="out-of-service[]" class="form-control">
-            <option value="1">Yes</option>
             <option value="0">No</option>
+            <option value="1">Yes</option>
         </select>
     </td>
     <td class="text-center">
@@ -22,7 +22,7 @@
     </td>
     <td class="text-center">
         <input type="number"
-                class="form-control text-right"
+                class="form-control text-right px-0"
                 name="current-mileage[]"
                 value="0.0000"
                 placeholder=""
@@ -33,20 +33,18 @@
     </td>
     <td class="text-center">
         <input type="text"
-                class="date form-control text-center"
+                class="date form-control text-center px-0"
                 name="maintenance-date[]"
                 value=""
-                placeholder="yyyy-mm-dd"
-                required
+                placeholder="mm-dd-yy"
         />
     </td>
     <td class="text-center">
         <input type="text"
                 class="form-control"
                 name="maintenance-desc[]"
-                placeholder="Description of Maintenance Performed"
+                placeholder="Description"
                 value=""
-                required
         />
     </td>
     <td class="text-center">

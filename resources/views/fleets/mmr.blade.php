@@ -61,7 +61,7 @@
                         <div class="row justify-content-end">
                             <div class="form-group mr-3">
                                 <button type="button" class="form-control btn btn-success ml-auto mr-3" id="upload-signs" name="upload-signs">
-                                    <i class="fa fa-upload"></i> Upload Signs
+                                    <i class="fa fa-upload"></i> Upload Signature
                                 </button>
                             </div>
                             <div class="form-group mr-3">
@@ -120,8 +120,8 @@
                                                     data-week-start="0"
                                                     data-autoclose="true"
                                                     data-today-highlight="true"
-                                                    data-date-format="yyyy-mm-dd"
-                                                    placeholder="yyyy-mm-dd"
+                                                    data-date-format="mm-dd-yy"
+                                                    placeholder="mm-dd-yy"
                                             />
                                         </td>
                                     </tr>
@@ -129,10 +129,7 @@
                             </table>
                         </div>
 
-                        <div class="row justify-content-between">
-                            <div class="form-group">
-                                <span class="text-danger ml-3"><strong>*All items are required.</strong></span>
-                            </div>
+                        <div class="row justify-content-end">
                             <div class="form-group mr-3 mb-1">
                                 <button type="button" class="form-control btn btn-dark ml-auto mr-3" id="add-maintenance" name="add-maintenance">
                                     <i class="fa fa-plus-circle"></i> Add Tractor / Maintenance
@@ -145,11 +142,11 @@
                                     <tr>
                                         <th class="text-center" style="width: 10%;">Maintenance</th>
                                         <th class="text-center" style="width: 10%;">Out of Service</th>
-                                        <th class="text-center" style="width: 15%;">Tractor</th>
+                                        <th class="text-center" style="width: 130px;">Tractor</th>
                                         <th class="text-center" style="width: 15%;">Current Mileage</th>
-                                        <th class="text-center" style="width: 10%;">Date</th>
+                                        <th class="text-center" style="width: 115px;">Date</th>
                                         <th class="text-center">Description of Maintenance Performed</th>
-                                        <th class="text-center" style="width: 85px;">Action</th>
+                                        <th class="text-center" style="width: 65px;"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -232,7 +229,7 @@ jQuery(function($){
             $('.date').datepicker('remove');
 
             $('.date').datepicker({
-                format: 'yyyy-mm-dd',
+                format: 'mm-dd-yy',
                 defaultViewDate: startDate,
                 clearBtn: true,
                 autoclose: true,
@@ -266,6 +263,17 @@ jQuery(function($){
                     $(tr).find('input[type=number][name="current-mileage[]"]').val(cValue);
                 }
             });
+        });
+        $(document).on('change', 'select[name="maintenance[]"]', function() {
+            if ($(this).val() == '1') {
+                $(this).closest('tr').find('input[type=text][name="maintenance-date[]"]').prop('required', true);
+                $(this).closest('tr').find('input[type=text][name="maintenance-desc[]"]').prop('required', true);
+            } else {
+                $(this).closest('tr').find('input[type=text][name="maintenance-date[]"]').val('');
+                $(this).closest('tr').find('input[type=text][name="maintenance-desc[]"]').val('');
+                $(this).closest('tr').find('input[type=text][name="maintenance-date[]"]').prop('required', false);
+                $(this).closest('tr').find('input[type=text][name="maintenance-desc[]"]').prop('required', false);
+            }
         });
     });
 });

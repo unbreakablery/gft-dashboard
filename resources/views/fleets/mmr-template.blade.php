@@ -96,17 +96,21 @@
     .mt-30 {
         margin-top: 30px !important;
     }
+    .mb-10 {
+        margin-bottom: 10px !important;
+    }
+    .mb-20 {
+        margin-bottom: 20px !important;
+    }
     .my-5 {
         margin: 5px 0 !important;
     }
-
     .my-10 {
         margin: 10px 0 !important;
     }
     .my-20 {
         margin: 20px 0 !important;
     }
-
     
     /* paddings */
     .py-0 {
@@ -127,8 +131,8 @@
     }
 
     /* line height */
-    .lh-15 {
-        line-height: 15px !important;
+    .lh-14 {
+        line-height: 14px !important;
     }
 
     @page {
@@ -162,7 +166,7 @@
         </strong>
     </p>
     <p class="text-right"><strong>17 November 2020</strong></p>
-    <p class="block-1 lh-15">
+    <p class="block-1 lh-14">
         To comply with U.S. federal regulations, this form must be completed, signed and submitted to FedEx Ground by the 20th 
         of the month following the month for which inspections, repairs, or maintenance were performed on any service provider- 
         owned or -leased equipment. Submit one record for each piece of equipment, even if not regularly providing services.
@@ -211,7 +215,7 @@
                 <strong>Vehicle Unit #:</strong>
             </td>
             <td class="w-10"></td>
-            <td class="w-45 f-10 pt-10 pb-0 lh-15" rowspan="2">
+            <td class="w-45 f-10 pt-10 pb-0 lh-14" rowspan="2">
                 *If reading has decreased due to odometer repair/replacement, proof
                 should also be provided. If unit is undergoing repair and unavailable,
                 “N/A” may be utilized for current mileage.
@@ -245,9 +249,9 @@
     </table>
 
     <!-- out of service -->
-    <table class="w-100 mb-10">
+    <table class="w-100 mb-20">
         <tr>
-            <td class="w-70 f-13 pt-10 lh-15">
+            <td class="w-70 f-13 pt-10 lh-14">
                 If “no” maintenance was performed, was the unit out of service and unable to provide
                 service (i.e., awaiting repair, on litigation hold, etc.)?
             </td>
@@ -265,17 +269,17 @@
     </table>
 
     <!-- block 2 -->
-    <p class="f-13 mt-10 lh-15">
-        If “yes,” maintenance was performed, then a record of any inspection, repairs or maintenance indicating their date and
-        nature should be included with this form. Copies of invoices, receipts, etc. are preferred; however, in lieu, a list indicating
-        the date and nature of the inspection, maintenance and repairs should be documented in the “Date of Maintenance” and
+    <p class="f-13 mt-10 lh-14">
+        If “yes,” maintenance was performed, then a record of any inspection, repairs or maintenance indicating their date 
+        and &nbsp;nature should be included with this form. Copies of invoices, receipts, etc. are preferred; however, in lieu, 
+        a list indicating the date and nature of the inspection, maintenance and repairs should be documented in the “Date of Maintenance” and
         “Nature/Description of Maintenance Performed” columns. Section 396.3(b)(3) of the Federal Motor Carrier Safety
         Regulations requires motor carriers to maintain a record of all inspections, repair, and maintenance indicating their date
         and nature.
     </p>
 
     <!-- Maintenance List Table -->
-    <p class="f-13 mt-20 lh-15">
+    <p class="f-13 mt-20 lh-14">
         If documentation is not attached, indicate the date and nature of the inspections, repairs, 
         or maintenance performed in the box below.
     </p>
@@ -314,7 +318,7 @@
             <td class="w-5 pt-0 f-13 align-top">
                 <input type="checkbox" checked>
             </td>
-            <td class="w-95 f-13 lh-15">
+            <td class="w-95 f-13 lh-14">
                 By checking this box, I declare that this record is true and correct. Unless otherwise clearly indicated as “out of
                 service” on this record, I confirm that the equipment on this record is in compliance with the Federal Motor Carrier
                 Safety Regulations 49 C.F.R. 396.3(a)(1) and 396.7 (a) and is in safe operating condition and meets all federal, state
@@ -347,7 +351,7 @@
     </table>
     
     <!-- block 4 -->
-    <p class="f-13 mt-20 lh-15 font-italic">
+    <p class="f-13 mt-20 lh-14 font-italic">
         * The Monthly Maintenance Record (MMR) is FedEx Ground's systematic method of obtaining vehicle maintenance records for
         service provider-owned vehicles in compliance with the Federal Motor Carrier Safety Regulations which require motor carriers to have
         a systematic method of causing vehicles operating under their motor carrier operating authority to be inspected, repaired, and
