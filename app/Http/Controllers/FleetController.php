@@ -9,9 +9,15 @@ use App\Models\SignImage;
 use DB;
 use DateTime;
 use Redirect;
+use Storage;
 
 use App\Imports\FleetsImport;
 use Maatwebsite\Excel\Facades\Excel;
+
+use PDF;
+
+use App\Mail\MMRMail;
+use Illuminate\Support\Facades\Mail;
 
 class FleetController extends Controller
 {
@@ -199,7 +205,12 @@ class FleetController extends Controller
                 $ext = $file->getClientOriginalExtension();
                 $save_name = pathinfo($name, PATHINFO_FILENAME);
 
-                $file->move(public_path('media/photos/signs'), $name);
+                // save in public folder
+                // $file->move(public_path('media/photos/signs'), $name);
+
+                // save in storage/app/public/signs
+                $path = $file->storeAs('public/signs', $name);
+
                 $files .= $name . ", ";
 
                 $signs = SignImage::where('name', $save_name)->get()->all();
@@ -210,8 +221,9 @@ class FleetController extends Controller
                     $sign = $signs[0];
                 }
 
-                $sign->name = $save_name;
-                $sign->extension = $ext;
+                $sign->name         = $save_name;
+                $sign->extension    = $ext;
+                $sign->path         = $path;
                 $sign->save();
             }
             $request->session()->flash('success', 'Uploaded Sign Image Files: <strong>' . implode(', ', explode(', ', $files, -1)) . '</strong>');
@@ -220,5 +232,145 @@ class FleetController extends Controller
         }
 
         return redirect('mmr');
+    }
+
+    public function sendEmailMMR(Request $request)
+    {
+        $yearNum        = $request->input('year-num');
+        $monthNum       = $request->input('month-num');
+        
+        //get month name as November from month num
+        $dateObj        = DateTime::createFromFormat('!m', $monthNum);
+        $monthName      = $dateObj->format('F');
+        $mYearMonth     = $monthName . ' ' . $request->input('year-num');
+
+        $sign_image     = SignImage::where('name', $request->input('sign'))->get();
+        if (empty($sign_image) || count($sign_image) > 1) {
+            $request->session()->flash('error', 'Can\'t find the sign data with Name = ' . $request->input('sign'));
+            return Redirect('/mmr');
+        }
+        $sign           = storage_path('app/' . $sign_image[0]->path);
+
+        $completedDate  = $request->input('completed-date');
+        $hasMaints      = $request->input('maintenance');
+        $oServices      = $request->input('out-of-service');
+
+        $tIds           = $request->input('tractor-id');
+        if (empty($tIds)) {
+            $request->session()->flash('error', 'Please add tractors/maintenances.');
+            return Redirect('/mmr');
+        }
+
+        $cMileages      = $request->input('current-mileage');
+        $maintDates     = $request->input('maintenance-date');
+        $maintDescs     = $request->input('maintenance-desc');
+
+        $tractors = [];
+        $newIds = [];
+        foreach ($tIds as $t) {
+            if (!in_array($t, $newIds)) {
+                array_push($newIds, $t);
+            }
+        }
+
+        foreach ($newIds as $nId) {
+            $tractor = new \stdClass();
+            $tractor->id = $nId;
+
+            $tractor->hasMaint = false;
+            $tractor->oService = false;
+            $tractor->cMileage = 0;
+
+            $fleet = Fleet::where('tractor_id', $tractor->id)->get();
+            if (empty($fleet) || count($fleet) > 1) {
+                $request->session()->flash('error', 'Can\'t find the fleet data with ID = ' . $nId);
+                return Redirect('/mmr');
+            }
+            $tractor->domicile      = $fleet[0]->domicile;
+            $tractor->email         = $fleet[0]->domicile_email;
+            $tractor->sProvider     = $fleet[0]->service_provider;
+            
+            $idxs = [];
+            foreach ($tIds as $i => $t) {
+                if ($t == $nId && in_array($t, $newIds)) {
+                    array_push($idxs, $i);
+                }
+            }
+
+            $tractor->maints = [];
+            foreach ($idxs as $i) {
+                $tractor->hasMaint = $tractor->hasMaint || $hasMaints[$i];
+                $tractor->oService = $tractor->oService || $oServices[$i];
+                $tractor->cMileage = $cMileages[$i];
+
+                $m = new \stdClass();
+                $m->mDate = date('n-j-Y', strtotime($maintDates[$i]));
+                $m->mDesc = $maintDescs[$i];
+                array_push($tractor->maints, $m);
+            }
+
+            array_push($tractors, $tractor);
+        }
+        
+        //set storage path
+        $path = 'public/mmr/' . $yearNum . (($monthNum < 10) ? '0' . $monthNum : $monthNum) . '/';
+
+        foreach ($tractors as $t) {
+            $data = [
+                'mYearMonth'    => $mYearMonth,
+                'sign'          => $sign,
+                'cDate'         => date('n-j-Y', strtotime($completedDate)),
+                'tractor'       => $t
+            ];
+
+            // save to storage/app
+            $pdf = PDF::loadView('fleets.mmr-template', $data)
+                        ->setPaper('Letter');
+            $file = $path . 'MMR-' . $t->id . '.pdf';
+            Storage::put($file, $pdf->output());
+
+            // send email to domicile address
+            if (!empty($t->email)) {
+                Mail::to($t->email)
+                    ->send(new MMRMail($mYearMonth, storage_path('app/' . $file)));
+            }
+        }
+
+        $request->session()->flash('success', 'Sent emails with MMR PDF.');
+        return Redirect('/mmr');
+        
+
+        //set storage path
+        // $path = 'public/mmr/' . $yearNum . $monthNum . '/';
+
+        // $data = [];
+        // $data = [
+        //     'maintenance_year_num' => $monthName . ' ' . $request->input('year-num'),
+        //     'completed_date' => date('d F Y', strtotime($request->input('completed-date')))
+        // ];
+
+        // save to public folder
+        // $pdf = PDF::loadView('fleets.mmr-template', $data)
+        //             ->setPaper('Letter')
+        //             ->save(public_path('mmr') . '/'  . 'aaa.pdf');
+        // return $pdf->download('demo.pdf');
+
+        // save to storage/app
+        // $pdf = PDF::loadView('fleets.mmr-template', $data)
+        //             ->setPaper('Letter');
+        // Storage::put($path . 'MMR.pdf', $pdf->output());
+        // return $pdf->download('demo.pdf');
+        // $request->session()->flash('success', 'Sent emails with MMR PDF.');
+        // return Redirect('/mmr');
+        
+        // show in browser
+        // return $pdf->stream('demo.pdf');
+
+        // $items = DB::table("items")->get();  
+        // view()->share('items',$items);  
+        // if($request->has('download')){  
+        //     $pdf = PDF::loadView('itemPdfView');  
+        //     return $pdf->download('itemPdfView.pdf');  
+        // }
     }
 }
