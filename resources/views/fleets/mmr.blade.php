@@ -53,7 +53,10 @@
                             <p class="mb-0"><i class="fa fa-fw fa-info-circle"></i> {!! session('error') !!}</p>
                         </div>
                     @endif
-                    <form action="/mmr" method="POST" autocomplete="off" id="mmr-form">
+                    <table id="fleet-mmr-empty" hidden>
+                        <tbody><x-fleet-mmr :fleets="$fleets" /></tbody>
+                    </table>
+                    <form action="/mmr/send-email" method="POST" autocomplete="off" id="mmr-form">
                         @csrf
                         <div class="row justify-content-end">
                             <div class="form-group mr-3">
@@ -62,13 +65,8 @@
                                 </button>
                             </div>
                             <div class="form-group mr-3">
-                                <button type="button" class="form-control btn btn-dark ml-auto mr-3" id="new-mmr" name="new-mmr">
-                                    <i class="fas fa-file-alt"></i> New MMR
-                                </button>
-                            </div>
-                            <div class="form-group mr-3">
-                                <button class="form-control btn btn-primary ml-auto mr-3" id="create-mmr" name="create-mmr">
-                                    <i class="fas fa-file-pdf"></i> Generate PDF
+                                <button class="form-control btn btn-primary ml-auto mr-3" id="send-email" name="send-email">
+                                    <i class="fas fa-paper-plane"></i> Send MMRs
                                 </button>
                             </div>
                         </div>
@@ -109,7 +107,7 @@
                                         <td class="text-left form-group" style="width: 30%;">
                                             <select name="sign" class="form-control" required>
                                                 @foreach ($signs as $sign)
-                                                <option value="{{ $sign->name . '.' . $sign->extension }}">{{ $sign->name }}</option>
+                                                <option value="{{ $sign->name }}">{{ $sign->name }}</option>
                                                 @endforeach
                                             </select>
                                         </td>
@@ -131,18 +129,16 @@
                             </table>
                         </div>
 
-                        <div class="row justify-content-end">
-                            <div class="form-group mr-3">
+                        <div class="row justify-content-between">
+                            <div class="form-group">
+                                <span class="text-danger ml-3"><strong>*All items are required.</strong></span>
+                            </div>
+                            <div class="form-group mr-3 mb-1">
                                 <button type="button" class="form-control btn btn-dark ml-auto mr-3" id="add-maintenance" name="add-maintenance">
-                                    <i class="fa fa-plus-circle"></i> Add Maintenance
+                                    <i class="fa fa-plus-circle"></i> Add Tractor / Maintenance
                                 </button>
                             </div>
                         </div>
-
-                        <table id="fleet-mmr-empty" hidden>
-                            <tbody><x-fleet-mmr :fleets="$fleets" /></tbody>
-                        </table>
-                    
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped table-vcenter" id="mmr-table">
                                 <thead class="table-dark">
@@ -158,7 +154,7 @@
                                 </thead>
                                 <tbody>
                                     <tr id="no-maintenances">
-                                        <td class="text-center" colspan="7">No Maintenances</td>
+                                        <td class="text-center" colspan="7">No Tractors / Maintenances</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -260,6 +256,16 @@ jQuery(function($){
         });
         $(document).on('click', 'button.remove-maintenance', function() {
             $(this).closest('tr').remove();
+        });
+        $(document).on('change', 'input[type=number][name="current-mileage[]"]', function() {
+            var cValue = $(this).val();
+            var tId = $(this).closest('tr').find('select[name="tractor-id[]"]').val();
+            
+            $.each($('table#mmr-table tbody tr'), function(index, tr) {
+                if ($(tr).find('select[name="tractor-id[]"]').val() == tId) {
+                    $(tr).find('input[type=number][name="current-mileage[]"]').val(cValue);
+                }
+            });
         });
     });
 });

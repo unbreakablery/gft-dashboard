@@ -165,6 +165,9 @@ Route::middleware(['auth:sanctum', 'verified'])->get('mmr', [FleetController::cl
 Route::middleware(['auth:sanctum', 'verified'])->post('mmr/upload-signs', [FleetController::class, 'uploadSigns'], function () {
     return route('login');
 })->name('mmr-upload-signs');
+Route::middleware(['auth:sanctum', 'verified'])->post('mmr/send-email', [FleetController::class, 'sendEmailMMR'], function () {
+    return route('login');
+})->name('mmr-send-email');
 
 // Payroll
 Route::middleware(['auth:sanctum', 'verified'])->get('payroll', [PayrollController::class, 'index'], function () {

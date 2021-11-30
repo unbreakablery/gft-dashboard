@@ -205,9 +205,6 @@ class FleetController extends Controller
                 $ext = $file->getClientOriginalExtension();
                 $save_name = pathinfo($name, PATHINFO_FILENAME);
 
-                // save in public folder
-                // $file->move(public_path('media/photos/signs'), $name);
-
                 // save in storage/app/public/signs
                 $path = $file->storeAs('public/signs', $name);
 
@@ -338,39 +335,5 @@ class FleetController extends Controller
 
         $request->session()->flash('success', 'Sent emails with MMR PDF.');
         return Redirect('/mmr');
-        
-
-        //set storage path
-        // $path = 'public/mmr/' . $yearNum . $monthNum . '/';
-
-        // $data = [];
-        // $data = [
-        //     'maintenance_year_num' => $monthName . ' ' . $request->input('year-num'),
-        //     'completed_date' => date('d F Y', strtotime($request->input('completed-date')))
-        // ];
-
-        // save to public folder
-        // $pdf = PDF::loadView('fleets.mmr-template', $data)
-        //             ->setPaper('Letter')
-        //             ->save(public_path('mmr') . '/'  . 'aaa.pdf');
-        // return $pdf->download('demo.pdf');
-
-        // save to storage/app
-        // $pdf = PDF::loadView('fleets.mmr-template', $data)
-        //             ->setPaper('Letter');
-        // Storage::put($path . 'MMR.pdf', $pdf->output());
-        // return $pdf->download('demo.pdf');
-        // $request->session()->flash('success', 'Sent emails with MMR PDF.');
-        // return Redirect('/mmr');
-        
-        // show in browser
-        // return $pdf->stream('demo.pdf');
-
-        // $items = DB::table("items")->get();  
-        // view()->share('items',$items);  
-        // if($request->has('download')){  
-        //     $pdf = PDF::loadView('itemPdfView');  
-        //     return $pdf->download('itemPdfView.pdf');  
-        // }
     }
 }
