@@ -1,19 +1,19 @@
 <tr>
     <td class="text-center">
-        <select name="maintenance" class="form-control">
+        <select name="maintenance[]" class="form-control">
             <option value="1">Yes</option>
             <option value="0">No</option>
         </select>
     </td>
     <td class="text-center">
-        <select name="out-of-service" class="form-control">
+        <select name="out-of-service[]" class="form-control">
             <option value="1">Yes</option>
             <option value="0">No</option>
         </select>
     </td>
     <td class="text-center">
         @if (isset($fleets))
-        <select name="tractor-id" class="form-control">
+        <select name="tractor-id[]" class="form-control">
             @foreach ($fleets as $fleet)
             <option value="{{ $fleet->tractor_id }}">{{ $fleet->tractor_id }}</option>
             @endforeach
@@ -23,27 +23,27 @@
     <td class="text-center">
         <input type="number"
                 class="form-control text-right"
-                name="current-mileage"
+                name="current-mileage[]"
                 value="0.0000"
                 placeholder=""
                 min="0"
                 step="0.0001"
+                required
         />
     </td>
     <td class="text-center">
         <input type="text"
                 class="date form-control text-center"
-                name="maintenance-date"
+                name="maintenance-date[]"
                 value=""
                 placeholder="yyyy-mm-dd"
-                readonly
                 required
         />
     </td>
     <td class="text-center">
         <input type="text"
                 class="form-control"
-                name="maintenance-desc"
+                name="maintenance-desc[]"
                 placeholder="Description of Maintenance Performed"
                 value=""
                 required
