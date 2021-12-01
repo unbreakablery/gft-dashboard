@@ -313,6 +313,9 @@ class FleetController extends Controller
         //set storage path
         $path = 'public/mmr/' . $yearNum . (($monthNum < 10) ? '0' . $monthNum : $monthNum) . '/';
 
+        //bulk email
+        $bulks = [];
+
         foreach ($tractors as $t) {
             $data = [
                 'mYearMonth'    => $mYearMonth,
@@ -326,16 +329,27 @@ class FleetController extends Controller
             $pdf = PDF::loadView('fleets.mmr-template', $data)
                         ->setPaper('Letter');
             $file = $path . 'MMR-' . $t->id . '.pdf';
+
             Storage::put($file, $pdf->output());
 
-            // send email to domicile address
-            if (!empty($t->email)) {
-                Mail::to($t->email)
-                    ->send(new MMRMail($mYearMonth, storage_path('app/' . $file)));
+            if (!array_key_exists($t->email, $bulks)) {
+                $bulks[$t->email]['files'][] = 'app/' . $file;
+                $bulks[$t->email]['tractors'][] = $t->id;
+            } else {
+                array_push($bulks[$t->email]['files'], 'app/' . $file);
+                array_push($bulks[$t->email]['tractors'], $t->id);
+            }
+        }
+        
+        // send email with bulk attachments to domicile address
+        foreach ($bulks as $email => $attachments) {
+            if (!empty($email)) {
+                Mail::to($email)
+                    ->send(new MMRMail($mYearMonth, $attachments['files'], $attachments['tractors']));
             }
         }
 
-        $request->session()->flash('success', 'Sent emails with MMR PDF.');
+        $request->session()->flash('success', 'Sent emails with MMR PDFs.');
         return Redirect('/mmr');
     }
 }

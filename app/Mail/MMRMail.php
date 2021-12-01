@@ -12,17 +12,19 @@ class MMRMail extends Mailable
     use Queueable, SerializesModels;
 
     public $date;
-    public $attach;
+    public $files;
+    public $tractors;
     
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($date, $attach)
+    public function __construct($date, $files, $tractors)
     {
         $this->date = $date;
-        $this->attach = $attach;
+        $this->files = $files;
+        $this->tractors = $tractors;
     }
 
     /**
@@ -32,13 +34,15 @@ class MMRMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Monthly Maintenance Record')
-                    ->view('fleets.mmr-email')
-                    ->attach($this->attach, 
-                                [
-                                    // 'as' => 'MMR-' . $this->date . '.pdf',
-                                    'mime' => 'application/pdf',
-                                ]
-                            );
+        $email = $this->view('fleets.mmr-email')
+                        ->subject('Monthly Maintenance Record');
+
+        // $files is an array with paths of files
+        foreach ($this->files as $filePath) {
+            $email->attach(storage_path($filePath), [
+                'mime' => 'application/pdf',
+            ]);
+        }
+        return $email;
     }
 }
