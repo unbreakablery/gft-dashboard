@@ -17,7 +17,6 @@ class Linehaul_Drivers extends Model
         'phone',
         'license',
         'address',
-        'fixed_rate',
         'price_per_mile',
         'work_status'
     ];

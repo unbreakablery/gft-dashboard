@@ -20,7 +20,6 @@ class CreateLinehaulDriversTable extends Migration
             $table->string('phone')->nullable();
             $table->string('license')->nullable();
             $talbe->string('address')->nullable();
-            $table->float('fixed_rate', 8, 4)->default(0.0000);
             $table->float('price_per_mile', 8, 4)->default(0.0000);
             $table->tinyInteger('work_status')->default('1');
             //$table->timestamps();
