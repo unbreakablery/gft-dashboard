@@ -102,77 +102,108 @@
                     </ul>
                 </li>
                 <li class="nav-main-heading">By Key Metrics</li>
-                <li class="nav-main-heading">Revenue</li>
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="/chart/total-revenue-week">
-                        <i class="nav-main-link-icon fa fa-chart-pie"></i>
-                        <span class="nav-main-link-name">Revenue Per Week</span>
+                <li class="nav-main-item open">
+                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
+                        <i class="nav-main-link-icon fas fa-dollar-sign"></i>
+                        <span class="nav-main-link-name">Revenue</span>
                     </a>
+                    <ul class="nav-main-submenu">
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/chart/total-revenue-week">
+                                <span class="nav-main-link-name">Revenue Per Week</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-main-heading">Miles</li>
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="/chart/total-miles-week">
-                        <i class="nav-main-link-icon fa fa-chart-bar"></i>
-                        <span class="nav-main-link-name">Miles Per Week (Total)</span>
+                <li class="nav-main-item open">
+                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
+                        <i class="nav-main-link-icon fas fa-dharmachakra"></i>
+                        <span class="nav-main-link-name">Miles</span>
                     </a>
+                    <ul class="nav-main-submenu">
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/chart/total-miles-week">
+                                <span class="nav-main-link-name">Miles Per Week (Total)</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/chart/miles-week-driver">
+                                <span class="nav-main-link-name">Miles Per Week (Driver)</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/chart/miles-week-vehicle">
+                                <span class="nav-main-link-name">Miles Per Week (Vehicle)</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="/chart/miles-week-driver">
-                        <i class="nav-main-link-icon fa fa-chart-bar"></i>
-                        <span class="nav-main-link-name">Miles Per Week (Driver)</span>
+                <li class="nav-main-item open">
+                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
+                        <i class="nav-main-link-icon fas fa-chart-line"></i>
+                        <span class="nav-main-link-name">MPG</span>
                     </a>
+                    <ul class="nav-main-submenu">
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/chart/mpg-week-vehicle">
+                                <span class="nav-main-link-name">MPG Per Week (Vehicle)</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="/chart/miles-week-vehicle">
-                        <i class="nav-main-link-icon fa fa-chart-pie"></i>
-                        <span class="nav-main-link-name">Miles Per Week (Vehicle)</span>
+                <li class="nav-main-item open">
+                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
+                        <i class="nav-main-link-icon fas fa-gas-pump"></i>
+                        <span class="nav-main-link-name">Fuel Cost</span>
                     </a>
+                    <ul class="nav-main-submenu">
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/chart/total-fuelcost-week">
+                                <span class="nav-main-link-name">Cost Per Week (Total)</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/chart/fuelcost-week-vehicle">
+                                <span class="nav-main-link-name">Cost Per Week (Vehicle)</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-main-heading">MPG</li>
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="/chart/mpg-week-vehicle">
-                        <i class="nav-main-link-icon fa fa-chart-line"></i>
-                        <span class="nav-main-link-name">MPG Per Week (Vehicle)</span>
+                <li class="nav-main-item open">
+                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
+                        <i class="nav-main-link-icon fas fa-money-check-alt"></i>
+                        <span class="nav-main-link-name">Payroll</span>
                     </a>
+                    <ul class="nav-main-submenu">
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/payroll/rates">
+                                <span class="nav-main-link-name">Rate Setting</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/payroll">
+                                <span class="nav-main-link-name">Payroll Per Driver</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-main-heading">Fuel Cost</li>
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="/chart/total-fuelcost-week">
-                        <i class="nav-main-link-icon fa fa-chart-bar"></i>
-                        <span class="nav-main-link-name">Cost Per Week (Total)</span>
+                <li class="nav-main-item open">
+                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
+                        <i class="nav-main-link-icon fas fa-robot"></i>
+                        <span class="nav-main-link-name">Utilities</span>
                     </a>
-                </li>
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="/chart/fuelcost-week-vehicle">
-                        <i class="nav-main-link-icon fa fa-chart-pie"></i>
-                        <span class="nav-main-link-name">Cost Per Week (Vehicle)</span>
-                    </a>
-                </li>
-                <li class="nav-main-heading">Payroll</li>
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="/payroll/rates">
-                        <i class="nav-main-link-icon fa fa-cogs"></i>
-                        <span class="nav-main-link-name">Rate Setting</span>
-                    </a>
-                </li>
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="/payroll">
-                        <i class="nav-main-link-icon fa fa-money-check"></i>
-                        <span class="nav-main-link-name">Payroll Per Driver</span>
-                    </a>
-                </li>
-                <li class="nav-main-heading">Utilities</li>
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="/util/ext-links">
-                        <i class="nav-main-link-icon fa fa-external-link-alt"></i>
-                        <span class="nav-main-link-name">Favorite Websites</span>
-                    </a>
-                </li>
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="{{ route('util.download-data') }}">
-                        <i class="nav-main-link-icon fa fa-download"></i>
-                        <span class="nav-main-link-name">Download Data</span>
-                    </a>
+                    <ul class="nav-main-submenu">
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/util/ext-links">
+                                <span class="nav-main-link-name">Favorite Websites</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="{{ route('util.download-data') }}">
+                                <span class="nav-main-link-name">Download Data</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>
