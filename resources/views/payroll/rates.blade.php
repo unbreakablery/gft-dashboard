@@ -1,4 +1,9 @@
 <x-app-layout>
+<style type="text/css">
+    .badge {
+        font-size: 100%;
+    }
+</style>
 
 <div class="bg-body-light">
     <div class="content content-full">
@@ -25,7 +30,7 @@
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
-                    <p>{!! session('status') !!}</p>
+                    <p><i class="fa fa-fw fa-info-circle"></i> {!! session('status') !!}</p>
                 </div>
             @endif
             @if (session('error'))
@@ -39,11 +44,11 @@
             <div class="row">
                 <div class="col-lg-9 col-md-9 col-sm-6 col-xs-12">
                     <p class="font-size-sm text-muted">
-                        <i class="fa fa-info-circle"></i> You can set fixed rates and prices per mile for each driver, and global from and to miles for fixed rate.
+                        <i class="fa fa-info-circle"></i> You can set fixed rates per mileage <strong>(it will affect globally.)</strong> and prices per mile for each driver.
                     </p>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 text-right">
-                    <button type="button" class="btn btn-dark miles-setting"><i class="fa fa-cog"></i> Miles Setting</button>
+                    <button type="button" class="btn btn-success fixed-rates-setting"><i class="fa fa-cog"></i> Fixed Rate Setting</button>
                 </div>
             </div>
             
@@ -55,7 +60,7 @@
                         </th>
                         <th class="d-none d-md-table-cell text-center" style="width: 20%;"><strong>Driver ID</strong></th>
                         <th class="text-center"><strong>Driver Name</strong></th>
-                        <th class="d-none d-sm-table-cell text-center" style="width: 20%;"><strong>Fixed Rate</strong></th>
+                        <th class="d-none d-sm-table-cell text-center" style="width: 20%;"><strong>Work Status</strong></th>
                         <th class="d-none d-sm-table-cell text-center" style="width: 20%;"><strong>Price Per Mile</strong></th>
                         <th class="text-center" style="width: 100px;"><strong>Actions</strong></th>
                     </tr>
@@ -71,12 +76,13 @@
                         </td>
                         <td class="font-w600 font-size-sm text-left">
                             {{ $rate->driver_name }}
+                        </td>
+                        <td class="d-none d-sm-table-cell font-size-sm text-center">
                             @if ($rate->work_status == 0)
                                 <span class="badge badge-pill badge-danger">No longer working</span>
+                            @else
+                                <span class="badge badge-pill badge-success">Working now</span>
                             @endif
-                        </td>
-                        <td class="d-none d-sm-table-cell font-size-sm text-right">
-                            $ {{ number_format($rate->fixed_rate, 2) }}
                         </td>
                         <td class="d-none d-sm-table-cell font-size-sm text-right">
                             $ {{ number_format($rate->price_per_mile, 2) }}
@@ -114,8 +120,8 @@ jQuery(function($){
             window.location.href = "/payroll/rate/remove/" + id;
         });
         
-        $("button.miles-setting").click(function() {
-            window.location.href = "/payroll/miles-setting";
+        $("button.fixed-rates-setting").click(function() {
+            window.location.href = "/payroll/fixed-rates";
         });
 
         $("button.change-workstatus").click(function() {

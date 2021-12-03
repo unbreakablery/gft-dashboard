@@ -56,43 +56,51 @@
             <table class="table table-bordered table-striped table-vcenter table-dark">
                 <thead>
                     <tr>
-                        <th class="text-center" style="width: 100px;">
+                        <th class="text-center" style="width: 80px;">
                             <strong><i class="far fa-user"></i></strong>
                         </th>
                         <th class="text-center"><strong>Driver Name</strong></th>
-                        <th class="d-none d-md-table-cell text-center" style="width: 10%;"><strong>Fixed Rate</strong></th>
-                        <th class="d-none d-sm-table-cell text-center" style="width: 20%;"><strong>Number of Trips for FR</strong></th>
+                        <th class="d-none d-md-table-cell text-center" style="width: 10%;"><strong>Mi. For FR</strong></th>
+                        <th class="d-none d-sm-table-cell text-center" style="width: 10%;"><strong>Price For FR</strong></th>
                         <th class="d-none d-sm-table-cell text-center" style="width: 10%;"><strong>Price Per Mile</strong></th>
-                        <th class="d-none d-sm-table-cell text-center" style="width: 15%;"><strong>Miles excl. FR</strong></th>
-                        <th class="text-center" style="width: 15%;"><strong>Total Pay</strong></th>
+                        <th class="d-none d-sm-table-cell text-center" style="width: 10%;"><strong>Mi. excl. FR</strong></th>
+                        <th class="d-none d-sm-table-cell text-center" style="width: 10%;"><strong>Price excl. FR</strong></th>
+                        <th class="d-none d-sm-table-cell text-center" style="width: 10%;"><strong>Total Miles</strong></th>
+                        <th class="text-center"><strong>Total Price</strong></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($drivers as $idx => $driver)
+                    @foreach ($payrolls as $idx => $p)
                     <tr>
                         <td class="text-center">
                             {{ $idx + 1 }}
                         </td>
                         <td class="font-w600 font-size-sm text-left">
-                            <a href="/payroll/get/{{ $driver->id }}/{{ $year_num }}/{{ $week_num }}">{{ $driver->driver_name }}</a>
-                            @if ($driver->work_status == 0)
+                            <a href="/payroll/get/{{ $p->id }}/{{ $year_num }}/{{ $week_num }}">{{ $p->driver_name }}</a>
+                            @if ($p->work_status == 0)
                                 <span class="badge badge-pill badge-danger">No longer working</span>
                             @endif
                         </td>
                         <td class="d-none d-sm-table-cell font-size-sm text-right">
-                            $ {{ number_format($driver->fixed_rate, 2) }}
+                            {{ number_format($p->fr_miles, 2) }}
                         </td>
-                        <td class="d-none d-sm-table-cell text-right">
-                            <span class="badge badge-primary">&nbsp;{{ $driver->cnt_trips_fix_rate }}&nbsp;</strong>
+                        <td class="d-none d-sm-table-cell font-size-sm text-right">
+                            $ {{ number_format($p->fr_price, 2) }}
                         </td>
-                        <td class="d-none d-sm-table-cell text-right">
-                            $ {{ number_format($driver->price_per_mile, 2) }}
+                        <td class="d-none d-sm-table-cell font-size-sm text-right">
+                            <span class="badge badge-primary">&nbsp;$ {{ $p->price_per_mile }}&nbsp;</strong>
                         </td>
-                        <td class="d-none d-sm-table-cell text-right">
-                            {{ number_format($driver->miles_other, 2) }}
+                        <td class="d-none d-sm-table-cell font-size-sm text-right">
+                            {{ number_format($p->other_miles, 2) }}
+                        </td>
+                        <td class="d-none d-sm-table-cell font-size-sm text-right">
+                            $ {{ number_format($p->other_price, 2) }}
+                        </td>
+                        <td class="d-none d-sm-table-cell text-primary text-right">
+                            {{ number_format($p->total_miles, 2) }}
                         </td>
                         <td class="text-right text-warning">
-                            <strong>$ {{ number_format($driver->total_payroll, 2) }}</strong>
+                            <strong>$ {{ number_format($p->total_price, 2) }}</strong>
                         </td>
                     </tr>
                     @endforeach
@@ -100,7 +108,7 @@
             </table>
 
             <p class="text-right">
-                <strong class="text-success">Total Payroll Amount: <span class="text-danger">$ {{ number_format($total, 2) }}</span></strong>
+                <strong class="text-success">Total Payroll Amount: <span class="text-danger">$ {{ number_format($total_price, 2) }}</span></strong>
             </p>
         </div>
     </div>

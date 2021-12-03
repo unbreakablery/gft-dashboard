@@ -39,17 +39,6 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-4 col-form-label" for="fixed-rate">Fixed Rate <span class="text-danger">*</span> : </label>
-                            <div class="col-sm-8">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
-                                    </div>
-                                    <input type="number" class="form-control text-center" id="fixed-rate" name="fixed-rate" value="{{ number_format($rate->fixed_rate, 2) }}" min="0" step="0.01" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
                             <label class="col-sm-4 col-form-label" for="price-per-mile">Price Per Mile <span class="text-danger">*</span> : </label>
                             <div class="col-sm-8">
                                 <div class="input-group">

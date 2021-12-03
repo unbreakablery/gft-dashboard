@@ -191,10 +191,10 @@ Route::middleware(['auth:sanctum', 'verified'])->get('payroll/rate/{id}', [Payro
 Route::middleware(['auth:sanctum', 'verified'])->get('payroll/rate/remove/{id}', [PayrollController::class, 'remove_rate'], function () {
     return route('login');
 });
-Route::middleware(['auth:sanctum', 'verified'])->get('payroll/miles-setting', [PayrollController::class, 'get_miles_setting'], function () {
+Route::middleware(['auth:sanctum', 'verified'])->get('payroll/fixed-rates', [PayrollController::class, 'get_fixed_rates_setting'], function () {
     return route('login');
 });
-Route::middleware(['auth:sanctum', 'verified'])->post('payroll/miles-setting/save', [PayrollController::class, 'save_miles_setting'], function () {
+Route::middleware(['auth:sanctum', 'verified'])->post('payroll/fixed-rates/save', [PayrollController::class, 'save_fixed_rates_setting'], function () {
     return route('login');
 });
 Route::middleware(['auth:sanctum', 'verified'])->get('payroll/work-status/save/{id}', [PayrollController::class, 'save_workstatus'], function () {

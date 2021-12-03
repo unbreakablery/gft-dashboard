@@ -18,18 +18,26 @@
                             <a class="btn btn-lg btn-alt-primary" href="javascript:window.history.back(-1);">
                                 <i class="fa fa-arrow-left mr-1"></i> Payroll List
                             </a>
+                            <a class="btn btn-lg btn-alt-success" href="/payroll/fixed-rates">
+                                <i class="fa fa-cogs"></i> <span class="d-none d-sm-inline-block ml-1">Fixed Rates</span>
+                            </a>
                             <a class="btn btn-lg btn-alt-success" href="/payroll/rate/{{ $payroll->id }}">
-                                <i class="fa fa-cogs"></i> <span class="d-none d-sm-inline-block ml-1">Rate Setting</span>
+                                <i class="fa fa-cog"></i> <span class="d-none d-sm-inline-block ml-1">Price Per Mile</span>
                             </a>
                         </div>
                         <hr>
-                        <div class="alert alert-success" role="alert">
-                            <p class="mb-0"><strong>Miles For Fixed Rate</strong>: Between <strong>{{ $from_m_fr }}</strong> and <strong>{{ $to_m_fr }}</strong></p>
-                        </div>
                         <div class="alert alert-info" role="alert">
-                            <p class="mb-0">You can set the fixed rate and price per mile for driver in "Rate Setting".</p>
+                            <p class="mb-0"><strong><i class="fa fa-info-circle"></i></strong> You can set the fixed rates and price per mile for driver.</p>
                         </div>
                         <ul class="list-group push">
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-gray-light">
+                                YEAR:
+                                <span class="font-w600"><strong>{{ $year_num }}</strong></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-gray-light">
+                                WEEK:
+                                <span class="font-w600"><strong>{{ $week_num }}</strong></span>
+                            </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Driver ID:
                                 <span class="badge badge-success">{{ $payroll->driver_id }}</span>
@@ -38,21 +46,21 @@
                                 Driver Name:
                                 <span class="font-w600"><strong>{{ $payroll->driver_name }}</strong></span>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center bg-gray-light">
-                                Fixed Rate:
-                                <span class="badge badge-pill badge-primary"><i class="fa fa-dollar-sign"></i> {{ number_format($payroll->fixed_rate, 2) }}</span>
-                            </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Number Of Trips For Fixed Rate:
-                                <span class="font-w600">{{ $payroll->cnt_trips_fix_rate }}</span>
+                                Work Status:
+                                @if ($payroll->work_status == 1)
+                                <span class="badge badge-pill badge-success">{{ 'Working Now' }}</span>
+                                @else
+                                <span class="badge badge-pill badge-danger">{{ 'No longer working' }}</span>
+                                @endif
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Miles For Fixed Rate:
-                                <span class="font-w600">{{ number_format($payroll->miles_fix_rate, 2) }}</span>
+                                <span class="font-w600">{{ number_format($payroll->fr_miles, 2) }}</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Payroll For Fixed Rate:
-                                <span class="font-w600 text-warning"><i class="fa fa-dollar-sign"></i> <em>{{ number_format($payroll->payroll_fix_rate, 2) }}</em></span>
+                                Price For Fixed Rate:
+                                <span class="font-w600 text-warning"><i class="fa fa-dollar-sign"></i> <em>{{ number_format($payroll->fr_price, 2) }}</em></span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center bg-gray-light">
                                 Price Per Mile:
@@ -60,19 +68,19 @@
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Miles For Price Per Mile:
-                                <span class="font-w600">{{ number_format($payroll->miles_other, 2) }}</span>
+                                <span class="font-w600">{{ number_format($payroll->other_miles, 2) }}</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Payroll For Price Per Mile:
-                                <span class="font-w600 text-warning"><i class="fa fa-dollar-sign"></i> <em>{{ number_format($payroll->payroll_per_mile, 2) }}</em></span>
+                                Price For Price Per Mile:
+                                <span class="font-w600 text-warning"><i class="fa fa-dollar-sign"></i> <em>{{ number_format($payroll->other_price, 2) }}</em></span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center bg-gray-light">
-                                Total Miles For Driver:
+                                Total Miles:
                                 <span class="font-w600 text-danger">{{ number_format($payroll->total_miles, 2) }}</span>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-gray-light">
                                 <strong>Total Payroll:</strong>
-                                <span class="font-w600 text-primary"><strong><i class="fa fa-dollar-sign"></i> {{ number_format($payroll->total_payroll, 2) }}</strong></span>
+                                <span class="font-w600 text-primary"><strong><i class="fa fa-dollar-sign"></i> {{ number_format($payroll->total_price, 2) }}</strong></span>
                             </li>
                         </ul>
                     </div>
