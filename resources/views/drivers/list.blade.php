@@ -50,6 +50,12 @@
                     <form action="/drivers/remove-bulk" method="POST">
                     @csrf
                     <div class="table-responsive push text-right">
+                        <button type="button" class="btn btn-primary" id="show-active-drivers">
+                            <i class="fa fa-search"></i> Show Active Drivers
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="show-inactive-drivers">
+                            <i class="fa fa-search"></i> Show Inactive Drivers
+                        </button>
                         <button type="button" class="btn btn-dark" id="add-driver">
                             <i class="fa fa-plus"></i> Add Driver
                         </button>
@@ -312,6 +318,12 @@ jQuery(function($){
             for (let i = 0; i < drivers.length; i++) {
                 drivers[i].checked = this.checked;
             }
+        });
+        $('button#show-active-drivers').click(function() {
+            location.href = '/drivers/search/active';
+        });
+        $('button#show-inactive-drivers').click(function() {
+            location.href = '/drivers/search/inactive';
         });
     });
 });

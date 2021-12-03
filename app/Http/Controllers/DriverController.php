@@ -11,12 +11,20 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class DriverController extends Controller
 {
-    public function getDrivers() 
+    public function getDrivers(Request $request)
     {
-        $drivers = Linehaul_Drivers::all();
-        return view('drivers.list', [
-            'drivers' => $drivers
-        ]);
+        $status = ['active' => 1, 'inactive' => 0];
+        $work_status = $request->route()->parameter('status');
+        
+        if (!isset($status[$work_status]) || $status[$work_status] === null) {
+            $drivers = Linehaul_Drivers::all();
+        } else {
+            $drivers = Linehaul_Drivers::where('work_status', $status[$work_status])
+                                    ->get()
+                                    ->all();
+        }
+        
+        return view('drivers.list', compact('drivers'));
     }
     public function getDriver(Request $request)
     {
