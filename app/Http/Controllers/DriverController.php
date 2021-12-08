@@ -84,7 +84,6 @@ class DriverController extends Controller
         $driver->phone              = $request->input('phone');
         $driver->license            = $request->input('license');
         $driver->address            = $request->input('address');
-        $driver->fixed_rate         = $request->input('fixed_rate');
         $driver->price_per_mile     = $request->input('price_per_mile');
         $driver->work_status        = $request->input('work_status');
 

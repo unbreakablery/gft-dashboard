@@ -32,9 +32,8 @@ class DriversImport implements ToArray, WithEvents
             $phone              = (string)$array[$i][2];
             $license            = (string)$array[$i][3];
             $address            = (string)$array[$i][4];
-            $fixed_rate         = $array[$i][5];
-            $price_per_mile     = $array[$i][6];
-            $work_status        = $array[$i][7];
+            $price_per_mile     = $array[$i][5];
+            $work_status        = $array[$i][6];
 
             $drivers = Linehaul_Drivers::where('driver_id', $driver_id)
                                         ->get()

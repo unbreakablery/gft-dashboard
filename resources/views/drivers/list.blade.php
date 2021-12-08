@@ -169,10 +169,6 @@
                                                     <td class="text-left" id="t_address"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="font-w600 text-right">Fxied Rate : </td>
-                                                    <td class="text-left" id="t_fixed_rate"></td>
-                                                </tr>
-                                                <tr>
                                                     <td class="font-w600 text-right">Price Per Mile : </td>
                                                     <td class="text-left" id="t_price_per_mile"></td>
                                                 </tr>
@@ -257,7 +253,6 @@ jQuery(function($){
             $('#t_phone').html('');
             $('#t_license').html('');
             $('#t_address').html('');
-            $('#t_fixed_rate').html('');
             $('#t_price_per_mile').html('');
             $('#t_work_status').html('');
         }
@@ -280,7 +275,6 @@ jQuery(function($){
                         $('#t_phone').html('<span class="badge badge-pill badge-violet">' + (data.driver.phone ? '+' + data.driver.phone : '' )+ '</span>');
                         $('#t_license').html('<span class="badge badge-success">' + (data.driver.license ? data.driver.license : '') + '</span>');
                         $('#t_address').html(data.driver.address);
-                        $('#t_fixed_rate').html(data.driver.fixed_rate);
                         $('#t_price_per_mile').html(data.driver.price_per_mile);
                         $('#t_work_status').html(data.driver.work_status ? 'Working' : '<span class="font-w600 text-danger">No longer working</span>');
                     } else {

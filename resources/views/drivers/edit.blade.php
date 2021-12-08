@@ -80,17 +80,6 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="font-w800 text-right" style="width: 20%;">Fixed Rate : </td>
-                                        <td class="text-left" style="width: 80%;">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="fixed-rate-prefix">$</span>
-                                                </div>
-                                                <input type="number" class="form-control" name="fixed_rate" value="@if (isset($driver)){{ $driver->fixed_rate }}@else{{ 0 }}@endif" placeholder="Enter fixed rate.." step="0.0001" min="0" aria-describedby="fixed-rate-prefix" />
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
                                         <td class="font-w800 text-right" style="width: 20%;">Price Per Mile : </td>
                                         <td class="text-left" style="width: 80%;">
                                             <div class="input-group">
