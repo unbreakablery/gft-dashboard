@@ -24,7 +24,7 @@
             <form action="/payroll" method="POST" autocomplete="off">
                 @csrf
                 <div class="row">
-                    <div class="col-lg-5 col-md-5">
+                    <div class="col-lg-3 col-md-3">
                         <div class="form-group">
                             <label for="year-num">Year <span class="text-danger">*</span> :</label>
                             <select class="form-control" id="year-num" name="year-num" required>
@@ -34,13 +34,22 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-lg-5 col-md-5">
+                    <div class="col-lg-3 col-md-3">
                         <div class="form-group">
                             <label for="week-num">Week <span class="text-danger">*</span> :</label>
                             <select class="form-control" id="week-num" name="week-num" required>
                                 @for ($i = 1; $i <= 52; $i++)
                                     <option value="{{ $i }}" @if ($i == $week_num) selected @endif>{{ $i }}</option>
                                 @endfor
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4">
+                        <div class="form-group">
+                            <label for="work-status">Work Status <span class="text-danger">*</span> :</label>
+                            <select class="form-control" id="work-status" name="work-status" required>
+                                <option value="1" @if ($work_status == 1) selected @endif>Working now</option>
+                                <option value="0" @if ($work_status == 0) selected @endif>Not longer working</option>
                             </select>
                         </div>
                     </div>

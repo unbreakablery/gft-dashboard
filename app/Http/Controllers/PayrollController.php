@@ -14,11 +14,13 @@ class PayrollController extends Controller
     //members
     private $year_num;
     private $week_num;
+    private $work_status;
     
     public function __construct()
     {
-        $this->year_num         = Date("Y");
-        $this->week_num         = Date("W");
+        $this->year_num     = Date("Y");
+        $this->week_num     = Date("W");
+        $this->work_status  = 1;
     }
 
     public function index(Request $request)
@@ -30,9 +32,15 @@ class PayrollController extends Controller
             $this->year_num = Date("Y");
             $this->week_num = Date("W");
         }
-
+        
+        if ($request->input('work-status') !== null) {
+            $this->work_status = $request->input('work-status');
+        } else {
+            $this->work_status = 1;
+        }
+                
         $fixed_rates = FixedRateSetting::all();
-        $drivers = Linehaul_Drivers::all();
+        $drivers = Linehaul_Drivers::where('work_status', $this->work_status)->get()->all();
 
         $payrolls = [];
         $total_price = 0;
@@ -85,6 +93,7 @@ class PayrollController extends Controller
         return view('payroll.payrolls', [
             'year_num'      => $this->year_num,
             'week_num'      => $this->week_num,
+            'work_status'   => $this->work_status,
             'payrolls'      => $payrolls,
             'total_price'   => $total_price
         ]);
