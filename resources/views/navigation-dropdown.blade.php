@@ -30,6 +30,7 @@
         <!-- Side Navigation -->
         <div class="content-side content-side-full">
             <ul class="nav-main">
+                @can('manage-driver')
                 <li class="nav-main-item open">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
                         <i class="nav-main-link-icon far fa-id-card"></i>
@@ -53,6 +54,8 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
+                @can('manage-fleet')
                 <li class="nav-main-item open">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
                         <i class="nav-main-link-icon fa fa-truck"></i>
@@ -71,18 +74,24 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
+                @can('manage-gf-statement')
                 <li class="nav-main-item">
                     <a class="nav-main-link" href="/upload/statement">
                         <i class="nav-main-link-icon fa fa-file-csv"></i>
                         <span class="nav-main-link-name">GF Statements</span>
                     </a>
                 </li>
+                @endcan
+                @can('manage-driver')
                 <li class="nav-main-item">
                     <a class="nav-main-link" href="/drivers">
                         <i class="nav-main-link-icon fa fa-users"></i>
                         <span class="nav-main-link-name">Drivers</span>
                     </a>
                 </li>
+                @endcan
+                @can('manage-schedule')
                 <li class="nav-main-item open">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
                         <i class="nav-main-link-icon far fa-calendar"></i>
@@ -101,6 +110,8 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
+                @can('manage-dashboard')
                 <li class="nav-main-heading">By Key Metrics</li>
                 <li class="nav-main-item open">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
@@ -169,17 +180,21 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
+                @canany(['manage-payroll', 'manage-payroll-setting'])
                 <li class="nav-main-item open">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
                         <i class="nav-main-link-icon fas fa-money-check-alt"></i>
                         <span class="nav-main-link-name">Payroll</span>
                     </a>
                     <ul class="nav-main-submenu">
+                        @can('manage-payroll-setting')
                         <li class="nav-main-item">
                             <a class="nav-main-link" href="/payroll/rates">
                                 <span class="nav-main-link-name">Rate Setting</span>
                             </a>
                         </li>
+                        @endcan
                         <li class="nav-main-item">
                             <a class="nav-main-link" href="/payroll">
                                 <span class="nav-main-link-name">Payroll Per Driver</span>
@@ -187,6 +202,8 @@
                         </li>
                     </ul>
                 </li>
+                @endcanany
+                @can('manage-global-setting')
                 <li class="nav-main-item open">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
                         <i class="nav-main-link-icon fas fa-robot"></i>
@@ -205,6 +222,7 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
             </ul>
         </div>
         <!-- END Side Navigation -->
