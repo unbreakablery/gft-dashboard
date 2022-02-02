@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use App\Models\User;
+use Auth;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,6 +27,14 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        $permissions = config('gftsetting.permissions');
+        foreach ($permissions as $action => $roles) {
+            Gate::define(
+                $action,
+                function (User $user) use ($roles) {
+                    return in_array($user->role, $roles);
+                }
+            );
+        }
     }
 }
