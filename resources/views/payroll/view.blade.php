@@ -18,17 +18,21 @@
                             <a class="btn btn-lg btn-alt-primary" href="javascript:window.history.back(-1);">
                                 <i class="fa fa-arrow-left mr-1"></i> Payroll List
                             </a>
+                            @can('manage-payroll-setting')
                             <a class="btn btn-lg btn-alt-success" href="/payroll/fixed-rates">
                                 <i class="fa fa-cogs"></i> <span class="d-none d-sm-inline-block ml-1">Fixed Rates</span>
                             </a>
                             <a class="btn btn-lg btn-alt-success" href="/payroll/rate/{{ $payroll->id }}">
                                 <i class="fa fa-cog"></i> <span class="d-none d-sm-inline-block ml-1">Price Per Mile</span>
                             </a>
+                            @endcan
                         </div>
+                        @can('manage-payroll-setting')
                         <hr>
                         <div class="alert alert-info" role="alert">
                             <p class="mb-0"><strong><i class="fa fa-info-circle"></i></strong> You can set the fixed rates and price per mile for driver.</p>
                         </div>
+                        @endcan
                         <ul class="list-group push">
                             <li class="list-group-item d-flex justify-content-between align-items-center bg-gray-light">
                                 YEAR:

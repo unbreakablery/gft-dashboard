@@ -25,6 +25,8 @@ class PayrollController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('manage-payroll');
+        
         if ($request->input('year-num') && $request->input('week-num')) {
             $this->year_num = $request->input('year-num');
             $this->week_num = $request->input('week-num');    
@@ -101,6 +103,8 @@ class PayrollController extends Controller
 
     public function get_payroll(Request $request)
     {
+        $this->authorize('manage-payroll');
+
         $id = $request->route()->parameter('id');
         $year_num = $request->route()->parameter('year');
         $week_num = $request->route()->parameter('week');
@@ -166,6 +170,8 @@ class PayrollController extends Controller
 
     public function get_rates()
     {
+        $this->authorize('manage-payroll-setting');
+
         $rates = Linehaul_Drivers::orderBy('work_status', 'desc')
                                 ->get()
                                 ->all();
@@ -176,6 +182,8 @@ class PayrollController extends Controller
 
     public function get_rate(Request $request)
     {
+        $this->authorize('manage-payroll-setting');
+
         $id = $request->route()->parameter('id');
         
         $rate = Linehaul_Drivers::find($id);
@@ -187,6 +195,8 @@ class PayrollController extends Controller
 
     public function save_rate(Request $request)
     {
+        $this->authorize('manage-payroll-setting');
+
         $id             = $request->input('id');
         $price_per_mile = $request->input('price-per-mile');
 
@@ -200,6 +210,8 @@ class PayrollController extends Controller
 
     public function remove_rate(Request $request)
     {
+        $this->authorize('manage-payroll-setting');
+
         $id = $request->route()->parameter('id');
         
         $rate = Linehaul_Drivers::find($id);
@@ -212,6 +224,8 @@ class PayrollController extends Controller
 
     public function get_fixed_rates_setting()
     {
+        $this->authorize('manage-payroll-setting');
+
         $rates = FixedRateSetting::all();
         
         return view('payroll.fixed_rates_setting', compact('rates')); 
@@ -219,6 +233,8 @@ class PayrollController extends Controller
     
     public function save_fixed_rates_setting(Request $request)
     {
+        $this->authorize('manage-payroll-setting');
+
         $from_miles = $request->input('from-miles');
         $to_miles = $request->input('to-miles');
         $fixed_rates = $request->input('fixed-rate');
