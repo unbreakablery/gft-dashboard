@@ -11,6 +11,8 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\UtilController;
 use App\Http\Controllers\WeeklyScheduleController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\CompanyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +41,27 @@ Route::middleware(['auth:sanctum', 'verified'])->get('user/setting', [UserContro
 Route::middleware(['auth:sanctum', 'verified'])->post('user/setting', [UserController::class, 'update'], function () {
     return route('login');
 })->name('user-setting');
+Route::middleware(['auth:sanctum', 'verified'])->get('user/list', [UserController::class, 'list'], function () {
+    return route('login');
+})->name('user-list');
+Route::middleware(['auth:sanctum', 'verified'])->post('user/list', [UserController::class, 'list'], function () {
+    return route('login');
+})->name('user-list');
+Route::middleware(['auth:sanctum', 'verified'])->get('user/add', [UserController::class, 'getAddPage'], function () {
+    return route('login');
+})->name('user-add');
+Route::middleware(['auth:sanctum', 'verified'])->post('user/save', [UserController::class, 'saveUser'], function () {
+    return route('login');
+})->name('user-save');
+Route::middleware(['auth:sanctum', 'verified'])->post('user/get', [UserController::class, 'getUser'], function () {
+    return route('login');
+})->name('user-get');
+Route::middleware(['auth:sanctum', 'verified'])->get('user/edit/{id}', [UserController::class, 'editUser'], function () {
+    return route('login');
+})->name('user-edit');
+Route::middleware(['auth:sanctum', 'verified'])->get('user/remove/{id}', [UserController::class, 'removeUser'], function () {
+    return route('login');
+})->name('user-remove');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('upload/{type}', [UploadDataController::class, 'index'], function () {
     return route('login');
@@ -303,3 +326,34 @@ Route::middleware(['auth:sanctum', 'verified'])->post('drivers/save', [DriverCon
 Route::middleware(['auth:sanctum', 'verified'])->post('drivers/upload', [DriverController::class, 'uploadDrivers'], function () {
     return route('login');
 });
+
+// routes for permission
+Route::middleware(['auth:sanctum', 'verified'])->get('permission/index', [PermissionController::class, 'index'], function () {
+    return route('login');
+})->name('permission');
+Route::middleware(['auth:sanctum', 'verified'])->post('permission/update', [PermissionController::class, 'update'], function () {
+    return route('login');
+})->name('permission.update');
+
+// routes for company
+Route::middleware(['auth:sanctum', 'verified'])->get('company/list', [CompanyController::class, 'list'], function () {
+    return route('login');
+})->name('company.list');
+Route::middleware(['auth:sanctum', 'verified'])->post('company/list', [CompanyController::class, 'list'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('company/add', function () {
+    return view('company.company');
+})->name('company-add');
+Route::middleware(['auth:sanctum', 'verified'])->post('company/save', [CompanyController::class, 'saveCompany'], function () {
+    return route('login');
+})->name('company-save');
+Route::middleware(['auth:sanctum', 'verified'])->post('company/get', [CompanyController::class, 'getCompany'], function () {
+    return route('login');
+})->name('company-get');
+Route::middleware(['auth:sanctum', 'verified'])->get('company/edit/{id}', [CompanyController::class, 'editCompany'], function () {
+    return route('login');
+})->name('company-edit');
+Route::middleware(['auth:sanctum', 'verified'])->get('company/remove/{id}', [CompanyController::class, 'removeCompany'], function () {
+    return route('login');
+})->name('company-remove');
