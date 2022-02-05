@@ -30,6 +30,28 @@
         <!-- Side Navigation -->
         <div class="content-side content-side-full">
             <ul class="nav-main">
+                @can('manage-company')
+                <li class="nav-main-item">
+                    <a class="nav-main-link" href="/company/list">
+                        <i class="nav-main-link-icon fa fa-building"></i>
+                        <span class="nav-main-link-name">Companies</span>
+                    </a>
+                </li>
+                @endcan
+                @can('manage-user')
+                <li class="nav-main-item">
+                    <a class="nav-main-link" href="/user/list">
+                        <i class="nav-main-link-icon fa fa-users"></i>
+                        <span class="nav-main-link-name">Users</span>
+                    </a>
+                </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link" href="/permission/index">
+                        <i class="nav-main-link-icon fa fa-lock"></i>
+                        <span class="nav-main-link-name">Permissions</span>
+                    </a>
+                </li>
+                @endcan
                 @can('manage-driver')
                 <li class="nav-main-item open">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
