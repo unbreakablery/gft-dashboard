@@ -1,17 +1,19 @@
 <x-guest-layout>
-    <x-jet-validation-errors class="mb-4" />
-
-    @if (session('status'))
-        <div class="mb-4 font-medium text-sm text-green-600">
-            {{ session('status') }}
-        </div>
-    @endif
     <!-- Main Container -->
     <main id="main-container">
 
         <!-- Page Content -->
         <div class="bg-image" style="background-image: url('/media/photos/Header-Photo-Update-4.jpg');">
             <div class="hero-static">
+                @if (session('status'))
+                    <div class="alert alert-info alert-dismissable" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <p class="mb-0"><i class="fa fa-fw fa-info-circle"></i> {{ session('status') }}</p>
+                    </div>
+                @endif
+                
                 <div class="content">
                     <div class="row justify-content-center">
                         <div class="col-md-8 col-lg-6 col-xl-4">
@@ -19,25 +21,36 @@
                             <div class="block block-themed block-fx-shadow mb-0">
                                 <div class="block-header">
                                     <h3 class="block-title">Sign In</h3>
-                                    <div class="block-options">
+                                    <!-- <div class="block-options">
                                         @if (Route::has('password.request'))
                                             <a class="btn-block-option font-size-sm" href="{{ route('password.request') }}">{{ __('Forgot your password?') }}</a>
                                         @endif
                                         <a class="btn-block-option" href="{{ route('register') }}" data-toggle="tooltip" data-placement="left" title="New Account">
                                             <i class="fa fa-user-plus"></i>
                                         </a>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="block-content">
                                     <div class="p-sm-3 px-lg-4 py-lg-5">
                                         <h1 class="mb-2">{{ config('app.name') }}</h1>
                                         <p>Welcome, please login.</p>
 
+                                        @if ($errors->any())
+                                        @foreach ($errors->all() as $error)
+                                        <div class="alert alert-danger alert-dismissable" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                            <p class="mb-0"><i class="fa fa-fw fa-info-circle"></i> {{ $error }}</p>
+                                        </div>
+                                        @endforeach
+                                        @endif
+
                                         <!-- Sign In Form -->
                                         <!-- jQuery Validation (.js-validation-signin class is initialized in js/pages/op_auth_signin.min.js which was auto compiled from _es6/pages/op_auth_signin.js) -->
                                         <!-- For more info and examples you can check out https://github.com/jzaefferer/jquery-validation -->
                                         <form class="js-validation-signin" action="{{ route('login') }}" method="POST">
-                                        @csrf
+                                            @csrf
                                             <div class="py-3">
                                                 <div class="form-group">
                                                     <input type="text" class="form-control form-control-alt form-control-lg" id="email" type="email" name="email" :value="old('email')" required autofocus placeholder="Email">
