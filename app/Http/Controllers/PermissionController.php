@@ -28,7 +28,11 @@ class PermissionController extends Controller
 
         $users = $this->getUsers();
         
-        $permissions = Permission::get()->all();
+        $permissions = Permission::where('role', '>', Auth::user()->role)
+                                ->orderBy('role', 'DESC')
+                                ->orderBy('id', 'ASC')
+                                ->get()
+                                ->all();
 
         return view('permission.index', compact('users', 'permissions'));
     }
@@ -51,7 +55,13 @@ class PermissionController extends Controller
         UserPermission::insert($bulks);
 
         $users = $this->getUsers();
-        $permissions = Permission::get()->all();
+        $permissions = Permission::where('role', '>', Auth::user()->role)
+                                ->orderBy('role', 'DESC')
+                                ->orderBy('id', 'ASC')
+                                ->get()
+                                ->all();
+
+        $request->session()->flash('success', 'User permissions updated.');
 
         return view('permission.index', compact('users', 'permissions'));
     }
