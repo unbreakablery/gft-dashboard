@@ -621,3 +621,35 @@ if (!function_exists('get_data_fuelcost_total')) {
         return $excel_data;
     }
 }
+
+if (!function_exists('get_companies_by_user')) {
+    function get_companies_by_user($user) {
+        if ($user->role == 1) {
+            return DB::table('companies')->get()->all();
+        } else {
+            return DB::table('companies')->where('id', '=', $user->company_id)->get()->all();
+        }
+    }
+}
+
+if (!function_exists('get_company_by_id')) {
+    function get_company_name_by_id($company_id) {
+        $company = DB::table('companies')->where('id', $company_id)->get()->first();
+        if ($company) {
+            return $company->name;
+        } else {
+            return '';
+        }
+    }
+}
+
+if (!function_exists('get_company_logo_by_id')) {
+    function get_company_logo_by_id($company_id) {
+        $company = DB::table('companies')->where('id', $company_id)->get()->first();
+        if ($company) {
+            return $company->logo;
+        } else {
+            return '';
+        }
+    }
+}
