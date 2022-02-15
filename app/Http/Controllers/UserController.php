@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Company;
+use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Task;
+use App\Models\UserPermission;
+use App\Models\UserTask;
 use Illuminate\Support\Facades\Hash;
-use Auth;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password;
 use stdClass;
 
 class UserController extends Controller
@@ -26,7 +31,7 @@ class UserController extends Controller
         if (Auth::user()->role == 1) {
             return Role::orderBy('id', 'DESC')->get()->all();
         } else {
-            return Role::where('id', '>', 2)->get()->all();
+            return Role::where('id', '>=', 2)->get()->all();
         }
     }
 
@@ -36,9 +41,27 @@ class UserController extends Controller
             return User::with('company')->with('permissions');
         } else {
             return User::with('company')->with('permissions')
-                        ->where('role', '>', 2)
+                        ->where('role', '>=', 2)
                         ->where('company_id', '=', Auth::user()->company_id);
         }
+    }
+
+    protected function getPermissions($role = null)
+    {
+        if ($role == null) {
+            return Permission::all();
+        }
+        
+        return Permission::where('role', '>=', $role)->get()->all();
+    }
+
+    protected function getTasks($company_id = null)
+    {
+        if ($company_id == null) {
+            return Task::all();    
+        }
+        
+        return Task::where('company_id', '=', $company_id)->get()->all();
     }
 
     protected function isGetableUser($user)
@@ -131,8 +154,10 @@ class UserController extends Controller
         
         $companies = $this->getCompanies();
         $roles = $this->getRoles();
+        $permissions = $this->getPermissions();
+        // $tasks = $this->getTasks();
         
-        return view('user.user', compact('companies', 'roles'));
+        return view('user.user', compact('companies', 'roles', 'permissions'));
     }
 
     public function saveUser(Request $request)
@@ -141,8 +166,6 @@ class UserController extends Controller
 
         if (!$request->has('name') || 
             !$request->has('email') || 
-            !$request->has('password') || 
-            !$request->has('confirm-password') || 
             !$request->has('company') || 
             !$request->has('role')) {
             $request->session()->flash('error', "Sorry, your input not validation! Please check your input.");
@@ -157,6 +180,11 @@ class UserController extends Controller
         $company = $request->input('company');
         $role = $request->input('role');
 
+        if (!empty($password) && ($password != $confirm_password)) {
+            $request->session()->flash('error', "Sorry, password does not match.");
+            return back()->withInput();
+        }
+
         if ($id) {
             $existed_user = User::where('email', '=', $email)->get()->first();
             $user = User::find($id);
@@ -166,12 +194,34 @@ class UserController extends Controller
                 return back()->withInput();
             }
 
+            //update user info
             $user->name = $name;
             $user->email = $email;
-            $user->password = Hash::make($password);
+            if (!empty($password)) {
+                $user->password = Hash::make($password);
+            }
             $user->company_id = $company;
             $user->role = $role;
             $user->save();
+
+            //update user_permission
+            $permissions = $request->input('permissions') ?? [];
+            
+            UserPermission::where('user_id', $id)->delete();
+            $bulks = [];
+            foreach ($permissions as $p) {
+                $bulks[] = ['user_id' => $id, 'permission_id' => $p];
+            }
+            UserPermission::insert($bulks);
+
+            //update user_task
+            // $tasks = $request->input('tasks') ?? [];
+            // UserTask::where('user_id', $id)->delete();
+            // $bulks = [];
+            // foreach ($tasks as $t) {
+            //     $bulks[] = ['user_id' => $id, 'task_id' => $t];
+            // }
+            // UserTask::insert($bulks);
 
             $request->session()->flash('success', "User was updated successfull!");
         } else {
@@ -181,11 +231,12 @@ class UserController extends Controller
                 return back()->withInput();
             }
 
-            if ($password != $confirm_password) {
-                $request->session()->flash('error', "Sorry, password does not match.");
+            if (empty($password)) {
+                $request->session()->flash('error', "Sorry, please enter password.");
                 return back()->withInput();
             }
 
+            //create new user
             $user = User::create([
                 'name' => $name,
                 'email' => $email,
@@ -193,8 +244,29 @@ class UserController extends Controller
                 'company_id' => $company,
                 'role' => $role
             ]);
-    
-            $request->session()->flash('success', "New user account was created for " . $email);
+
+            //create user_permission
+            $permissions = $request->input('permissions') ?? [];
+            UserPermission::where('user_id', $user->id)->delete();
+            $bulks = [];
+            foreach ($permissions as $p) {
+                $bulks[] = ['user_id' => $user->id, 'permission_id' => $p];
+            }
+            UserPermission::insert($bulks);
+
+            //create user_task
+            // $tasks = $request->input('tasks') ?? [];
+            // UserTask::where('user_id', $user->id)->delete();
+            // $bulks = [];
+            // foreach ($tasks as $t) {
+            //     $bulks[] = ['user_id' => $user->id, 'task_id' => $t];
+            // }
+            // UserTask::insert($bulks);
+            
+            // Send reset password link to user email
+            $status = Password::sendResetLink(['email' => $email]);
+            
+            $request->session()->flash('success', "New user account was created for " . $email . " And sent reset password link!");
         }
         
         return $this->list($request);
@@ -225,17 +297,18 @@ class UserController extends Controller
         $this->authorize('manage-user');
 
         $id = $request->route()->parameter('id');
-
-        $companies = $this->getCompanies();
-        $roles = $this->getRoles();
-        
         $user = User::with('company')->with('roles')->find($id);
-
         if (!$this->isGetableUser($user)) {
             abort(401);
         }
+
+        $companies = $this->getCompanies();
+        $roles = $this->getRoles();
+
+        $permissions = $this->getPermissions($user->role);
+        // $tasks = $this->getTasks($user->company_id);
         
-        return view('user.user', compact('user', 'companies', 'roles'));
+        return view('user.user', compact('user', 'companies', 'roles', 'permissions'));
     }
 
     public function removeUser(Request $request)

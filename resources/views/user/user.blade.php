@@ -55,13 +55,13 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="font-w800 text-right" style="width: 20%;">Password<span class="text-danger">*</span> : </td>
+                                        <td class="font-w800 text-right" style="width: 20%;">Password : </td>
                                         <td class="text-left" style="width: 30%;">
-                                            <input type="password" class="form-control" name="password" value="@if (!isset($user)){{ old('password') }}@endif" placeholder="Enter password.." required />
+                                            <input type="password" class="form-control" name="password" value="@if (!isset($user)){{ old('password') }}@endif" placeholder="Enter password.." />
                                         </td>
-                                        <td class="font-w800 text-right" style="width: 20%;">Confirm password<span class="text-danger">*</span> : </td>
+                                        <td class="font-w800 text-right" style="width: 20%;">Confirm password : </td>
                                         <td class="text-left" style="width: 30%;">
-                                            <input type="password" class="form-control" name="confirm-password" value="@if (!isset($user)){{ old('confirm-password') }}@endif" placeholder="Enter confirm password.." required />
+                                            <input type="password" class="form-control" name="confirm-password" value="@if (!isset($user)){{ old('confirm-password') }}@endif" placeholder="Enter confirm password.." />
                                         </td>
                                     </tr>
                                     <tr>
@@ -82,6 +82,29 @@
                                             </select>
                                         </td>
                                     </tr>
+                                    @if (isset($user))
+                                    <tr>
+                                        <td class="font-w800 text-right  align-top" style="width: 20%;">Permissions : </td>
+                                        <td class="text-left  align-top" style="width: 30%;">
+                                            @foreach ($permissions as $permission)
+                                                @php
+                                                    $flag = false
+                                                @endphp
+                                                @foreach ($user->permissions as $up)
+                                                    @if ($permission->id == $up->permission->id)
+                                                        @php
+                                                            $flag = true
+                                                        @endphp
+                                                    @endif
+                                                @endforeach
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" name="permissions[]" id="p-{{ $permission->id }}" value="{{ $permission->id }}" @if($flag) {{ 'checked' }}@endif/>
+                                                    <label class="form-check-label" for="p-{{ $permission->id }}">{{ $permission->action }}</label>
+                                                </div>
+                                            @endforeach
+                                        </td>
+                                    </tr>
+                                    @endif
                                 </tbody>
                             </table>
                         </div>

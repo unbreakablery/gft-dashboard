@@ -81,7 +81,7 @@
                             </div>
                             <div class="col-lg-2 col-md-2">
                                 <div class="form-group">
-                                    <label for="user-role">Company :</label>
+                                    <label for="user-company">Company :</label>
                                     <select name="user-company" id="user-company" class="form-control">
                                         <option value=""></option>
                                         @foreach ($companies as $company)

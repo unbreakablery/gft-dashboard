@@ -75,4 +75,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserPermission::class, 'user_id')->with('permission');
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(UserTask::class, 'user_id')->with('task');
+    }
 }
