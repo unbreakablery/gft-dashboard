@@ -13,6 +13,7 @@ use App\Http\Controllers\WeeklyScheduleController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\TaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -357,3 +358,29 @@ Route::middleware(['auth:sanctum', 'verified'])->get('company/edit/{id}', [Compa
 Route::middleware(['auth:sanctum', 'verified'])->get('company/remove/{id}', [CompanyController::class, 'removeCompany'], function () {
     return route('login');
 })->name('company-remove');
+
+// routes for task
+Route::middleware(['auth:sanctum', 'verified'])->get('task/list', [TaskController::class, 'list'], function () {
+    return route('login');
+})->name('task.list');
+Route::middleware(['auth:sanctum', 'verified'])->post('task/list', [TaskController::class, 'list'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('task/add', [TaskController::class, 'getAddPage'], function () {
+    return route('login');
+})->name('task-add');
+Route::middleware(['auth:sanctum', 'verified'])->post('task/save', [TaskController::class, 'saveTask'], function () {
+    return route('login');
+})->name('task-save');
+Route::middleware(['auth:sanctum', 'verified'])->post('task/get', [TaskController::class, 'getTask'], function () {
+    return route('login');
+})->name('task-get');
+Route::middleware(['auth:sanctum', 'verified'])->get('task/edit/{id}', [TaskController::class, 'editTask'], function () {
+    return route('login');
+})->name('task-edit');
+Route::middleware(['auth:sanctum', 'verified'])->get('task/remove/{id}', [TaskController::class, 'removeTask'], function () {
+    return route('login');
+})->name('task-remove');
+Route::middleware(['auth:sanctum', 'verified'])->post('task/change-status', [TaskController::class, 'changeStatus'], function () {
+    return route('login');
+})->name('task-change-status');

@@ -30,6 +30,14 @@
         <!-- Side Navigation -->
         <div class="content-side content-side-full">
             <ul class="nav-main">
+                @if (Auth::user()->role == 2)
+                <li class="nav-main-item">
+                    <a class="nav-main-link" href="/company/edit/{{ Auth::user()->company_id }}">
+                        <i class="nav-main-link-icon fa fa-building"></i>
+                        <span class="nav-main-link-name">My Company</span>
+                    </a>
+                </li>
+                @endif
                 @can('manage-company')
                 <li class="nav-main-item">
                     <a class="nav-main-link" href="/company/list">
@@ -45,10 +53,12 @@
                         <span class="nav-main-link-name">Users</span>
                     </a>
                 </li>
+                @endcan
+                @can('manage-task')
                 <li class="nav-main-item">
-                    <a class="nav-main-link" href="/permission/index">
-                        <i class="nav-main-link-icon fa fa-lock"></i>
-                        <span class="nav-main-link-name">Permissions</span>
+                    <a class="nav-main-link" href="/task/list">
+                        <i class="nav-main-link-icon fa fa-tasks"></i>
+                        <span class="nav-main-link-name">My Tasks</span>
                     </a>
                 </li>
                 @endcan
@@ -273,8 +283,12 @@
             <!-- END Left Section -->
             <div class="d-flex align-item-center">
                 <div class="row">
-                    <img src="{{ asset('/media/photos/logo.jpg') }}" height="60" />
-                    <h1 class="gft-title">Ground Force Trucking</h1>
+                    @if (Auth::user()->role != 1)
+                    <img class="" src="{{ asset('storage/uploads/company/' . get_company_logo_by_id(Auth::user()->company_id)) }}" alt="" height="60">
+                    <h1 class="gft-title">{{ get_company_name_by_id(Auth::user()->company_id) }}</h1>
+                    @else
+                    <h1 class="gft-title">System Super Admin</h1>
+                    @endif
                 </div>
             </div>
             <!-- Right Section -->
