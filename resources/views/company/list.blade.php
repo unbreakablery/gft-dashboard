@@ -115,6 +115,7 @@
                                 <tr>
                                     <th class="text-center" style="width: 15%;">Brand</th>
                                     <th class="text-center">Name</th>
+                                    <th class="text-center">Logo</th>
                                     <th class="d-none d-sm-table-cell text-center">Description</th>
                                     <th class="text-center" style="width: 100px;">Actions</th>
                                 </tr>
@@ -125,6 +126,11 @@
                                 <tr>
                                     <td class="font-w600 font-size-sm text-left text-primary">{{ $company->brand }}</td>
                                     <td class="font-w600 font-size-sm text-left">{{ $company->name }}</td>
+                                    <td class="font-w600 font-size-sm text-center">
+                                        @if ($company->logo)
+                                        <img class="" src="{{ asset('storage/uploads/company/' . $company->logo) }}" alt="" width="48" height="48">
+                                        @endif
+                                    </td>
                                     <td class="d-none d-sm-table-cell font-w600 font-size-sm text-left">{{ $company->description }}</td>
                                     <td class="text-center">
                                         <div class="btn-group">
@@ -179,6 +185,10 @@
                                                     <td class="font-w800 text-right">Description : </td>
                                                     <td class="text-left" id="u_description"></td>
                                                 </tr>
+                                                <tr>
+                                                    <td class="font-w800 text-right">Logo : </td>
+                                                    <td class="text-left" id="u_logo"></td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -205,6 +215,7 @@ jQuery(function($){
             $('#u_brand').html('');
             $('#u_name').html('');
             $('#u_description').html('');
+            $('#u_logo').html('');
         }
         $('button.view-company').click(function() {
             var id = $(this).data('id');
@@ -223,6 +234,7 @@ jQuery(function($){
                         $('#u_brand').html(data.company.brand);
                         $('#u_name').html(data.company.name);
                         $('#u_description').html(data.company.description);
+                        $('#u_logo').html('<img src="/storage/uploads/company/' + data.company.logo + '" width="150" height="150" />');
                     } else {
                         $('#company-table').addClass('d-none');
                         $('#modal-company-info .table-responsive').append(

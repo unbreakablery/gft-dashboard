@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Company;
-use DB;
+use Auth, DB;
 
 class CompanyController extends Controller
 {
@@ -55,7 +56,7 @@ class CompanyController extends Controller
 
     public function saveCompany(Request $request)
     {
-        $this->authorize('manage-company');
+        // $this->authorize('manage-company');
 
         if (!$request->has('brand') || 
             !$request->has('name')) {
@@ -77,9 +78,26 @@ class CompanyController extends Controller
                 return back()->withInput();
             }
 
+            if($request->hasfile('logo')) {
+                //delete old logo
+                if ($company->logo) {
+                    Storage::delete('public/uploads/company/' . $company->logo);
+                }
+                
+                $file = $request->file('logo');
+            
+                $path_parts = pathinfo($file->getClientOriginalName());
+                
+                $string = preg_replace(array('/\s+/', '/\.[\.]+/', '/[^\w_\.\-]/'), array('_', '.', ''), $path_parts['filename']);
+                $clean_name = strtolower($string);
+                $filename = $clean_name . '_' . uniqid() . '.' . $path_parts['extension'];
+                $path = $file->storeAs('public/uploads/company', $filename);
+            }
+
             $company->name = $name;
             $company->brand = $brand;
             $company->description = $description;
+            $company->logo = $filename;
             $company->save();
 
             $request->session()->flash('success', "Company was updated successfull!");
@@ -90,21 +108,37 @@ class CompanyController extends Controller
                 return back()->withInput();
             }
 
+            if($request->hasfile('logo')) {
+                $file = $request->file('logo');
+            
+                $path_parts = pathinfo($file->getClientOriginalName());
+                
+                $string = preg_replace(array('/\s+/', '/\.[\.]+/', '/[^\w_\.\-]/'), array('_', '.', ''), $path_parts['filename']);
+                $clean_name = strtolower($string);
+                $filename = $clean_name . '_' . uniqid() . '.' . $path_parts['extension'];
+                $path = $file->storeAs('public/uploads/company', $filename);
+            }
+            
             $company = Company::create([
                 'brand' => $brand,
                 'name' => $name,
-                'description' => $description
+                'description' => $description,
+                'logo' => $filename
             ]);
     
             $request->session()->flash('success', "New company was created for " . $brand);
         }
         
+        if (Auth::user()->role == 2) {
+            return redirect()->route('company-edit', ['id' => $id]);
+        }
+
         return $this->list($request);
     }
 
     public function editCompany(Request $request)
     {
-        $this->authorize('manage-company');
+        // $this->authorize('manage-company');
 
         $id = $request->route()->parameter('id');
 

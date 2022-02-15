@@ -18,6 +18,7 @@ class CreateCompaniesTable extends Migration
             $table->string('brand');
             $table->string('name');
             $table->text('description')->nullable();
+            $table->string('logo')->nullable();
         });
     }
 

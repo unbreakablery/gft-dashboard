@@ -14,7 +14,8 @@ class Company extends Model
     protected $fillable = [
         'brand',
         'name',
-        'description'
+        'description',
+        'logo'
     ];
 
     public $timestamps = false;

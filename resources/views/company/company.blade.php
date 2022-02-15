@@ -30,13 +30,15 @@
                             <p>{{ session('error') }}</p>
                         </div>
                     @endif
-                    <form class="js-validation" action="/company/save" method="POST" id="company-form" autocomplete="off">
+                    <form class="js-validation" action="/company/save" method="POST" id="company-form" autocomplete="off" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="id" value="@if (isset($company)){{ $company->id }}@endif" />
                         <div class="table-responsive push text-right">
+                            @if (Auth::user()->role == 1)
                             <button type="button" class="btn btn-dark view-companies">
                                 <i class="fa fa-list"></i> View Companies
                             </button>
+                            @endif
                             <button type="submit" class="btn btn-primary save-company">
                                 <i class="fa fa-save"></i> Save Company
                             </button>
@@ -59,7 +61,18 @@
                                     <tr>
                                         <td class="font-w800 text-right" style="width: 20%;">Description : </td>
                                         <td class="text-left" style="width: 30%;">
-                                        <textarea name="description" rows="10" class="form-control" placeholder="Enter description..">@if (isset($company)){{ $company->description }}@endif</textarea>
+                                            <textarea name="description" rows="10" class="form-control" placeholder="Enter description..">@if (isset($company)){{ $company->description }}@endif</textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-w800 text-right" style="width: 20%;">Logo : </td>
+                                        <td class="text-left" style="width: 30%;">
+                                            <input type="file" id="logo" name="logo" accept="image/*" onchange="readURL(this);" />
+                                            @if (isset($company) && $company->logo)
+                                            <img id="blah" src="{{ asset('storage/uploads/company/' . $company->logo) }}" alt="" width="150" height="150" />
+                                            @else
+                                            <img id="blah" style="max-width: 150px" />
+                                            @endif
                                         </td>
                                     </tr>
                                 </tbody>
@@ -72,12 +85,26 @@
     </div>
 </div>
 <script type="text/javascript">
-jQuery(function($){
-    $(document).ready(function() {
-        $('button.view-companies').click(function() {
-            location.href = "/company/list";
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#blah').attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            $('#blah').attr('src', '');
+        }
+    }
+
+    jQuery(function($){
+        $(document).ready(function() {
+            $('button.view-companies').click(function() {
+                location.href = "/company/list";
+            });
         });
     });
-});
 </script>
 </x-app-layout>
