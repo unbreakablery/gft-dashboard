@@ -162,7 +162,7 @@
 
     <p class="page-title">
         <strong>
-            U.S. Monthly Maintenance Record, MGRA-355
+            U.S. Monthly Maintenance Record, MGBA-355
         </strong>
     </p>
     <p class="text-right"><strong>17 November 2020</strong></p>
