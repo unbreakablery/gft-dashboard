@@ -35,6 +35,10 @@ class TaskController extends Controller
         $company_id = $user->company_id;
         $user_id = $user->id;
 
+        if ($user->role == 1) {
+            return User::where('id', '!=', $user_id)->get();
+        }
+
         return User::where('company_id', '=', $company_id)
                     ->where('role', '!=', '1')
                     ->where('id', '!=', $user_id)
@@ -142,8 +146,7 @@ class TaskController extends Controller
             !$request->has('recurring') || 
             !$request->has('interval') || 
             !$request->has('from-date') || 
-            !$request->has('to-date') || 
-            !$request->has('users')) {
+            !$request->has('to-date')) {
             $request->session()->flash('error', "Sorry, your input not validation! Please check your input.");
             return back()->withInput();
         }
@@ -155,7 +158,7 @@ class TaskController extends Controller
         $from_date = $request->input('from-date');
         $to_date = $request->input('to-date');
         $status = $request->input('status') ?? 'pending';
-        $users = $request->input('users');
+        $users = $request->input('users') ?? [];
         
         if ($id) {
             $task = Task::find($id);
