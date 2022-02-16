@@ -21,14 +21,14 @@
                             <div class="block block-themed block-fx-shadow mb-0">
                                 <div class="block-header">
                                     <h3 class="block-title">Sign In</h3>
-                                    <!-- <div class="block-options">
+                                    <div class="block-options">
                                         @if (Route::has('password.request'))
-                                            <a class="btn-block-option font-size-sm" href="{{ route('password.request') }}">{{ __('Forgot your password?') }}</a>
+                                            <a class="btn-block-option font-size-sm" href="{{ route('password.request') }}">{{ __('Reset password') }}</a>
                                         @endif
-                                        <a class="btn-block-option" href="{{ route('register') }}" data-toggle="tooltip" data-placement="left" title="New Account">
+                                        <!-- <a class="btn-block-option" href="{{ route('register') }}" data-toggle="tooltip" data-placement="left" title="New Account">
                                             <i class="fa fa-user-plus"></i>
-                                        </a>
-                                    </div> -->
+                                        </a> -->
+                                    </div>
                                 </div>
                                 <div class="block-content">
                                     <div class="p-sm-3 px-lg-4 py-lg-5">
