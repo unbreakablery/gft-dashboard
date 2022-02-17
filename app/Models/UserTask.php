@@ -20,6 +20,6 @@ class UserTask extends Model
 
     public function task()
     {
-        return $this->hasOne(Task::class, 'id', 'task_id')->with('creator');
+        return $this->hasOne(Task::class, 'id', 'task_id')->with('creator')->with('owner');
     }
 }
