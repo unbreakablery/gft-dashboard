@@ -54,12 +54,12 @@
                                         <td class="font-w800 text-right" style="width: 20%;">Recurring<span class="text-danger">*</span> : </td>
                                         <td class="text-left" style="width: 30%;">
                                             <select name="recurring" id="recurring" class="form-control" required>
-                                                <option value="No" @if (isset($task) && ($task->recurring == "No")) {{ __('selected') }} @elseif (old('recurring') == "No") {{ __('selected') }} @endif>No</option>
                                                 <option value="Yes" @if (isset($task) && ($task->recurring == "Yes")) {{ __('selected') }} @elseif (old('recurring') == "Yes") {{ __('selected') }} @endif>Yes</option>
+                                                <option value="No" @if (isset($task) && ($task->recurring == "No")) {{ __('selected') }} @elseif (old('recurring') == "No") {{ __('selected') }} @endif>No</option>
                                             </select>
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <tr class="interval @if (isset($task) && $task->recurring == 'No') {{ 'd-none' }} @endif">
                                         <td class="font-w800 text-right" style="width: 20%;">Interval (Days): </td>
                                         <td class="text-left" style="width: 30%;">
                                             <input type="number" 
@@ -70,8 +70,8 @@
                                             />
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td class="font-w800 text-right" style="width: 20%;">From Date<span class="text-danger">*</span> : </td>
+                                    <tr class="from-date @if (isset($task) && $task->recurring == 'No') {{ 'd-none' }} @endif">
+                                        <td class="font-w800 text-right" style="width: 20%;">From Date : </td>
                                         <td class="text-left" style="width: 30%;">
                                             <input type="text" 
                                                 class="form-control js-datepicker" 
@@ -82,17 +82,31 @@
                                                 data-today-highlight="true" 
                                                 data-date-format="yyyy-mm-dd" 
                                                 placeholder="yyyy-mm-dd"
-                                                required 
                                             />
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <tr class="to-date @if (isset($task) && $task->recurring == 'No') {{ 'd-none' }} @endif">
                                         <td class="font-w800 text-right" style="width: 20%;">To Date : </td>
                                         <td class="text-left" style="width: 30%;">
                                             <input type="text" 
                                                 class="form-control js-datepicker" 
                                                 name="to-date" 
                                                 value="@if (isset($task)){{ $task->to_date }}@else{{ old('to-date') }}@endif" 
+                                                data-week-start="0" 
+                                                data-autoclose="true" 
+                                                data-today-highlight="true" 
+                                                data-date-format="yyyy-mm-dd" 
+                                                placeholder="yyyy-mm-dd"
+                                            />
+                                        </td>
+                                    </tr>
+                                    <tr class="due-date @if (!isset($task) || (isset($task) && $task->recurring == 'Yes')) {{ 'd-none' }} @endif">
+                                        <td class="font-w800 text-right" style="width: 20%;">Due Date : </td>
+                                        <td class="text-left" style="width: 30%;">
+                                            <input type="text" 
+                                                class="form-control js-datepicker" 
+                                                name="due-date" 
+                                                value="@if (isset($task)){{ $task->due_date }}@else{{ old('due-date') }}@endif" 
                                                 data-week-start="0" 
                                                 data-autoclose="true" 
                                                 data-today-highlight="true" 
@@ -114,6 +128,17 @@
                                         </td>
                                     </tr>
                                     @endif
+                                    <tr>
+                                        <td class="font-w800 text-right" style="width: 20%;">Owner : </td>
+                                        <td class="text-left form-group" style="width: 30%;">
+                                            <select name="owner" id="owner" class="form-control">
+                                                <option value=""></option>
+                                                @foreach ($o_users as $user)
+                                                <option value="{{ $user['id'] }}" @if(isset($task) && $task->owner_id == $user['id']){{ 'selected' }}@elseif(old('owner') == $user['id']){{ 'selected' }}@endif>{{ $user['name'] }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td class="font-w800 text-right align-top" style="width: 20%;">Users for sharing : </td>
                                         <td class="text-left align-top" style="width: 30%;">
@@ -151,6 +176,22 @@ jQuery(function($){
     $(document).ready(function() {
         $('button.view-tasks').click(function() {
             location.href = "/task/list";
+        });
+
+        $('select#recurring').change(function() {
+            var recurring = $(this).val();
+
+            if (recurring === 'Yes') {
+                $('tr.interval').removeClass('d-none');
+                $('tr.from-date').removeClass('d-none');
+                $('tr.to-date').removeClass('d-none');
+                $('tr.due-date').addClass('d-none');
+            } else {
+                $('tr.interval').addClass('d-none');
+                $('tr.from-date').addClass('d-none');
+                $('tr.to-date').addClass('d-none');
+                $('tr.due-date').removeClass('d-none');
+            }
         });
     });
 });

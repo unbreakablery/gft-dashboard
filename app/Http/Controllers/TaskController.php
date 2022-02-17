@@ -24,8 +24,14 @@ class TaskController extends Controller
                             if (isset($filters['status'])) {
                                 $q->where('status', '=', $filters['status']);
                             }
+                            if (isset($filters['owner'])) {
+                                $q->whereHas('owner', function($q1) use ($filters) {
+                                    $q1->where('name', 'like', '%' . $filters['owner'] . '%');
+                                });
+                            }
                         })
                         ->where('user_id', '=', $user_id)
+                        ->orderBy('task_id', 'DESC')
                         ->get();
         return $query;
     }
@@ -40,8 +46,9 @@ class TaskController extends Controller
         }
 
         return User::where('company_id', '=', $company_id)
-                    ->where('role', '!=', '1')
-                    ->where('id', '!=', $user_id)
+                    // ->where('role', '!=', '1')
+                    // ->where('id', '!=', $user_id)
+                    ->orWhere('role', '1')
                     ->get();
     }
 
@@ -88,14 +95,21 @@ class TaskController extends Controller
             $task_status = "";
         }
 
+        if ($request->has('task-owner') && !empty($request->input('task-owner'))) {
+            $task_owner = $request->input('task-owner');
+            $filters['owner'] = $task_owner;
+        } else {
+            $task_owner = "";
+        }
+
         $list = $this->getQueryForTasksByUser($user->id, $filters);
         
         $tasks = [];
         foreach ($list as $t) {
             $tasks[] = $t->task;
         }
-                
-        return view('task.list', compact('tasks', 'task_name', 'task_recurring', 'task_status'));
+
+        return view('task.list', compact('tasks', 'task_name', 'task_recurring', 'task_status', 'task_owner'));
     }
 
     public function getTask(Request $request)
@@ -103,7 +117,7 @@ class TaskController extends Controller
         $this->authorize('manage-task');
 
         $id = $request->input('id');
-        $task = Task::with('creator')->find($id);
+        $task = Task::with('creator')->with('owner')->find($id);
 
         return response()->json([
             'type' => 'success',
@@ -118,8 +132,14 @@ class TaskController extends Controller
         $user = Auth::user();
         $users = $this->getUsersByCompany($user);
         $shared_users = [];
+
+        $o_users = [];
+        foreach ($users as $u) {
+            $o_users[] = ['id' => $u->id , 'name' => $u->name];
+        }
+        $o_users = array_unique($o_users, SORT_REGULAR);
                 
-        return view('task.task', compact('users', 'shared_users'));
+        return view('task.task', compact('users', 'shared_users', 'o_users'));
     }
 
     public function editTask(Request $request)
@@ -128,25 +148,29 @@ class TaskController extends Controller
 
         $id = $request->route()->parameter('id');
 
+        $task = Task::with('creator')->with('owner')->find($id);
+
         $user = Auth::user();
         $users = $this->getUsersByCompany($user);
-        
-        $task = Task::with('creator')->find($id);
-        
+        $o_users = [];
+        foreach ($users as $u) {
+            $o_users[] = ['id' => $u->id , 'name' => $u->name];
+        }
+        if ($task->owner) {
+            $o_users[] = ['id' => $task->owner->id, 'name' => $task->owner->name];
+        }
+        $o_users = array_unique($o_users, SORT_REGULAR);
+                
         $shared_users = $this->getSharedUsersByTask($task);
 
-        return view('task.task', compact('task', 'users', 'shared_users'));
+        return view('task.task', compact('task', 'users', 'shared_users', 'o_users'));
     }
 
     public function saveTask(Request $request)
     {
         $this->authorize('manage-task');
 
-        if (!$request->has('name') || 
-            !$request->has('recurring') || 
-            !$request->has('interval') || 
-            !$request->has('from-date') || 
-            !$request->has('to-date')) {
+        if (!$request->has('name') || !$request->has('recurring')) {
             $request->session()->flash('error', "Sorry, your input not validation! Please check your input.");
             return back()->withInput();
         }
@@ -154,10 +178,20 @@ class TaskController extends Controller
         $id = $request->input('id');
         $name = $request->input('name');
         $recurring = $request->input('recurring');
-        $interval = $request->input('interval') ?? 0;
-        $from_date = $request->input('from-date');
-        $to_date = $request->input('to-date');
+        if ($recurring == 'Yes') {
+            $interval = $request->input('interval') ?? 0;
+            $from_date = $request->input('from-date') ?? null;
+            $to_date = $request->input('to-date') ?? null;
+            $due_date = null;
+        } else {
+            $interval = 0;
+            $from_date = null;
+            $to_date = null;
+            $due_date = $request->input('due-date') ?? null;
+        }
+        
         $status = $request->input('status') ?? 'pending';
+        $owner = $request->input('owner') ?? null;
         $users = $request->input('users') ?? [];
         
         if ($id) {
@@ -165,9 +199,12 @@ class TaskController extends Controller
             $task->name = $name;
             $task->recurring = $recurring;
             $task->interval = $interval;
-            $task->status = $status;
             $task->from_date = $from_date;
             $task->to_date = $to_date;
+            $task->due_date = $due_date;
+            $task->status = $status;
+            $task->owner_id = $owner;
+            
             $task->save();
 
             //update user_task table
@@ -178,9 +215,23 @@ class TaskController extends Controller
                     'task_id' => $task->id
                 ];
             }
-            UserTask::where('task_id', '=', $task->id)
-                    ->where('user_id', '!=', Auth::user()->id)
-                    ->delete();
+            if (!empty($owner)) {
+                $bulks[] = [
+                    'user_id' => $owner,
+                    'task_id' => $task->id
+                ];
+            }
+            $bulks[] = [
+                'user_id' => Auth::user()->id,
+                'task_id' => $task->id
+            ];
+            $bulks[] = [
+                'user_id' => $task->user_id,
+                'task_id' => $task->id
+            ];
+            $bulks = array_unique($bulks, SORT_REGULAR);
+            
+            UserTask::where('task_id', '=', $task->id)->delete();
             UserTask::insert($bulks);
 
             $request->session()->flash('success', "Task was updated successfull!");
@@ -191,8 +242,10 @@ class TaskController extends Controller
                 'interval' => $interval,
                 'from_date' => $from_date,
                 'to_date' => $to_date,
+                'due_date' => $due_date,
                 'status' => $status,
-                'user_id' => Auth::user()->id
+                'user_id' => Auth::user()->id,
+                'owner_id' => $owner
             ]);
 
             //update user_task table
@@ -203,14 +256,23 @@ class TaskController extends Controller
                     'task_id' => $task->id
                 ];
             }
-            UserTask::where('task_id', '=', $task->id)
-                    ->where('user_id', '!=', Auth::user()->id)
-                    ->delete();
-
-            UserTask::create([
+            if (!empty($owner)) {
+                $bulks[] = [
+                    'user_id' => $owner,
+                    'task_id' => $task->id
+                ];
+            }
+            $bulks[] = [
                 'user_id' => Auth::user()->id,
                 'task_id' => $task->id
-            ]);
+            ];
+            $bulks[] = [
+                'user_id' => $task->user_id,
+                'task_id' => $task->id
+            ];
+            $bulks = array_unique($bulks, SORT_REGULAR);
+
+            UserTask::where('task_id', '=', $task->id)->delete();
             UserTask::insert($bulks);
     
             $request->session()->flash('success', "New task was created for '" . $name . "'");

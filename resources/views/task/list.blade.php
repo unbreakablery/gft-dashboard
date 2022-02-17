@@ -55,7 +55,7 @@
                     <form action="/task/list" method="POST" autocomplete="off" id="search-form">
                         @csrf
                         <div class="row">
-                            <div class="col-lg-3 col-md-3">
+                            <div class="col-lg-2 col-md-2">
                                 <div class="form-group">
                                     <label for="user-name">Task Name :</label>
                                     <input type="text" 
@@ -77,7 +77,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-md-3">
+                            <div class="col-lg-2 col-md-2">
                                 <div class="form-group">
                                     <label for="task-status">Status :</label>
                                     <select name="task-status" id="task-status" class="form-control">
@@ -87,6 +87,18 @@
                                         <option value="completed" @if($task_status == "completed"){{ 'selected' }}@endif>Completed</option>
                                         <option value="cancelled" @if($task_status == "cancelled"){{ 'selected' }}@endif>Cancelled</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2">
+                                <div class="form-group">
+                                    <label for="user-name">Owner :</label>
+                                    <input type="text" 
+                                        class="form-control" 
+                                        name="task-owner" 
+                                        id="task-owner" 
+                                        value="{{ $task_owner }}"
+                                        placeholder="Enter Owner Name.." 
+                                    />
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-2">
@@ -111,13 +123,14 @@
                         <table class="table table-bordered table-striped table-dark table-vcenter" id="tasks-table">
                             <thead>
                                 <tr>
-                                    <th class="text-center" style="width: 15%;">Name</th>
-                                    <th class="text-center">Recurring</th>
+                                    <th class="text-center" style="width: 40%;">Name</th>
+                                    <!-- <th class="text-center">Recurring</th>
                                     <th class="text-center">Interval</th>
                                     <th class="d-none d-sm-table-cell text-center">From</th>
-                                    <th class="d-none d-sm-table-cell text-center">To</th>
-                                    <th class="d-none d-sm-table-cell text-center">Status</th>
-                                    <th class="d-none d-sm-table-cell text-center">Created By</th>
+                                    <th class="d-none d-sm-table-cell text-center">To</th> -->
+                                    <th class="d-none d-sm-table-cell text-center">Due Date</th>
+                                    <th class="d-none d-sm-table-cell text-center" style="min-width: 115px;">Status</th>
+                                    <th class="d-none d-sm-table-cell text-center">Owner</th>
                                     <th class="text-center" style="width: 100px;">Actions</th>
                                 </tr>
                             </thead>
@@ -126,7 +139,7 @@
                             @foreach ($tasks as $task)
                                 <tr>
                                     <td class="font-w600 font-size-sm text-left text-primary">{{ $task->name }}</td>
-                                    <td class="font-w600 font-size-sm text-center">
+                                    <!-- <td class="font-w600 font-size-sm text-center">
                                         @if ($task->recurring == 'Yes')
                                         <span class="badge badge-success">{{ $task->recurring }}</span>
                                         @else
@@ -139,7 +152,22 @@
                                         @endif
                                     </td>
                                     <td class="d-none d-sm-table-cell font-w600 font-size-sm text-center">{{ $task->from_date }}</td>
-                                    <td class="d-none d-sm-table-cell font-w600 font-size-sm text-center">{{ $task->to_date }}</td>
+                                    <td class="d-none d-sm-table-cell font-w600 font-size-sm text-center">{{ $task->to_date }}</td> -->
+                                    <td class="d-none d-sm-table-cell font-w600 font-size-sm text-center">
+                                        @if ($task->recurring == 'No')
+                                            @if ($task->due_date < date('Y-m-d'))
+                                               <span class="text-danger">{{ $task->due_date }}</span>
+                                            @else
+                                                {{ $task->due_date }}
+                                            @endif
+                                        @else
+                                            @if ($task->to_date && $task->to_date < date('Y-m-d'))
+                                                <span class="text-danger">{{ $task->from_date . ', ' . $task->interval . ' days' }}</span>
+                                            @else
+                                                {{ $task->from_date . ', ' . $task->interval . ' days' }}
+                                            @endif
+                                        @endif
+                                    </td>
                                     <td class="d-none d-sm-table-cell font-w600 font-size-sm text-center">
                                         @if ($task->status == 'completed')
                                         <span class="badge badge-success">{{ $task->status }}</span>
@@ -151,24 +179,26 @@
                                         {{ $task->status }}
                                         @endif
                                     </td>
-                                    <td class="d-none d-sm-table-cell font-w600 font-size-sm text-left">{{ $task->creator->name }}</td>
+                                    <td class="d-none d-sm-table-cell font-w600 font-size-sm text-left">
+                                        @if ($task->owner)
+                                        {{ $task->owner->name }}
+                                        @endif
+                                    </td>
                                     <td class="text-center">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-sm btn-dark view-task" title="View Task" data-id="{{ $task->id }}">
                                                 <i class="fa fa-fw fa-eye"></i>
                                             </button>
-                                            @if ($task->is_creator)
                                             <button type="button" class="btn btn-sm btn-dark edit-task" title="Edit Task" data-id="{{ $task->id }}">
                                                 <i class="fa fa-fw fa-edit"></i>
                                             </button>
                                             <button type="button" class="btn btn-sm btn-dark remove-task" title="Remove Task" data-id="{{ $task->id }}">
                                                 <i class="fa fa-fw fa-trash"></i>
                                             </button>
-                                            @else
-                                            <button type="button" class="btn btn-sm btn-dark change-status" title="Change Status" data-id="{{ $task->id }}">
+                                            
+                                            <!-- <button type="button" class="btn btn-sm btn-dark change-status" title="Change Status" data-id="{{ $task->id }}">
                                                 <i class="fa fa-fw fa-check"></i>
-                                            </button>
-                                            @endif
+                                            </button> -->
                                         </div>
                                     </td>
                                 </tr>
@@ -220,12 +250,20 @@
                                                     <td class="text-left" id="t_to_date"></td>
                                                 </tr>
                                                 <tr>
+                                                    <td class="font-w800 text-right">Due Date : </td>
+                                                    <td class="text-left" id="t_due_date"></td>
+                                                </tr>
+                                                <tr>
                                                     <td class="font-w800 text-right">Status : </td>
                                                     <td class="text-left" id="t_status"></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-w800 text-right">Created By : </td>
                                                     <td class="text-left" id="t_creator"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="font-w800 text-right">Owner : </td>
+                                                    <td class="text-left" id="t_owner"></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -326,8 +364,10 @@ jQuery(function($){
             $('#t_interval').html('');
             $('#t_from_date').html('');
             $('#t_to_date').html('');
+            $('#t_due_date').html('');
             $('#t_status').html('');
             $('#t_creator').html('');
+            $('#t_owner').html('');
 
             $('#t_name1').html('');
             $('#t_recurring1').html('');
@@ -361,8 +401,10 @@ jQuery(function($){
                         $('#t_interval').html(data.task.interval + ' days');
                         $('#t_from_date').html(data.task.from_date);
                         $('#t_to_date').html(data.task.to_date);
+                        $('#t_due_date').html(data.task.due_date);
                         $('#t_status').html(data.task.status);
                         $('#t_creator').html(data.task.creator.name);
+                        $('#t_owner').html(data.task.owner ? data.task.owner.name : '');
                     } else {
                         $('#task-table').addClass('d-none');
                         $('#modal-task-info .table-responsive').append(
