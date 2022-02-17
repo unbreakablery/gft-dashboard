@@ -20,8 +20,10 @@ class CreateTasksTable extends Migration
             $table->date('from_date')->nullable();
             $table->date('to_date')->nullable();
             $table->integer('interval')->default(0);
+            $table->date('due_date')->nullable();
             $table->enum('status', ['pending', 'in progress', 'completed', 'cancelled'])->default('pending');
             $table->integer('user_id');
+            $table->integer('owner_id');
             // $table->timestamps();
         });
     }

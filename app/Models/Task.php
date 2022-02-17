@@ -17,9 +17,11 @@ class Task extends Model
         'recurring',
         'from_date',
         'to_date',
+        'due_date',
         'interval',
         'status',
-        'user_id'
+        'user_id',
+        'owner_id'
     ];
 
     protected $appends = [
@@ -36,5 +38,10 @@ class Task extends Model
     public function getIsCreatorAttribute()
     {
         return $this->user_id == Auth::user()->id;
+    }
+
+    public function owner()
+    {
+        return $this->hasOne(User::class, 'id', 'owner_id');
     }
 }
