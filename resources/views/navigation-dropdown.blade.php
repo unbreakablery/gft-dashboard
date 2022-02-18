@@ -62,33 +62,16 @@
                     </a>
                 </li>
                 @endcan
-                @can('manage-driver')
-                <li class="nav-main-item open">
-                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
-                        <i class="nav-main-link-icon far fa-id-card"></i>
-                        <span class="nav-main-link-name">Driver Scorecards</span>
+                @can('manage-gf-statement')
+                <li class="nav-main-item">
+                    <a class="nav-main-link" href="/data/upload/statement">
+                        <i class="nav-main-link-icon fa fa-file-csv"></i>
+                        <span class="nav-main-link-name">GF Statements</span>
                     </a>
-                    <ul class="nav-main-submenu">
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" href="/upload/photo">
-                                <span class="nav-main-link-name">Upload Driver Photos</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" href="/upload/scorecards">
-                                <span class="nav-main-link-name">Import Scorecards</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" href="/scorecards">
-                                <span class="nav-main-link-name">View Scorecards</span>
-                            </a>
-                        </li>
-                    </ul>
                 </li>
                 @endcan
                 @can('manage-fleet')
-                <li class="nav-main-item open">
+                <li class="nav-main-item @if(request()->segment(1) == 'fleet' || request()->segment(1) == 'mmr'){{ 'open' }}@endif">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
                         <i class="nav-main-link-icon fa fa-truck"></i>
                         <span class="nav-main-link-name">Fleet Information</span>
@@ -107,24 +90,38 @@
                     </ul>
                 </li>
                 @endcan
-                @can('manage-gf-statement')
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="/upload/statement">
-                        <i class="nav-main-link-icon fa fa-file-csv"></i>
-                        <span class="nav-main-link-name">GF Statements</span>
-                    </a>
-                </li>
-                @endcan
                 @can('manage-driver')
-                <li class="nav-main-item">
-                    <a class="nav-main-link" href="/drivers">
-                        <i class="nav-main-link-icon fa fa-users"></i>
+                <li class="nav-main-item @if(request()->segment(1) == 'drivers'){{ 'open' }}@endif">
+                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
+                        <i class="nav-main-link-icon fas fa-user-tie"></i>
                         <span class="nav-main-link-name">Drivers</span>
                     </a>
+                    <ul class="nav-main-submenu">
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/drivers">
+                                <span class="nav-main-link-name">Manage Drivers</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/drivers/upload/photo">
+                                <span class="nav-main-link-name">Upload Driver Photos</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/drivers/upload/scorecards">
+                                <span class="nav-main-link-name">Import Scorecards</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/drivers/scorecards">
+                                <span class="nav-main-link-name">View Scorecards</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 @endcan
                 @can('manage-schedule')
-                <li class="nav-main-item open">
+                <li class="nav-main-item @if(request()->segment(1) == 'schedule'){{ 'open' }}@endif">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
                         <i class="nav-main-link-icon far fa-calendar"></i>
                         <span class="nav-main-link-name">Weekly Schedule</span>
@@ -143,78 +140,8 @@
                     </ul>
                 </li>
                 @endcan
-                @can('manage-dashboard')
-                <li class="nav-main-heading">By Key Metrics</li>
-                <li class="nav-main-item open">
-                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
-                        <i class="nav-main-link-icon fas fa-dollar-sign"></i>
-                        <span class="nav-main-link-name">Revenue</span>
-                    </a>
-                    <ul class="nav-main-submenu">
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" href="/chart/total-revenue-week">
-                                <span class="nav-main-link-name">Revenue Per Week</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-main-item open">
-                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
-                        <i class="nav-main-link-icon fas fa-dharmachakra"></i>
-                        <span class="nav-main-link-name">Miles</span>
-                    </a>
-                    <ul class="nav-main-submenu">
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" href="/chart/total-miles-week">
-                                <span class="nav-main-link-name">Miles Per Week (Total)</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" href="/chart/miles-week-driver">
-                                <span class="nav-main-link-name">Miles Per Week (Driver)</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" href="/chart/miles-week-vehicle">
-                                <span class="nav-main-link-name">Miles Per Week (Vehicle)</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-main-item open">
-                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
-                        <i class="nav-main-link-icon fas fa-chart-line"></i>
-                        <span class="nav-main-link-name">MPG</span>
-                    </a>
-                    <ul class="nav-main-submenu">
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" href="/chart/mpg-week-vehicle">
-                                <span class="nav-main-link-name">MPG Per Week (Vehicle)</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-main-item open">
-                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
-                        <i class="nav-main-link-icon fas fa-gas-pump"></i>
-                        <span class="nav-main-link-name">Fuel Cost</span>
-                    </a>
-                    <ul class="nav-main-submenu">
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" href="/chart/total-fuelcost-week">
-                                <span class="nav-main-link-name">Cost Per Week (Total)</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" href="/chart/fuelcost-week-vehicle">
-                                <span class="nav-main-link-name">Cost Per Week (Vehicle)</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                @endcan
                 @canany(['manage-payroll', 'manage-payroll-setting'])
-                <li class="nav-main-item open">
+                <li class="nav-main-item @if(request()->segment(1) == 'payroll'){{ 'open' }}@endif">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
                         <i class="nav-main-link-icon fas fa-money-check-alt"></i>
                         <span class="nav-main-link-name">Payroll</span>
@@ -236,7 +163,7 @@
                 </li>
                 @endcanany
                 @can('manage-global-setting')
-                <li class="nav-main-item open">
+                <li class="nav-main-item @if(request()->segment(1) == 'util'){{ 'open' }}@endif">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
                         <i class="nav-main-link-icon fas fa-robot"></i>
                         <span class="nav-main-link-name">Utilities</span>
@@ -255,11 +182,89 @@
                     </ul>
                 </li>
                 @endcan
+                @can('manage-dashboard')
+                <li class="nav-main-item open">
+                    <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
+                        <i class="nav-main-link-icon fas fa-tachometer-alt"></i>
+                        <span class="nav-main-link-name">KPIs</span>
+                    </a>
+                    <ul class="nav-main-submenu">
+                        <li class="nav-main-item @if(request()->segment(2) == 'total-revenue-week'){{ 'open' }}@endif">
+                            <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
+                                <i class="nav-main-link-icon fas fa-dollar-sign"></i>
+                                <span class="nav-main-link-name">Revenue</span>
+                            </a>
+                            <ul class="nav-main-submenu">
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link" href="/chart/total-revenue-week">
+                                        <span class="nav-main-link-name">Revenue Per Week</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-main-item @if(in_array(request()->segment(2), ['total-miles-week', 'miles-week-driver', 'miles-week-vehicle'])){{ 'open' }}@endif">
+                            <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
+                                <i class="nav-main-link-icon fas fa-dharmachakra"></i>
+                                <span class="nav-main-link-name">Miles</span>
+                            </a>
+                            <ul class="nav-main-submenu">
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link" href="/chart/total-miles-week">
+                                        <span class="nav-main-link-name">Miles Per Week (Total)</span>
+                                    </a>
+                                </li>
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link" href="/chart/miles-week-driver">
+                                        <span class="nav-main-link-name">Miles Per Week (Driver)</span>
+                                    </a>
+                                </li>
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link" href="/chart/miles-week-vehicle">
+                                        <span class="nav-main-link-name">Miles Per Week (Vehicle)</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-main-item @if(request()->segment(2) == 'mpg-week-vehicle'){{ 'open' }}@endif">
+                            <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
+                                <i class="nav-main-link-icon fas fa-chart-line"></i>
+                                <span class="nav-main-link-name">MPG</span>
+                            </a>
+                            <ul class="nav-main-submenu">
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link" href="/chart/mpg-week-vehicle">
+                                        <span class="nav-main-link-name">MPG Per Week (Vehicle)</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-main-item @if(in_array(request()->segment(2), ['total-fuelcost-week', 'fuelcost-week-vehicle'])){{ 'open' }}@endif">
+                            <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
+                                <i class="nav-main-link-icon fas fa-gas-pump"></i>
+                                <span class="nav-main-link-name">Fuel Cost</span>
+                            </a>
+                            <ul class="nav-main-submenu">
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link" href="/chart/total-fuelcost-week">
+                                        <span class="nav-main-link-name">Cost Per Week (Total)</span>
+                                    </a>
+                                </li>
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link" href="/chart/fuelcost-week-vehicle">
+                                        <span class="nav-main-link-name">Cost Per Week (Vehicle)</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                @endcan
             </ul>
         </div>
         <!-- END Side Navigation -->
     </nav>
     <!-- END Sidebar -->
+
     <!-- Header -->
     <header  id="page-header" >
         <!-- Header Content -->

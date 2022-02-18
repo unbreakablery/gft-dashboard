@@ -114,7 +114,7 @@
 jQuery(function($){
     $(document).ready(function() {
         $('button#back-to-persons').click(function() {
-            location.href = "/scorecards";
+            location.href = "/drivers/scorecards";
         });
     });
 });

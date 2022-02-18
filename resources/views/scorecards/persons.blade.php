@@ -46,7 +46,7 @@
                             <img class="img-avatar img-avatar48" src="{{ asset('/media/photos/drivers/' . $person->photo) }}" alt="">
                         </td>
                         <td class="font-w600 font-size-sm">
-                            <a href="/scorecards/{{ $person->id }}">{{ $person->name }}</a>
+                            <a href="/drivers/scorecards/{{ $person->id }}">{{ $person->name }}</a>
                         </td>
                         <td class="d-none d-lg-table-cell font-w600 font-size-sm">{{ $person->email }}</td>
                         <td class="text-center">
@@ -72,6 +72,10 @@
                         </td>
                     </tr>
                 @endforeach
+                @else
+                <tr>
+                    <td class="text-center" colspan="10">No Drivers</td>
+                </tr>
                 @endif    
                 </tbody>
             </table>
@@ -85,7 +89,7 @@
 jQuery(function($){
     $(document).ready(function() {
         $('button.view-scorecard').click(function() {
-            location.href = "/scorecards/" + $(this).data('id');
+            location.href = "/drivers/scorecards/" + $(this).data('id');
         });
         $('button.send-email').click(function() {
             let id = $(this).data('id');

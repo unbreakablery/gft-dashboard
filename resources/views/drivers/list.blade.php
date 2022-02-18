@@ -13,7 +13,7 @@
         <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
             <h1 class="d-flex flex-sm-fill h3 my-2 text-primary align-items-center font-w700">
                 <span class="item item-circle bg-primary-lighter mr-sm-3">
-                    <i class="fa fa-users text-primary"></i>
+                    <i class="fas fa-user-tie text-primary"></i>
                 </span>
                 <span class="">Drivers</span>
             </h1>

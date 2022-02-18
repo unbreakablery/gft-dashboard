@@ -64,9 +64,13 @@ Route::middleware(['auth:sanctum', 'verified'])->get('user/remove/{id}', [UserCo
     return route('login');
 })->name('user-remove');
 
-Route::middleware(['auth:sanctum', 'verified'])->get('upload/{type}', [UploadDataController::class, 'index'], function () {
+Route::middleware(['auth:sanctum', 'verified'])->get('drivers/upload/{type}', [UploadDataController::class, 'index'], function () {
     return route('login');
 })->name('upload');
+
+Route::middleware(['auth:sanctum', 'verified'])->get('data/upload/{type}', [UploadDataController::class, 'index'], function () {
+    return route('login');
+})->name('data-upload');
 
 Route::middleware(['auth:sanctum', 'verified'])->post('upload/statement', [UploadDataController::class, 'upload_statement'], function () {
     return route('login');
@@ -140,11 +144,11 @@ Route::middleware(['auth:sanctum', 'verified'])->post('chart/total-revenue-week'
     return route('login');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('scorecards', [ScorecardsController::class, 'get_persons'], function () {
+Route::middleware(['auth:sanctum', 'verified'])->get('drivers/scorecards', [ScorecardsController::class, 'get_persons'], function () {
     return route('login');
 })->name('persons');
 
-Route::middleware(['auth:sanctum', 'verified'])->get('scorecards/{id}', [ScorecardsController::class, 'get_scorecard'], function () {
+Route::middleware(['auth:sanctum', 'verified'])->get('drivers/scorecards/{id}', [ScorecardsController::class, 'get_scorecard'], function () {
     return route('login');
 })->name('scorecard');
 
