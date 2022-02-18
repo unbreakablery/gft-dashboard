@@ -54,14 +54,14 @@
                     </a>
                 </li>
                 @endcan
-                @can('manage-task')
+                
                 <li class="nav-main-item">
                     <a class="nav-main-link" href="/task/list">
                         <i class="nav-main-link-icon fa fa-tasks"></i>
                         <span class="nav-main-link-name">My Tasks</span>
                     </a>
                 </li>
-                @endcan
+                
                 @can('manage-gf-statement')
                 <li class="nav-main-item">
                     <a class="nav-main-link" href="/data/upload/statement">

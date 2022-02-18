@@ -69,7 +69,7 @@ class TaskController extends Controller
 
     public function list(Request $request)
     {
-        $this->authorize('manage-task');
+        // $this->authorize('manage-task');
 
         $user = Auth::user();
         
@@ -115,7 +115,7 @@ class TaskController extends Controller
 
     public function getTask(Request $request)
     {
-        $this->authorize('manage-task');
+        // $this->authorize('manage-task');
 
         $id = $request->input('id');
         $task = Task::with('creator')->with('owner')->find($id);
@@ -128,7 +128,7 @@ class TaskController extends Controller
 
     public function getAddPage(Request $request)
     {
-        $this->authorize('manage-task');
+        // $this->authorize('manage-task');
         
         $user = Auth::user();
         $users = $this->getUsersByCompany($user);
@@ -145,7 +145,7 @@ class TaskController extends Controller
 
     public function editTask(Request $request)
     {
-        $this->authorize('manage-task');
+        // $this->authorize('manage-task');
 
         $id = $request->route()->parameter('id');
 
@@ -169,7 +169,7 @@ class TaskController extends Controller
 
     public function saveTask(Request $request)
     {
-        $this->authorize('manage-task');
+        // $this->authorize('manage-task');
 
         if (!$request->has('name') || !$request->has('recurring')) {
             $request->session()->flash('error', "Sorry, your input not validation! Please check your input.");
@@ -284,7 +284,7 @@ class TaskController extends Controller
 
     public function removeTask(Request $request)
     {
-        $this->authorize('manage-task');
+        // $this->authorize('manage-task');
 
         $id = $request->route()->parameter('id');
 
