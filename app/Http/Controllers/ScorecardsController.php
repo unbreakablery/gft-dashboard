@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Mail;
 
 use App\Models\Persons;
 use App\Models\Scorecards;
 use App\Models\Person_Photo;
-use DB;
-use File;
 
-use DateTime;
-
-use Illuminate\Http\Request;
 use App\Mail\ScorecardsMail;
-use Illuminate\Support\Facades\Mail;
-
 
 class ScorecardsController extends Controller
 {   

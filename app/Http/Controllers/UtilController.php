@@ -7,19 +7,13 @@ use Illuminate\Http\Request;
 use App\Models\External_Links;
 
 use App\Imports\ExternalLinksImport;
-
 use App\Exports\HistoricalDataExport;
-
 use Maatwebsite\Excel\Facades\Excel;
 
-use DB;
 use stdClass;
 
 class UtilController extends Controller
 {   
-    //last weeks to show on charts
-    private $limit = 6;
-
     public function get_ext_links() 
     {
         $ext_links = External_Links::all();
@@ -27,6 +21,7 @@ class UtilController extends Controller
             'ext_links' => $ext_links
         ]);
     }
+
     public function get_ext_link(Request $request)
     {
         $id = $request->input('id');
@@ -49,6 +44,7 @@ class UtilController extends Controller
             ]);
         }
     }
+
     public function save_ext_link(Request $request)
     {
         $link = new stdClass();
@@ -92,6 +88,7 @@ class UtilController extends Controller
             }
         }
     }
+
     public function edit_ext_link(Request $request)
     {
         $id = $request->route()->parameter('id');
@@ -111,6 +108,7 @@ class UtilController extends Controller
             ]);
         }
     }
+
     public function remove_ext_link(Request $request)
     {
         $id = $request->route()->parameter('id');
@@ -121,12 +119,14 @@ class UtilController extends Controller
         $request->session()->flash('success', 'Was removed successfully ! (Link #: ' . $id . ')');
         return redirect('util/ext-links');
     }
+
     public function truncate_ext_links(Request $request)
     {
         External_Links::truncate();
         $request->session()->flash('success', 'Was truncated successfully ! (All Links)');
         return redirect('util/ext-links');
     }
+
     public function upload_ext_links(Request $request)
     {
         $file = $request->file('upload-file');
@@ -144,6 +144,7 @@ class UtilController extends Controller
         }
         return redirect('util/ext-links');
     }
+
     public function download_data(Request $request)
     {
         $search = new stdClass();
@@ -157,6 +158,7 @@ class UtilController extends Controller
         return Excel::download($exports, 'HD_WK' . $search->from_week_num . '-' . $search->from_year_num 
                                         . '_WK' . $search->to_week_num . '-' . $search->to_year_num . '.xlsx');
     }
+
     public function view_data(Request $request)
     {
         $search = new stdClass();

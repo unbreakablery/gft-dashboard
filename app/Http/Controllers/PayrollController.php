@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use App\Models\Linehaul_Drivers;
 use App\Models\Linehaul_Trips;
 use App\Models\FixedRateSetting;
-use DateTime;
-use DB;
 
 class PayrollController extends Controller
 {

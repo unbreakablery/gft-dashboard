@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Linehaul_Trips;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class ChartDataController extends Controller
 {

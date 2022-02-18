@@ -3,21 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 
 use App\Models\Fleet;
 use App\Models\SignImage;
-use DB;
-use DateTime;
-use Redirect;
-use Storage;
-
-use App\Imports\FleetsImport;
-use Maatwebsite\Excel\Facades\Excel;
-
-use PDF;
 
 use App\Mail\MMRMail;
-use Illuminate\Support\Facades\Mail;
+use App\Imports\FleetsImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade as PDF;
+
+use DateTime;
 
 class FleetController extends Controller
 {

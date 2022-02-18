@@ -3,18 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Auth\Factory as Auth;
-use DateTime;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Linehaul_Trips;
 use App\Models\Fuel_Purchases;
 use App\Models\Linehaul_Drivers;
 use App\Models\Other_Settlement_Adjustments;
 use App\Models\Tractor_Repairs_Misc;
 use App\Models\Person_Photo;
-use DB;
 
 use App\Imports\ScorecardsImport;
 use Maatwebsite\Excel\Facades\Excel;
+
+use DateTime;
 
 class UploadDataController extends Controller
 {   
@@ -470,9 +471,8 @@ class UploadDataController extends Controller
         } else {
             $request->session()->flash('error', 'Please choose a file to submit.');
         }
-        return view('upload.scorecards', [
-            
-        ]);
+        
+        return redirect('/drivers/upload/scorecards');
     }
 
     public function check_st(Request $request)

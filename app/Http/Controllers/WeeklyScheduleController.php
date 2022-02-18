@@ -3,16 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-use App\Imports\ScheduleImport;
-use Maatwebsite\Excel\Facades\Excel;
+use illuminate\support\Facades\Redirect;
 
 use App\Models\WeeklySchedule;
 use App\Models\Linehaul_Drivers;
 
+use App\Imports\ScheduleImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Twilio\Rest\Client;
-
-use Redirect;
 
 class WeeklyScheduleController extends Controller
 {
@@ -395,7 +393,7 @@ class WeeklyScheduleController extends Controller
         $from = str_replace('+', '', $request->input('From'));
         $body = $request->input('Body');
         $response = (strpos($request->input('Body'), '1') === FALSE) ? ((strpos($request->input('Body'), '2') === FALSE) ? 0 : 2) : 1;
-        // \Log::info($from . ' - ' . $body);
+        
         $s = WeeklySchedule::whereRaw(
                                     "driver_phone = ? AND CONCAT(year_num, week_num) = (SELECT MAX(CONCAT(year_num, week_num)) FROM weekly_schedule WHERE driver_phone = ?)",
                                     [$from, $from])
