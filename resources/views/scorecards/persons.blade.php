@@ -29,12 +29,12 @@
                         </th>
                         <th class="text-left">Name</th>
                         <th class="d-none d-lg-table-cell text-center">Email</th>
-                        <th class="text-center" style="">FedEX ID</th>
-                        <th class="d-none d-md-table-cell text-center" style="">Start Date</th>
-                        <th class="d-none d-md-table-cell text-center" style="">Birth Date</th>
-                        <th class="d-none d-md-table-cell text-center" style="">MEC</th>
-                        <th class="d-none d-md-table-cell text-center" style="">MVR</th>
-                        <th class="d-none d-md-table-cell text-center" style="">COV</th>
+                        <th class="text-center">FedEX ID</th>
+                        <th class="d-none d-md-table-cell text-center">Start Date</th>
+                        <th class="d-none d-md-table-cell text-center">Birth Date</th>
+                        <th class="d-none d-md-table-cell text-center">MEC</th>
+                        <th class="d-none d-md-table-cell text-center">MVR</th>
+                        <th class="d-none d-md-table-cell text-center">COV</th>
                         <th class="text-center" style="width: 100px;">Actions</th>
                     </tr>
                 </thead>
