@@ -54,12 +54,12 @@
                                         <td class="font-w800 text-right" style="width: 20%;">Recurring<span class="text-danger">*</span> : </td>
                                         <td class="text-left" style="width: 30%;">
                                             <select name="recurring" id="recurring" class="form-control" required>
+                                                <option value="No" @if (isset($task) && ($task->recurring == "No")) {{ __('selected') }} @elseif (old('recurring') == "No") {{ __('selected') }} @endif>No</option>    
                                                 <option value="Yes" @if (isset($task) && ($task->recurring == "Yes")) {{ __('selected') }} @elseif (old('recurring') == "Yes") {{ __('selected') }} @endif>Yes</option>
-                                                <option value="No" @if (isset($task) && ($task->recurring == "No")) {{ __('selected') }} @elseif (old('recurring') == "No") {{ __('selected') }} @endif>No</option>
                                             </select>
                                         </td>
                                     </tr>
-                                    <tr class="interval @if (isset($task) && $task->recurring == 'No') {{ 'd-none' }} @endif">
+                                    <tr class="interval @if (!isset($task) || (isset($task) && $task->recurring == 'No')) {{ 'd-none' }} @endif">
                                         <td class="font-w800 text-right" style="width: 20%;">Interval (Days): </td>
                                         <td class="text-left" style="width: 30%;">
                                             <input type="number" 
@@ -70,7 +70,7 @@
                                             />
                                         </td>
                                     </tr>
-                                    <tr class="from-date @if (isset($task) && $task->recurring == 'No') {{ 'd-none' }} @endif">
+                                    <tr class="from-date @if (!isset($task) || (isset($task) && $task->recurring == 'No')) {{ 'd-none' }} @endif">
                                         <td class="font-w800 text-right" style="width: 20%;">From Date : </td>
                                         <td class="text-left" style="width: 30%;">
                                             <input type="text" 
@@ -85,7 +85,7 @@
                                             />
                                         </td>
                                     </tr>
-                                    <tr class="to-date @if (isset($task) && $task->recurring == 'No') {{ 'd-none' }} @endif">
+                                    <tr class="to-date @if (!isset($task) || (isset($task) && $task->recurring == 'No')) {{ 'd-none' }} @endif">
                                         <td class="font-w800 text-right" style="width: 20%;">To Date : </td>
                                         <td class="text-left" style="width: 30%;">
                                             <input type="text" 
@@ -100,7 +100,7 @@
                                             />
                                         </td>
                                     </tr>
-                                    <tr class="due-date @if (!isset($task) || (isset($task) && $task->recurring == 'Yes')) {{ 'd-none' }} @endif">
+                                    <tr class="due-date @if (isset($task) && $task->recurring == 'Yes') {{ 'd-none' }} @endif">
                                         <td class="font-w800 text-right" style="width: 20%;">Due Date : </td>
                                         <td class="text-left" style="width: 30%;">
                                             <input type="text" 
