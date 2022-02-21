@@ -28,6 +28,7 @@ class CreateTractorRepairsMiscTable extends Migration
             $table->float('repair_misc_amt', 8, 4);
             $table->float('auth_chgbk_arrears', 8, 4);
             $table->float('auth_chgbk_refund', 8, 4);
+            $table->integer('company_id');
             //$table->timestamps();
         });
     }

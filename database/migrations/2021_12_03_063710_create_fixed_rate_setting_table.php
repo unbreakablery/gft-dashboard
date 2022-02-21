@@ -18,6 +18,7 @@ class CreateFixedRateSettingTable extends Migration
             $table->float('from_miles', 8, 4);
             $table->float('to_miles', 8, 4);
             $table->float('fixed_rate', 8, 4);
+            $table->integer('company_id');
             $table->timestamps();
         });
     }

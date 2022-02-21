@@ -27,6 +27,7 @@ class CreateScorecardsTable extends Migration
             $table->integer('q2');
             $table->integer('q3');
             $table->integer('q4');
+            $table->integer('company_id');
             //$table->timestamps();
         });
     }

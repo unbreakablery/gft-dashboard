@@ -41,6 +41,7 @@ class CreateWeeklyScheduleTable extends Migration
             $table->string('fri_tractor_id')->nullable();
             $table->tinyInteger('sent_sms')->default(0);
             $table->tinyInteger('response')->default(0);
+            $table->integer('company_id');
         });
     }
 

@@ -38,6 +38,7 @@ class CreateLinehaulTripsTable extends Migration
             $table->float('daily_gross_amt', 8, 4);
             $table->char('driver_1', 255);
             $table->char('driver_2', 255);
+            $table->integer('company_id');
             //$table->timestamps();
         });
     }

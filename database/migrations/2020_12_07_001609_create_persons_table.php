@@ -22,6 +22,7 @@ class CreatePersonsTable extends Migration
             $table->date('mec');
             $table->date('mvr');
             $table->date('cov');
+            $table->integer('company_id');
             //$table->timestamps();
         });
     }

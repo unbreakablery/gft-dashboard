@@ -28,6 +28,7 @@ class CreateFuelPurchasesTable extends Migration
             $table->float('auth_chgbk_arrears', 8, 4);
             $table->float('auth_chgbk_refund', 8, 4);
             $table->float('auth_chgbk_net', 8, 4);
+            $table->integer('company_id');
             //$table->timestamps();
         });
     }

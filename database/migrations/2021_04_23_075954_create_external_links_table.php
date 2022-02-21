@@ -18,6 +18,7 @@ class CreateExternalLinksTable extends Migration
             $table->char('name', 255);
             $table->char('url', 255);
             $table->text('description');
+            $table->integer('company_id');
             // $table->timestamps();
         });
     }

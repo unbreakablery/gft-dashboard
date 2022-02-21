@@ -30,7 +30,7 @@ class CreateFleetsTable extends Migration
             $table->float('book_value', 20, 4)->default(0);
             $table->string('vedr')->nullable();
             $table->string('eld')->nullable();
-            
+            $table->integer('company_id');
             //$table->timestamps();
         });
     }

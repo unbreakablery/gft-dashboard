@@ -17,6 +17,7 @@ class CreatePersonPhotoTable extends Migration
             $table->id();
             $table->char('name', 255);
             $table->char('ext', 50);
+            $table->integer('company_id');
             //$table->timestamps();
         });
     }

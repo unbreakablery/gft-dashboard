@@ -21,6 +21,7 @@ class CreateOtherSettlementAdjustmentsTable extends Migration
             $table->char('type', 255);
             $table->char('description', 255);
             $table->float('amt', 8, 4);
+            $table->integer('company_id');
             //$table->timestamps();
         });
     }
