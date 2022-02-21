@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Scopes\CompanyScope;
+
 class Linehaul_Trips extends Model
 {
     use HasFactory;
@@ -34,8 +36,19 @@ class Linehaul_Trips extends Model
         'flat_rate',
         'daily_gross_amt',
         'driver_1',
-        'driver_2'
+        'driver_2',
+        'company_id'
     ];
 
     public $timestamps = false;
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope(new CompanyScope);
+    }
 }

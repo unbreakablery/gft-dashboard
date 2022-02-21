@@ -80,4 +80,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserTask::class, 'user_id')->with('task');
     }
+
+    public function scopeOfCompany($query, $company_id)
+    {
+        if ($company_id) {
+            return $query->where('company_id', $company_id);
+        }
+    }
 }

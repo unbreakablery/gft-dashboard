@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Linehaul_Drivers;
+use App\Scopes\CompanyScope;
 
 class WeeklySchedule extends Model
 {
@@ -33,7 +34,8 @@ class WeeklySchedule extends Model
         'thursday',
         'friday',
         'sent_sms',
-        'response'
+        'response',
+        'company_id'
     ];
 
     public $timestamps = false;
@@ -41,5 +43,15 @@ class WeeklySchedule extends Model
     public function driver()
     {
         return $this->hasOne(Linehaul_Drivers::class, 'driver_id', 'driver_id');
+    }
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope(new CompanyScope);
     }
 }

@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Scopes\CompanyScope;
+
 class Other_Settlement_Adjustments extends Model
 {
     use HasFactory;
@@ -17,8 +19,19 @@ class Other_Settlement_Adjustments extends Model
         'date',
         'type',
         'description',
-        'amt'
+        'amt',
+        'company_id'
     ];
 
     public $timestamps = false;
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope(new CompanyScope);
+    }
 }

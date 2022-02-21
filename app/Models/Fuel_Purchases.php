@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Scopes\CompanyScope;
+
 class Fuel_Purchases extends Model
 {
     use HasFactory;
@@ -24,8 +26,19 @@ class Fuel_Purchases extends Model
         'pur_amt',
         'auth_chgbk_arrears',
         'auth_chgbk_refund',
-        'auth_chgbk_net'
+        'auth_chgbk_net',
+        'company_id'
     ];
 
     public $timestamps = false;
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope(new CompanyScope);
+    }
 }

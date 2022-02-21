@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Scopes\CompanyScope;
+
 class Fleet extends Model
 {
     use HasFactory;
@@ -26,8 +28,19 @@ class Fleet extends Model
         'domicile_email',
         'book_value',
         'vedr',
-        'eld'
+        'eld',
+        'company_id'
     ];
 
     public $timestamps = false;
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope(new CompanyScope);
+    }
 }

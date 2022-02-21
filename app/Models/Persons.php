@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Scopes\CompanyScope;
+
 class Persons extends Model
 {
     use HasFactory;
@@ -19,8 +21,19 @@ class Persons extends Model
         'mec',
         'mvr',
         'cov',
-        'email'
+        'email',
+        'company_id'
     ];
 
     public $timestamps = false;
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope(new CompanyScope);
+    }
 }
