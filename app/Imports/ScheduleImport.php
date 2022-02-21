@@ -13,6 +13,8 @@ use Maatwebsite\Excel\Events\BeforeSheet;
 use App\Models\WeeklySchedule;
 use App\Models\Linehaul_Drivers;
 
+use Illuminate\Support\Facades\Auth;
+
 class ScheduleImport implements ToArray, WithEvents
 {
     public $sheetNames;
@@ -94,7 +96,8 @@ class ScheduleImport implements ToArray, WithEvents
                     'thu_tractor_id'    => $thu_tractor_id,
                     'thu_start_time'    => $thu_start_time,
                     'fri_tractor_id'    => $fri_tractor_id,
-                    'fri_start_time'    => $fri_start_time
+                    'fri_start_time'    => $fri_start_time,
+                    'company_id'        => Auth::user()->company_id,
                 ]);
             } else {
                 // update data
@@ -133,7 +136,8 @@ class ScheduleImport implements ToArray, WithEvents
                 Linehaul_Drivers::insert([
                     'driver_id'     => $driver_id,
                     'driver_name'   => $driver_name,
-                    'phone'         => $driver_phone
+                    'phone'         => $driver_phone,
+                    'company_id'    => Auth::user()->company_id,
                 ]);
             } else {
                 // update driver info

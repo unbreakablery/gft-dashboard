@@ -3,6 +3,8 @@
 namespace App\Imports;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+
 use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
@@ -65,7 +67,8 @@ class FleetsImport implements ToArray, WithEvents
                     'qiv'               => $qiv,
                     'bit'               => $bit,
                     'domicile'          => $domicile,
-                    'domicile_email'    => $domicile_email
+                    'domicile_email'    => $domicile_email,
+                    'company_id'        => Auth::user()->company_id,
                 ]);
             } else {
                 // update data

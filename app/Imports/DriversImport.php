@@ -3,6 +3,8 @@
 namespace App\Imports;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+
 use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
@@ -48,9 +50,9 @@ class DriversImport implements ToArray, WithEvents
                     'phone'             => $phone,
                     'license'           => $license,
                     'address'           => $address,
-                    'fixed_rate'        => $fixed_rate,
                     'price_per_mile'    => $price_per_mile,
-                    'work_status'       => $work_status
+                    'work_status'       => $work_status,
+                    'company_id'        => Auth::user()->company_id,
                 ]);
             } else {
                 // update data
@@ -61,7 +63,6 @@ class DriversImport implements ToArray, WithEvents
                 $d->phone           = $phone;
                 $d->license         = $license;
                 $d->address         = $address;
-                $d->fixed_rate      = $fixed_rate;
                 $d->price_per_mile  = $price_per_mile;
                 $d->work_status     = $work_status;
                 

@@ -3,6 +3,8 @@
 namespace App\Imports;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+
 use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
@@ -58,14 +60,15 @@ class ScorecardsImport implements ToArray, WithEvents
                     ->delete();
         }
         $person_id = Persons::insertGetId([
-                                            'name'      => $name,
-                                            'fedex_id'  => $fedex_id,
-                                            'birth'     => $birth,
-                                            'drug_test' => $drug_test,
-                                            'mec'       => $mec,
-                                            'mvr'       => $mvr,
-                                            'cov'       => $cov,
-                                            'email'     => $email
+                                            'name'          => $name,
+                                            'fedex_id'      => $fedex_id,
+                                            'birth'         => $birth,
+                                            'drug_test'     => $drug_test,
+                                            'mec'           => $mec,
+                                            'mvr'           => $mvr,
+                                            'cov'           => $cov,
+                                            'email'         => $email,
+                                            'company_id'    => Auth::user()->company_id,
                             ]);
         
         $start_offset = 9;
@@ -84,18 +87,19 @@ class ScorecardsImport implements ToArray, WithEvents
             $q3 = $array[$i][56];
             $q4 = $array[$i][57];
             Scorecards::insert([
-                                    'person_id' => $person_id,
-                                    'type'      => $type,
-                                    'wk_47'     => $wk_47,
-                                    'wk_48'     => $wk_48,
-                                    'wk_49'     => $wk_49,
-                                    'wk_50'     => $wk_50,
-                                    'wk_51'     => $wk_51,
-                                    'wk_52'     => $wk_52,
-                                    'q1'        => $q1,
-                                    'q2'        => $q2,
-                                    'q3'        => $q3,
-                                    'q4'        => $q4
+                                    'person_id'     => $person_id,
+                                    'type'          => $type,
+                                    'wk_47'         => $wk_47,
+                                    'wk_48'         => $wk_48,
+                                    'wk_49'         => $wk_49,
+                                    'wk_50'         => $wk_50,
+                                    'wk_51'         => $wk_51,
+                                    'wk_52'         => $wk_52,
+                                    'q1'            => $q1,
+                                    'q2'            => $q2,
+                                    'q3'            => $q3,
+                                    'q4'            => $q4,
+                                    'company_id'    => Auth::user()->company_id,
                                 ]);
         }
     }

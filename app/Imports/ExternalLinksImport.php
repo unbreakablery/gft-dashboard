@@ -12,6 +12,8 @@ use Maatwebsite\Excel\Events\BeforeSheet;
 
 use App\Models\External_Links;
 
+use Illuminate\Support\Facades\Auth;
+
 class ExternalLinksImport implements ToArray, WithEvents
 {
     public $sheetNames;
@@ -28,9 +30,10 @@ class ExternalLinksImport implements ToArray, WithEvents
             $url = str_replace(" ", "", $array[$i][1]);
             $description = $array[$i][2];
             External_Links::insert([
-                                        'name' => $name,
-                                        'url' => $url,
-                                        'description' => $description
+                                        'name'          => $name,
+                                        'url'           => $url,
+                                        'description'   => $description,
+                                        'company_id'    => Auth::user()->company_id
                                     ]);
         }
     }
