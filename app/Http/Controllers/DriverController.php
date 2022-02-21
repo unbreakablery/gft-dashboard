@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Linehaul_Drivers;
 
@@ -13,6 +14,8 @@ class DriverController extends Controller
 {
     public function getDrivers(Request $request)
     {
+        $this->authorize('manage-driver');
+
         $status = ['active' => 1, 'inactive' => 0];
         $work_status = $request->route()->parameter('status');
         
@@ -26,8 +29,11 @@ class DriverController extends Controller
         
         return view('drivers.list', compact('drivers'));
     }
+
     public function getDriver(Request $request)
     {
+        $this->authorize('manage-driver');
+
         $id = $request->input('id');
         $driver = Linehaul_Drivers::find($id);
         if (!$driver) {
@@ -42,23 +48,26 @@ class DriverController extends Controller
             ]);
         }
     }
+
     public function editDriver(Request $request)
     {
+        $this->authorize('manage-driver');
+        
         $id = $request->route()->parameter('id');
         $driver = Linehaul_Drivers::find($id);
         if (!$driver) {
-            return response()->json([
-                'type' => 'failed',
-                'message' => "Can't find the driver info by id = {$id}"
-            ]);
+            return redirect('/drivers')->with('error', "Can't find the driver info by id = {$id}");
         } else {
             return view('drivers.edit', [
                 'driver' => $driver
             ]);
         }
     }
+
     public function removeDriver(Request $request)
     {
+        $this->authorize('manage-driver');
+
         $id = $request->route()->parameter('id');
         $res = Linehaul_Drivers::find($id)->delete();
 
@@ -69,14 +78,18 @@ class DriverController extends Controller
         }
         return redirect('drivers');
     }
+
     public function saveDriver(Request $request)
     {
+        $this->authorize('manage-driver');
+
         $id = $request->input('id');
 
         if ($id) {
             $driver = Linehaul_Drivers::find($id);
         } else {
             $driver = new Linehaul_Drivers();
+            $driver->company_id = Auth::user()->company_id;
         }
 
         $driver->driver_id          = $request->input('driver_id');
@@ -86,7 +99,7 @@ class DriverController extends Controller
         $driver->address            = $request->input('address');
         $driver->price_per_mile     = $request->input('price_per_mile');
         $driver->work_status        = $request->input('work_status');
-
+        
         $existed = Linehaul_Drivers::where('driver_id', $request->input('driver_id'))
                                     ->get()
                                     ->all();
@@ -102,8 +115,11 @@ class DriverController extends Controller
             return view('drivers.edit', compact('driver', $driver));
         }        
     }
+
     public function removeBulkDrivers(Request $request)
     {
+        $this->authorize('manage-driver');
+
         $checkedDrivers = $request->input('checked-drivers');
         $res = Linehaul_Drivers::destroy($checkedDrivers);
         
@@ -114,8 +130,11 @@ class DriverController extends Controller
         }
         return redirect('drivers');
     }
+
     public function uploadDrivers(Request $request)
     {
+        $this->authorize('manage-driver');
+        
         $file = $request->file('upload-file');
         
         if ($file) {

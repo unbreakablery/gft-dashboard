@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\External_Links;
 
@@ -16,7 +17,10 @@ class UtilController extends Controller
 {   
     public function get_ext_links() 
     {
+        $this->authorize('manage-global-setting');
+
         $ext_links = External_Links::all();
+
         return view('util.ext_links.list', [
             'ext_links' => $ext_links
         ]);
@@ -24,29 +28,30 @@ class UtilController extends Controller
 
     public function get_ext_link(Request $request)
     {
+        $this->authorize('manage-global-setting');
+
         $id = $request->input('id');
-        $links = External_Links::where([
-                                        'id' => $id
-                                    ])
-                                ->get();
-                            
-        if ($links == null || count($links) != 1) {
+
+        $link = External_Links::find($id);
+        
+        if (!$link) {
             return response()->json([
                 'type' => 'failed',
                 'message' => "Can't find the link info by id = {$id}"
             ]);
         } else {
-            $link = $links[0];
             $link->description = nl2br(e($link->description));
             return response()->json([
                 'type' => 'success',
-                'link' => $links[0]
+                'link' => $link
             ]);
         }
     }
 
     public function save_ext_link(Request $request)
     {
+        $this->authorize('manage-global-setting');
+
         $link = new stdClass();
         $link->id           = $request->input('id');
         $link->name         = $request->input('name');
@@ -81,7 +86,8 @@ class UtilController extends Controller
                 $link_id = External_Links::insertGetId([
                     'name'          => $link->name,
                     'url'           => $link->url,
-                    'description'   => $link->description
+                    'description'   => $link->description,
+                    'company_id'    => Auth::user()->company_id
                 ]);
                 $request->session()->flash('success', 'Was added successfully ! (Link #: ' . $link_id . ')');
                 return redirect('util/ext-links');
@@ -91,18 +97,15 @@ class UtilController extends Controller
 
     public function edit_ext_link(Request $request)
     {
+        $this->authorize('manage-global-setting');
+
         $id = $request->route()->parameter('id');
-        $links = External_Links::where([
-                                        'id' => $id
-                                    ])
-                                ->get();
-        if ($links == null || count($links) != 1) {
-            return response()->json([
-                'type' => 'failed',
-                'message' => "Can't find the link info by id = {$id}"
-            ]);
+
+        $link = External_Links::find($id);
+        
+        if (!$link) {
+            return redirect('/util/ext-links')->with('error', "Can't find the link info by id = {$id}");
         } else {
-            $link = $links[0];
             return view('util.ext_links.link', [
                 'link' => $link
             ]);
@@ -111,6 +114,8 @@ class UtilController extends Controller
 
     public function remove_ext_link(Request $request)
     {
+        $this->authorize('manage-global-setting');
+
         $id = $request->route()->parameter('id');
         External_Links::where([
                                 'id' => $id
@@ -122,19 +127,25 @@ class UtilController extends Controller
 
     public function truncate_ext_links(Request $request)
     {
-        External_Links::truncate();
+        $this->authorize('manage-global-setting');
+        
+        External_Links::whereNotNull('id')->delete();
+        
         $request->session()->flash('success', 'Was truncated successfully ! (All Links)');
         return redirect('util/ext-links');
     }
 
     public function upload_ext_links(Request $request)
     {
+        $this->authorize('manage-global-setting');
+
         $file = $request->file('upload-file');
         
         if ($file) {
             $file_name = $file->getClientOriginalName();
 
-            External_Links::truncate();
+            External_Links::whereNotNull('id')->delete();
+            
             $Imports = new ExternalLinksImport();
             $ts = Excel::import($Imports, $file);
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Linehaul_Drivers;
 use App\Models\Linehaul_Trips;
@@ -159,7 +160,6 @@ class PayrollController extends Controller
         $payroll->total_miles = $payroll->fr_miles + $payroll->other_miles;
         $payroll->total_price = $payroll->fr_price + $payroll->other_price;
 
-        // dd($payroll);
         return view('payroll.view', [
             'year_num'      => $this->year_num,
             'week_num'      => $this->week_num,
@@ -243,7 +243,7 @@ class PayrollController extends Controller
             return redirect()->route('get-rates');
         }
 
-        FixedRateSetting::truncate();
+        FixedRateSetting::whereNotNull('id')->delete();
 
         foreach ($fixed_rates as $idx => $fr) {
             $fm = $from_miles[$idx];
@@ -254,6 +254,7 @@ class PayrollController extends Controller
             $rate->from_miles = $fm;
             $rate->to_miles = $tm;
             $rate->fixed_rate = $fr;
+            $rate->company_id = Auth::user()->company_id;
 
             $rate->save();
         }

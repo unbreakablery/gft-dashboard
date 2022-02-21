@@ -41,9 +41,10 @@ class UserController extends Controller
         if (Auth::user()->role == 1) {
             return User::with('company')->with('permissions');
         } else {
-            return User::with('company')->with('permissions')
-                        ->where('role', '>=', 2)
-                        ->where('company_id', '=', Auth::user()->company_id);
+            return User::ofCompany(Auth::user()->company_id)
+                        ->with('company')
+                        ->with('permissions')
+                        ->where('role', '>=', 2);
         }
     }
 
@@ -54,15 +55,6 @@ class UserController extends Controller
         }
         
         return Permission::where('role', '>=', $role)->get()->all();
-    }
-
-    protected function getTasks($company_id = null)
-    {
-        if ($company_id == null) {
-            return Task::all();    
-        }
-        
-        return Task::where('company_id', '=', $company_id)->get()->all();
     }
 
     protected function isGetableUser($user)
@@ -156,8 +148,7 @@ class UserController extends Controller
         $companies = $this->getCompanies();
         $roles = $this->getRoles();
         $permissions = $this->getPermissions();
-        // $tasks = $this->getTasks();
-        
+                
         return view('user.user', compact('companies', 'roles', 'permissions'));
     }
 
@@ -307,8 +298,7 @@ class UserController extends Controller
         $roles = $this->getRoles();
 
         $permissions = $this->getPermissions($user->role);
-        // $tasks = $this->getTasks($user->company_id);
-        
+                
         return view('user.user', compact('user', 'companies', 'roles', 'permissions'));
     }
 
@@ -325,6 +315,13 @@ class UserController extends Controller
         }
         
         $res = $user->delete();
+
+        // delete user permissions
+        delete_permissions_by_user($id);
+
+        // delete user tasks and reset task creator & owner
+        delete_tasks_by_user($id);
+
         if ($res) {
             $request->session()->flash('success', 'User removed successfully. (ID: ' . $id . ')');
         } else {

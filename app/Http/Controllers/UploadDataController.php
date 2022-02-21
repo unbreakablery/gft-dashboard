@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Linehaul_Trips;
 use App\Models\Fuel_Purchases;
@@ -18,14 +19,14 @@ use Maatwebsite\Excel\Facades\Excel;
 use DateTime;
 
 class UploadDataController extends Controller
-{   
-    private function validateDate($date, $format = 'Y-m-d')
+{
+    protected function validateDate($date, $format = 'Y-m-d')
     {
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) === $date;
     }
 
-    private function formatMonth($date) 
+    protected function formatMonth($date) 
     {
         $array = explode('-', $date);
         if (count($array) == 3) {
@@ -50,7 +51,9 @@ class UploadDataController extends Controller
     }
 
     public function upload_statement(Request $request)
-    {   
+    {
+        $this->authorize('manage-gf-statement');
+        
         $file = $request->file('upload-file');
         if (null !== $request->get('selected-year')) {
             $year_num = $request->get('selected-year');
@@ -207,7 +210,8 @@ class UploadDataController extends Controller
                                         'flat_rate'         => $statement['flat_rate'],
                                         'daily_gross_amt'   => $statement['daily_gross_amt'],
                                         'driver_1'          => $statement['driver_1'],
-                                        'driver_2'          => $statement['driver_2']
+                                        'driver_2'          => $statement['driver_2'],
+                                        'company_id'        => Auth::user()->company_id,
                                     ]);
                                 }
                                 $cnt_linehaul_trips++;
@@ -250,7 +254,8 @@ class UploadDataController extends Controller
                                         'date'          => date('Y-m-d', strtotime($statement['date'])),
                                         'type'          => $statement['type'],
                                         'description'   => $statement['description'],
-                                        'amt'           => $statement['amt']
+                                        'amt'           => $statement['amt'],
+                                        'company_id'    => Auth::user()->company_id,
                                     ]);
                                 }
                                 $cnt_other_settlement_adjustments++;
@@ -312,7 +317,8 @@ class UploadDataController extends Controller
                                         'pur_amt'               => $statement['pur_amt'],
                                         'auth_chgbk_arrears'    => $statement['auth_chgbk_arrears'],
                                         'auth_chgbk_refund'     => $statement['auth_chgbk_refund'],
-                                        'auth_chgbk_net'        => $statement['auth_chgbk_net']
+                                        'auth_chgbk_net'        => $statement['auth_chgbk_net'],
+                                        'company_id'            => Auth::user()->company_id,
                                     ]);
                                 }
                                 $cnt_fuel_purchases++;
@@ -373,7 +379,8 @@ class UploadDataController extends Controller
                                                                     'description'           => $statement['description'],
                                                                     'auth_chgbk_arrears'    => $statement['auth_chgbk_arrears'],
                                                                     'auth_chgbk_refund'     => $statement['auth_chgbk_refund'],
-                                                                    'repair_misc_amt'       => $statement['repair_misc_amt']
+                                                                    'repair_misc_amt'       => $statement['repair_misc_amt'],
+                                                                    'company_id'            => Auth::user()->company_id,
                                                                 ]);
                                 }
                                 $cnt_tractor_repairs_msic++;
@@ -395,7 +402,8 @@ class UploadDataController extends Controller
                         } else {
                             Linehaul_Drivers::insert([
                                 'driver_id'     => $statement['driver_id'],
-                                'driver_name'   => $statement['driver_name']
+                                'driver_name'   => $statement['driver_name'],
+                                'company_id'    => Auth::user()->company_id,
                             ]);
                         }
                         $cnt_linehaul_drivers++;
@@ -426,6 +434,8 @@ class UploadDataController extends Controller
 
     public function upload_photo(Request $request)
     {
+        $this->authorize('manage-driver');
+
         $files = "";
 
         if($request->hasfile('upload-files')) {
@@ -438,13 +448,14 @@ class UploadDataController extends Controller
                 $files .= $name . ", ";
 
                 Person_Photo::where([
-                                        'name'  => $save_name,
-                                        'ext'   => $ext
+                                        'name'          => $save_name,
+                                        'ext'           => $ext
                                     ])
                             ->delete();
                 Person_Photo::insert([
-                                        'name'  => $save_name,
-                                        'ext'   => $ext
+                                        'name'          => $save_name,
+                                        'ext'           => $ext,
+                                        'company_id'    => Auth::user()->company_id,
                                     ]);
             }
             $request->session()->flash('status', 'Uploaded Files: ' . $files);
@@ -459,6 +470,8 @@ class UploadDataController extends Controller
 
     public function upload_scorecards(Request $request)
     {
+        $this->authorize('manage-driver');
+
         $file = $request->file('upload-file');
         
         if ($file) {
@@ -477,19 +490,16 @@ class UploadDataController extends Controller
 
     public function check_st(Request $request)
     {
+        $this->authorize('manage-gf-statement');
+
         $year = $request->input('year');
         $week = $request->input('week');
-        $trips = DB::select("
-                                SELECT 
-                                    year_num,
-                                    week_num,
-                                    trip_id
-                                FROM 
-                                    linehaul_trips
-                                WHERE
-                                    year_num = {$year} AND
-                                    week_num = {$week}
-                            ");
+        
+        $trips = Linehaul_Trips::where('year_num', $year)
+                                ->where('week_num', $week)
+                                ->get()
+                                ->all();
+
         if ($trips == null || count($trips) == 0) {
             return response()->json([
                 'type'  => 'failed',

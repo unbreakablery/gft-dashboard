@@ -46,7 +46,7 @@ class TaskController extends Controller
             return User::where('id', '!=', $user_id)->get();
         }
 
-        return User::where('company_id', '=', $company_id)
+        return User::ofCompany($company_id)
                     // ->where('role', '!=', '1')
                     // ->where('id', '!=', $user_id)
                     ->orWhere('role', '1')
@@ -288,7 +288,10 @@ class TaskController extends Controller
 
         $id = $request->route()->parameter('id');
 
-        $res = Task::find($id)->delete() && UserTask::where('task_id', '=', $id)->delete();
+        $res = Task::find($id)->delete();
+
+        // delete user tasks
+        delete_tasks_by_task($id);
         
         if ($res) {
             $request->session()->flash('success', 'Task removed successfully. (ID: ' . $id . ')');

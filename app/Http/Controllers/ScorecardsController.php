@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Persons;
 use App\Models\Scorecards;
@@ -17,6 +18,10 @@ class ScorecardsController extends Controller
 {   
     public function get_scorecard(Request $request)
     {
+        $this->authorize('manage-driver');
+        
+        $company_id = Auth::user()->company_id;
+
         $id = $request->route()->parameter('id');
         $persons = DB::select("
                                 SELECT 
@@ -38,8 +43,8 @@ class ScorecardsController extends Controller
                                     ELSE ''
                                 END) AS cov_color
                                 FROM persons AS p1
-                                LEFT JOIN person_photo AS p2 ON p2.name = p1.name
-                                WHERE p1.id = {$id}
+                                LEFT JOIN person_photo AS p2 ON p2.name = p1.name AND p2.company_id = {$company_id}
+                                WHERE p1.id = {$id} AND p1.company_id = {$company_id}
                             ");
         $person = $persons[0];
         
@@ -63,6 +68,10 @@ class ScorecardsController extends Controller
 
     public function get_persons() 
     {
+        $this->authorize('manage-driver');
+
+        $company_id = Auth::user()->company_id;
+
         $persons = DB::select("
                                 SELECT 
                                     p1.*,
@@ -83,9 +92,11 @@ class ScorecardsController extends Controller
                                         ELSE ''
                                     END) AS cov_color
                                 FROM persons AS p1
-                                LEFT JOIN person_photo AS p2 ON p2.name = p1.name
+                                LEFT JOIN person_photo AS p2 ON p2.name = p1.name AND p2.company_id = {$company_id}
+                                WHERE p1.company_id = {$company_id}
                                 ORDER BY p1.id
                             ");
+
         foreach ($persons as $person) {
             $person->drug_test = date("F j, Y", strtotime($person->drug_test));
             $person->birth = date("F j, Y", strtotime($person->birth));
@@ -105,10 +116,12 @@ class ScorecardsController extends Controller
 
     public function send_email(Request $request)
     {
+        $this->authorize('manage-driver');
+        
+        $company_id = Auth::user()->company_id;
+
         $id = $request->input('person_id');
         $email = $request->input('email');
-
-        //dd($id, $email);
 
         $persons = DB::select("
                                 SELECT 
@@ -130,8 +143,8 @@ class ScorecardsController extends Controller
                                     ELSE ''
                                 END) AS cov_color
                                 FROM persons AS p1
-                                LEFT JOIN person_photo AS p2 ON p2.name = p1.name
-                                WHERE p1.id = {$id}
+                                LEFT JOIN person_photo AS p2 ON p2.name = p1.name AND p2.company_id = {$company_id}
+                                WHERE p1.id = {$id} AND p1.company_id = {$company_id}
                             ");
         $person = $persons[0];
         
@@ -157,6 +170,8 @@ class ScorecardsController extends Controller
 
     public function remove_person(Request $request)
     {
+        $this->authorize('manage-driver');
+        
         $id = $request->route()->parameter('id');
 
         $name = Persons::where('id', $id)

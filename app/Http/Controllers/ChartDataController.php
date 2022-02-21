@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ChartDataController extends Controller
 {
     //last weeks to show on charts
-    private $limit = 6;
-    
-    public function total_miles_week(Request $request) {
+    protected $limit = 6;
+        
+    public function total_miles_week(Request $request)
+    {
+        $this->authorize('manage-kpi');
+
+        $company_id = Auth::user()->company_id;
+
         if (null !== $request->get('selected-year')) {
             $year_num = $request->get('selected-year');
         } else {
@@ -37,7 +43,8 @@ class ChartDataController extends Controller
                             WHERE
                                 year_num = {$year_num} AND
                                 week_num <= {$week_num} AND
-                                week_num > {$week_num} - {$limit}
+                                week_num > {$week_num} - {$limit} AND
+                                company_id = {$company_id}
                             GROUP BY year_num, week_num
                             ORDER BY year_num ASC, week_num ASC
                             LIMIT {$limit}");
@@ -64,7 +71,13 @@ class ChartDataController extends Controller
             'values'        => json_encode($values),
         ]);
     }
-    public function miles_week_driver(Request $request) {
+
+    public function miles_week_driver(Request $request)
+    {
+        $this->authorize('manage-kpi');
+
+        $company_id = Auth::user()->company_id;
+
         if (null !== $request->get('selected-year')) {
             $year_num = $request->get('selected-year');
         } else {
@@ -90,11 +103,12 @@ class ChartDataController extends Controller
                                 SUM(t.miles_qty) AS miles
                             FROM 
                                 linehaul_trips AS t
-                            LEFT JOIN linehaul_drivers AS d ON d.driver_id = t.driver_1
+                            LEFT JOIN linehaul_drivers AS d ON d.driver_id = t.driver_1 AND d.company_id = {$company_id}
                             WHERE
                                 t.year_num = {$year_num} AND
                                 t.week_num <= {$week_num} AND
-                                t.week_num > {$week_num} - {$limit}
+                                t.week_num > {$week_num} - {$limit} AND
+                                t.company_id = {$company_id}
                             GROUP BY t.year_num, t.week_num, t.driver_1
                             ORDER BY t.year_num ASC, t.week_num ASC");
         foreach ($weeks as $week) {
@@ -107,7 +121,13 @@ class ChartDataController extends Controller
             'limit'     => $limit
         ]);
     }
-    public function miles_week_vehicle(Request $request) {
+
+    public function miles_week_vehicle(Request $request)
+    {
+        $this->authorize('manage-kpi');
+
+        $company_id = Auth::user()->company_id;
+
         if (null !== $request->get('selected-year')) {
             $year_num = $request->get('selected-year');
         } else {
@@ -135,7 +155,8 @@ class ChartDataController extends Controller
                             WHERE
                                 year_num = {$year_num} AND
                                 week_num <= {$week_num} AND
-                                week_num > {$week_num} - {$limit}
+                                week_num > {$week_num} - {$limit} AND
+                                company_id = {$company_id}
                             GROUP BY year_num, week_num, vehicle
                             ORDER BY year_num ASC, week_num ASC");
         foreach ($weeks as $week) {
@@ -148,7 +169,13 @@ class ChartDataController extends Controller
             'limit'     => $limit
         ]);
     }
-    public function mpg_week_vehicle(Request $request) {
+
+    public function mpg_week_vehicle(Request $request)
+    {
+        $this->authorize('manage-kpi');
+
+        $company_id = Auth::user()->company_id;
+
         if (null !== $request->get('selected-year')) {
             $year_num = $request->get('selected-year');
         } else {
@@ -176,7 +203,8 @@ class ChartDataController extends Controller
                                 WHERE
                                     year_num = {$year_num} AND
                                     week_num <= {$week_num} AND
-                                    week_num > {$week_num} - {$limit}
+                                    week_num > {$week_num} - {$limit} AND
+                                    company_id = {$company_id}
                                 GROUP BY year_num, week_num, vehicle
                                 ORDER BY year_num ASC, week_num ASC");
         foreach ($week_miles as $week_mile) {
@@ -194,7 +222,8 @@ class ChartDataController extends Controller
                                 WHERE
                                     year_num = {$year_num} AND
                                     week_num <= {$week_num} AND
-                                    week_num > {$week_num} - {$limit}
+                                    week_num > {$week_num} - {$limit} AND
+                                    company_id = {$company_id}
                                 GROUP BY year_num, week_num, vehicle
                                 ORDER BY year_num ASC, week_num ASC");
         foreach ($week_fuels as $week_fuel) {
@@ -208,7 +237,13 @@ class ChartDataController extends Controller
             'limit'         => $limit
         ]);
     }
-    public function total_fuelcost_week(Request $request) {
+
+    public function total_fuelcost_week(Request $request)
+    {
+        $this->authorize('manage-kpi');
+
+        $company_id = Auth::user()->company_id;
+
         if (null !== $request->get('selected-year')) {
             $year_num = $request->get('selected-year');
         } else {
@@ -235,7 +270,8 @@ class ChartDataController extends Controller
                             WHERE
                                 year_num = {$year_num} AND
                                 week_num <= {$week_num} AND
-                                week_num > {$week_num} - {$limit}
+                                week_num > {$week_num} - {$limit} AND
+                                company_id = {$company_id}
                             GROUP BY year_num, week_num
                             ORDER BY year_num ASC, week_num ASC");
 
@@ -260,7 +296,13 @@ class ChartDataController extends Controller
             'week_num'      => $week_num
         ]);
     }
-    public function fuelcost_week_vehicle(Request $request) {
+
+    public function fuelcost_week_vehicle(Request $request)
+    {
+        $this->authorize('manage-kpi');
+
+        $company_id = Auth::user()->company_id;
+
         if (null !== $request->get('selected-year')) {
             $year_num = $request->get('selected-year');
         } else {
@@ -288,7 +330,8 @@ class ChartDataController extends Controller
                             WHERE
                                 year_num = {$year_num} AND
                                 week_num <= {$week_num} AND
-                                week_num > {$week_num} - {$limit}
+                                week_num > {$week_num} - {$limit} AND
+                                company_id = {$company_id}
                             GROUP BY year_num, week_num, vehicle
                             ORDER BY year_num ASC, week_num ASC");
         foreach ($weeks as $week) {
@@ -302,7 +345,13 @@ class ChartDataController extends Controller
             'limit'     => $limit    
         ]);
     }
-    public function total_revenue_week(Request $request) {
+
+    public function total_revenue_week(Request $request)
+    {
+        $this->authorize('manage-kpi');
+
+        $company_id = Auth::user()->company_id;
+
         if (null !== $request->get('selected-year')) {
             $year_num = $request->get('selected-year');
         } else {
@@ -329,7 +378,8 @@ class ChartDataController extends Controller
                                 WHERE
                                     year_num = {$year_num} AND
                                     week_num <= {$week_num} AND
-                                    week_num > {$week_num} - {$limit}
+                                    week_num > {$week_num} - {$limit} AND
+                                    company_id = {$company_id}
                                 GROUP BY year_num, week_num
                                 ORDER BY year_num ASC, week_num ASC
                                 LIMIT {$limit}");
@@ -343,7 +393,8 @@ class ChartDataController extends Controller
                                 WHERE
                                     year_num = {$year_num} AND
                                     week_num <= {$week_num} AND
-                                    week_num > {$week_num} - {$limit}
+                                    week_num > {$week_num} - {$limit} AND
+                                    company_id = {$company_id}
                                 GROUP BY year_num, week_num
                                 ORDER BY year_num ASC, week_num ASC
                                 LIMIT {$limit}");
@@ -357,7 +408,8 @@ class ChartDataController extends Controller
                                 WHERE
                                     year_num = {$year_num} AND
                                     week_num <= {$week_num} AND
-                                    week_num > {$week_num} - {$limit}
+                                    week_num > {$week_num} - {$limit} AND
+                                    company_id = {$company_id}
                                 GROUP BY year_num, week_num
                                 ORDER BY year_num ASC, week_num ASC
                                 LIMIT {$limit}");
@@ -371,7 +423,8 @@ class ChartDataController extends Controller
                                 WHERE
                                     year_num = {$year_num} AND
                                     week_num <= {$week_num} AND
-                                    week_num > {$week_num} - {$limit}
+                                    week_num > {$week_num} - {$limit} AND
+                                    company_id = {$company_id}
                                 GROUP BY year_num, week_num
                                 ORDER BY year_num ASC, week_num ASC
                                 LIMIT {$limit}");
@@ -439,19 +492,19 @@ class ChartDataController extends Controller
                                     (SELECT 
                                         IFNULL(SUM(t.daily_gross_amt), 0)
                                     FROM linehaul_trips AS t
-                                    WHERE YEAR(t.date) = {$year_num}) AS gross,
+                                    WHERE YEAR(t.date) = {$year_num} AND t.company_id = {$company_id}) AS gross,
                                     (SELECT 
                                         IFNULL(SUM(t.amt), 0)
                                     FROM other_settlement_adjustments AS t
-                                    WHERE YEAR(t.date) = {$year_num}) AS o_s_adjustments,
+                                    WHERE YEAR(t.date) = {$year_num} AND t.company_id = {$company_id}) AS o_s_adjustments,
                                     (SELECT 
                                         IFNULL(-SUM(t.auth_chgbk_net), 0)
                                     FROM fuel_purchases AS t
-                                    WHERE YEAR(t.date) = {$year_num}) AS fuel_cost,
+                                    WHERE YEAR(t.date) = {$year_num} AND t.company_id = {$company_id}) AS fuel_cost,
                                     (SELECT 
                                         IFNULL(-SUM(t.repair_misc_amt), 0)
                                     FROM tractor_repairs_misc AS t
-                                    WHERE YEAR(t.date) = {$year_num}) AS repair_cost) AS t");
+                                    WHERE YEAR(t.date) = {$year_num} AND t.company_id = {$company_id}) AS repair_cost) AS t");
         
         array_push($weeks, 'YTD, ' . $year_num);
         if (count($ytd_revenue) != 1) {

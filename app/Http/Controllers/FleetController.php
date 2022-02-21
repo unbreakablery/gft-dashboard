@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Fleet;
 use App\Models\SignImage;
@@ -20,11 +21,16 @@ use DateTime;
 
 class FleetController extends Controller
 {
-    public function getFleets(Request $request) {
+    public function getFleets(Request $request)
+    {
+        $this->authorize('manage-fleet');
+
+        $company_id = Auth::user()->company_id;
+
         $tractor_id = $request->input('tractor-id') ?? '';
         $model = $request->input('model') ?? '';
         $service_provider = $request->input('service_provider') ?? '';
-
+       
         $fleets = DB::select("
                                 SELECT
                                     f.*,
@@ -35,14 +41,21 @@ class FleetController extends Controller
                                         ELSE ''
                                     END) AS bit_color
                                 FROM fleets AS f
-                                WHERE f.tractor_id LIKE '%" . $tractor_id . "%' AND 
-                                        f.model LIKE '%" . $model . "%' AND 
-                                        f.service_provider LIKE '%" . $service_provider . "%'");
-
+                                WHERE f.tractor_id LIKE '%{$tractor_id}%' AND 
+                                        f.model LIKE '%{$model}%' AND 
+                                        f.service_provider LIKE '%{$service_provider}%' AND
+                                        f.company_id = {$company_id}
+                            ");
+        
         return view('fleets.list', compact('fleets', 'tractor_id', 'model', 'service_provider'));
     }
 
-    public function getFleet(Request $request) {
+    public function getFleet(Request $request)
+    {
+        $this->authorize('manage-fleet');
+
+        $company_id = Auth::user()->company_id;
+
         $id = $request->input('id');
         $fleets = DB::select("
                                 SELECT
@@ -54,7 +67,8 @@ class FleetController extends Controller
                                         ELSE ''
                                     END) AS bit_color
                                 FROM fleets AS f
-                                WHERE f.id = {$id}");
+                                WHERE f.id = {$id} AND f.company_id = {$company_id}
+                            ");
         if ($fleets == null || count($fleets) != 1) {
             return response()->json([
                 'type'      => 'failed',
@@ -69,7 +83,12 @@ class FleetController extends Controller
         }
     }
 
-    public function saveFleet(Request $request) {
+    public function saveFleet(Request $request)
+    {
+        $this->authorize('manage-fleet');
+
+        $company_id = Auth::user()->company_id;
+
         $id = $request->input('id');
         $existed = Fleet::where('tractor_id', $request->input('tractor_id'))->get();
 
@@ -82,20 +101,20 @@ class FleetController extends Controller
             }
 
             $fleet->tractor_id          = $request->input('tractor_id');
-            $fleet->model               = $request->input('model');
-            $fleet->vin                 = $request->input('vin');
+            $fleet->model               = $request->input('model') ?? '';
+            $fleet->vin                 = $request->input('vin') ?? '';
             $fleet->year                = $request->input('year');
-            $fleet->license_plate       = $request->input('license_plate');
-            $fleet->t_check             = $request->input('t_check');
-            $fleet->pre_pass            = $request->input('pre_pass');
-            $fleet->service_provider    = $request->input('service_provider');
-            $fleet->qiv                 = $request->input('qiv');
+            $fleet->license_plate       = $request->input('license_plate') ?? '';
+            $fleet->t_check             = $request->input('t_check') ?? '';
+            $fleet->pre_pass            = $request->input('pre_pass') ?? '';
+            $fleet->service_provider    = $request->input('service_provider') ?? '';
+            $fleet->qiv                 = $request->input('qiv') ?? '';
             $fleet->bit                 = $request->input('bit');
-            $fleet->domicile            = $request->input('domicile');
-            $fleet->domicile_email      = $request->input('domicile_email');
-            $fleet->book_value          = ($request->input('book_value')) ? $request->input('book_value') : 0;
-            $fleet->vedr                = $request->input('vedr');
-            $fleet->eld                 = $request->input('eld');
+            $fleet->domicile            = $request->input('domicile') ?? '';
+            $fleet->domicile_email      = $request->input('domicile_email') ?? '';
+            $fleet->book_value          = $request->input('book_value') ?? 0;
+            $fleet->vedr                = $request->input('vedr') ?? '';
+            $fleet->eld                 = $request->input('eld') ?? '';
 
             $fleet->save();
 
@@ -109,20 +128,21 @@ class FleetController extends Controller
 
             $fleet = new Fleet();
             $fleet->tractor_id          = $request->input('tractor_id');
-            $fleet->model               = $request->input('model');
-            $fleet->vin                 = $request->input('vin');
+            $fleet->model               = $request->input('model') ?? '';
+            $fleet->vin                 = $request->input('vin') ?? '';
             $fleet->year                = $request->input('year');
-            $fleet->license_plate       = $request->input('license_plate');
-            $fleet->t_check             = $request->input('t_check');
-            $fleet->pre_pass            = $request->input('pre_pass');
-            $fleet->service_provider    = $request->input('service_provider');
-            $fleet->qiv                 = $request->input('qiv');
+            $fleet->license_plate       = $request->input('license_plate') ?? '';
+            $fleet->t_check             = $request->input('t_check') ?? '';
+            $fleet->pre_pass            = $request->input('pre_pass') ?? '';
+            $fleet->service_provider    = $request->input('service_provider') ?? '';
+            $fleet->qiv                 = $request->input('qiv') ?? '';
             $fleet->bit                 = $request->input('bit');
-            $fleet->domicile            = $request->input('domicile');
-            $fleet->domicile_email      = $request->input('domicile_email');
-            $fleet->book_value          = ($request->input('book_value')) ? $request->input('book_value') : 0;
-            $fleet->vedr                = $request->input('vedr');
-            $fleet->eld                 = $request->input('eld');
+            $fleet->domicile            = $request->input('domicile') ?? '';
+            $fleet->domicile_email      = $request->input('domicile_email') ?? '';
+            $fleet->book_value          = $request->input('book_value') ?? 0;
+            $fleet->vedr                = $request->input('vedr') ?? '';
+            $fleet->eld                 = $request->input('eld') ?? '';
+            $fleet->company_id          = $company_id;
 
             $fleet->save();
 
@@ -131,7 +151,12 @@ class FleetController extends Controller
         }
     }
 
-    public function editFleet(Request $request) {
+    public function editFleet(Request $request)
+    {
+        $this->authorize('manage-fleet');
+
+        $company_id = Auth::user()->company_id;
+
         $id = $request->route()->parameter('id');
         $fleets = DB::select("
                                 SELECT
@@ -143,7 +168,8 @@ class FleetController extends Controller
                                         ELSE ''
                                     END) AS bit_color
                                 FROM fleets AS f
-                                WHERE f.id = {$id}");
+                                WHERE f.id = {$id} AND f.company_id = {$company_id}
+                            ");
         if ($fleets == null || count($fleets) != 1) {
             return response()->json([
                 'type'      => 'failed',
@@ -157,7 +183,10 @@ class FleetController extends Controller
         }
     }
 
-    public function removeFleet(Request $request) {
+    public function removeFleet(Request $request)
+    {
+        $this->authorize('manage-fleet');
+
         $id = $request->route()->parameter('id');
         
         $res = Fleet::find($id)->delete();
@@ -171,6 +200,8 @@ class FleetController extends Controller
 
     public function uploadFleets(Request $request)
     {
+        $this->authorize('manage-fleet');
+
         $file = $request->file('upload-file');
         
         if ($file) {
@@ -188,6 +219,8 @@ class FleetController extends Controller
 
     public function mmrIndex()
     {
+        $this->authorize('manage-fleet');
+
         $fleets = Fleet::get()->all();
         $signs = SignImage::get()->all();
 
@@ -196,6 +229,10 @@ class FleetController extends Controller
 
     public function uploadSigns(Request $request)
     {
+        $this->authorize('manage-fleet');
+
+        $company_id = Auth::user()->company_id;
+
         $files = "";
 
         if($request->hasfile('upload-files')) {
@@ -204,8 +241,8 @@ class FleetController extends Controller
                 $ext = $file->getClientOriginalExtension();
                 $save_name = pathinfo($name, PATHINFO_FILENAME);
 
-                // save in storage/app/public/signs
-                $path = $file->storeAs('public/signs', $name);
+                // save in storage/app/public/signs/company_id
+                $path = $file->storeAs("public/signs/{$company_id}", $name);
 
                 $files .= $name . ", ";
 
@@ -213,6 +250,7 @@ class FleetController extends Controller
 
                 if (!$signs) {
                     $sign = new SignImage();
+                    $sign->company_id = $company_id;
                 } else {
                     $sign = $signs[0];
                 }
@@ -232,6 +270,8 @@ class FleetController extends Controller
 
     public function sendEmailMMR(Request $request)
     {
+        $this->authorize('manage-fleet');
+        
         $yearNum        = $request->input('year-num');
         $monthNum       = $request->input('month-num');
         

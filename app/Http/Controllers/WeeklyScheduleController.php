@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use illuminate\support\Facades\Redirect;
+use illuminate\support\Facades\Auth;
 
 use App\Models\WeeklySchedule;
 use App\Models\Linehaul_Drivers;
@@ -16,11 +17,15 @@ class WeeklyScheduleController extends Controller
 {
     public function index()
     {
+        $this->authorize('manage-schedule');
+
         return view('schedule.upload');
     }
 
     public function upload(Request $request)
     {
+        $this->authorize('manage-schedule');
+
         $file = $request->file('upload-file');
         
         if ($file) {
@@ -38,10 +43,12 @@ class WeeklyScheduleController extends Controller
 
     public function search(Request $request)
     {
+        $this->authorize('manage-schedule');
+
         $year_num = $request->input('year-num') ?? date("Y");
         $week_num = $request->input('week-num') ?? date("W");
         $driver_id = $request->input('driver-id') ?? '';
-        
+
         $schedules = WeeklySchedule::with('driver')
                                 ->where('year_num', $year_num)
                                 ->where('week_num', $week_num)
@@ -54,6 +61,8 @@ class WeeklyScheduleController extends Controller
 
     public function getSchedule(Request $request)
     {
+        $this->authorize('manage-schedule');
+
         $schedule_id = $request->s_id;
         if (empty($schedule_id)) {
             $schedule = null;
@@ -116,6 +125,8 @@ class WeeklyScheduleController extends Controller
 
     public function getSchedulePost(Request $request)
     {
+        $this->authorize('manage-schedule');
+
         $schedule_id = $request->input('id');
         $schedule = WeeklySchedule::find($schedule_id);
         if (!$schedule) {
@@ -133,6 +144,8 @@ class WeeklyScheduleController extends Controller
 
     public function editSchedule(Request $request)
     {
+        $this->authorize('manage-schedule');
+
         $id = $request->route()->parameter('id');
         $schedule = WeeklySchedule::find($id);
         if (!$schedule) {
@@ -147,6 +160,8 @@ class WeeklyScheduleController extends Controller
 
     public function addSchedule()
     {
+        $this->authorize('manage-schedule');
+
         $drivers = Linehaul_Drivers::where('work_status', 1)->get()->all();
         
         return view('schedule.edit', compact('drivers'));
@@ -154,6 +169,8 @@ class WeeklyScheduleController extends Controller
 
     public function saveSchedule(Request $request)
     {
+        $this->authorize('manage-schedule');
+
         $id = $request->input('id');
 
         $year_num       = $request->input('year_num');
@@ -283,6 +300,7 @@ class WeeklyScheduleController extends Controller
                 $schedule->thu_tractor_id   = $thu_tractor_id;
                 $schedule->fri_start_time   = $fri_start_time;
                 $schedule->fri_tractor_id   = $fri_tractor_id;
+                $schedule->company_id       = Auth::user()->company_id;
 
                 $schedule->save();
 
@@ -300,6 +318,8 @@ class WeeklyScheduleController extends Controller
 
     public function removeSchedule(Request $request)
     {
+        $this->authorize('manage-schedule');
+
         $id = $request->route()->parameter('id');
 
         $res = WeeklySchedule::find($id)->delete();
@@ -314,11 +334,13 @@ class WeeklyScheduleController extends Controller
 
     public function removeBulkSchedules(Request $request)
     {
+        $this->authorize('manage-schedule');
+
         $ids = $request->input('ids');
         $ids = explode('|', $ids, -1);
         
         $res = WeeklySchedule::destroy($ids);
-        
+                
         if ($res) {
             return response()->json([
                 'type' => 'success',
@@ -334,6 +356,8 @@ class WeeklyScheduleController extends Controller
 
     public function sendSMS(Request $request)
     {
+        $this->authorize('manage-schedule');
+
         $ids = $request->input('ids');
         $ids = explode('|', $ids, -1);
         
