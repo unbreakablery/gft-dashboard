@@ -1,9 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 if (!function_exists('get_data_compare')) {
     function get_data_compare($search, $compare_list) {
+        $company_id = Auth::user()->company_id;
+
         $compare_data = DB::select("
                                 SELECT
                                     gt.week_name, 
@@ -19,12 +22,12 @@ if (!function_exists('get_data_compare')) {
                                         SUM(miles_qty) AS miles
                                     FROM 
                                         linehaul_trips
-
                                     WHERE
                                         CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
                                         CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                         CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
-                                        CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                        CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                        company_id = {$company_id}
                                     GROUP BY year_num, week_num
                                     ORDER BY year_num ASC, week_num ASC) AS gt
                                 LEFT JOIN
@@ -37,7 +40,8 @@ if (!function_exists('get_data_compare')) {
                                         CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
                                         CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                         CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
-                                        CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                        CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                        company_id = {$company_id}
                                     GROUP BY year_num, week_num
                                     ORDER BY year_num ASC, week_num ASC) AS osa
                                 ON gt.week_name = osa.week_name
@@ -52,7 +56,8 @@ if (!function_exists('get_data_compare')) {
                                         CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
                                         CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                         CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
-                                        CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                        CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                        company_id = {$company_id}
                                     GROUP BY year_num, week_num
                                     ORDER BY year_num ASC, week_num ASC) AS fp
                                 ON gt.week_name = fp.week_name
@@ -66,7 +71,8 @@ if (!function_exists('get_data_compare')) {
                                         CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
                                         CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                         CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
-                                        CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                        CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                        company_id = {$company_id}
                                     GROUP BY year_num, week_num
                                     ORDER BY year_num ASC, week_num ASC) AS trm
                                 ON gt.week_name = trm.week_name
@@ -110,6 +116,8 @@ if (!function_exists('get_data_compare')) {
 
 if (!function_exists('get_data_revenue')) {
     function get_data_revenue($search) {
+        $company_id = Auth::user()->company_id;
+
         $grosses            = DB::select("
                                 SELECT 
                                     year_num,
@@ -122,7 +130,8 @@ if (!function_exists('get_data_revenue')) {
                                     CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
                                     CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                     CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
-                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                    company_id = {$company_id}
                                 GROUP BY year_num, week_num
                                 ORDER BY year_num ASC, week_num ASC");
         $o_s_adjustments    = DB::select("
@@ -137,7 +146,8 @@ if (!function_exists('get_data_revenue')) {
                                     CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
                                     CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                     CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
-                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                    company_id = {$company_id}
                                 GROUP BY year_num, week_num
                                 ORDER BY year_num ASC, week_num ASC");
         $fuels              = DB::select("
@@ -152,7 +162,8 @@ if (!function_exists('get_data_revenue')) {
                                     CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
                                     CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                     CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
-                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                    company_id = {$company_id}
                                 GROUP BY year_num, week_num
                                 ORDER BY year_num ASC, week_num ASC");
         $repairs            = DB::select("
@@ -167,7 +178,8 @@ if (!function_exists('get_data_revenue')) {
                                     CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
                                     CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
 	                                CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
-                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                    company_id = {$company_id}
                                 GROUP BY year_num, week_num
                                 ORDER BY year_num ASC, week_num ASC");
         
@@ -246,6 +258,8 @@ if (!function_exists('get_data_revenue')) {
 
 if (!function_exists('get_data_mile_total')) {
     function get_data_mile_total($search) {
+        $company_id = Auth::user()->company_id;
+
         $weeks = DB::select("
                             SELECT 
                                 year_num,
@@ -258,7 +272,8 @@ if (!function_exists('get_data_mile_total')) {
                                 CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
                                 CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                 CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
-                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                company_id = {$company_id}
                             GROUP BY year_num, week_num
                             ORDER BY year_num ASC, week_num ASC");
         $headers = array();
@@ -293,6 +308,8 @@ if (!function_exists('get_data_mile_total')) {
 
 if (!function_exists('get_data_mile_driver')) {
     function get_data_mile_driver($search) {
+        $company_id = Auth::user()->company_id;
+
         $weeks = DB::select("
                             SELECT 
                                 t.year_num,
@@ -302,12 +319,13 @@ if (!function_exists('get_data_mile_driver')) {
                                 SUM(t.miles_qty) AS miles
                             FROM 
                                 linehaul_trips AS t
-                            LEFT JOIN linehaul_drivers AS d ON d.driver_id = t.driver_1
+                            LEFT JOIN linehaul_drivers AS d ON d.driver_id = t.driver_1 AND d.company_id = {$company_id}
                             WHERE
                                 CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) <= 
                                 CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                 CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) >= 
-                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                t.company_id = {$company_id}
                             GROUP BY t.year_num, t.week_num, t.driver_1
                             ORDER BY t.year_num ASC, t.week_num ASC");
 
@@ -352,6 +370,8 @@ if (!function_exists('get_data_mile_driver')) {
 
 if (!function_exists('get_data_mile_vehicle')) {
     function get_data_mile_vehicle($search) {
+        $company_id = Auth::user()->company_id;
+
         $weeks = DB::select("
                             SELECT 
                                 year_num,
@@ -364,7 +384,8 @@ if (!function_exists('get_data_mile_vehicle')) {
                                 CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) <= 
                                 CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                 CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) >= 
-                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                t.company_id = {$company_id}
                             GROUP BY year_num, week_num, vehicle
                             ORDER BY year_num ASC, week_num ASC");
         $headers = array();
@@ -408,6 +429,8 @@ if (!function_exists('get_data_mile_vehicle')) {
 
 if (!function_exists('get_data_trips_driver')) {
     function get_data_trips_driver($search) {
+        $company_id = Auth::user()->company_id;
+
         $trips = DB::select("
                             SELECT 
                                 t.year_num,
@@ -418,12 +441,13 @@ if (!function_exists('get_data_trips_driver')) {
                                 COUNT(*) AS trips 
                             FROM 
                                 linehaul_trips AS t 
-                            INNER JOIN linehaul_drivers AS d ON d.driver_id = t.driver_1 
+                            INNER JOIN linehaul_drivers AS d ON d.driver_id = t.driver_1 AND d.company_id = {$company_id}
                             WHERE 
                                 CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) <= 
                                 CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                 CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) >= 
-                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                t.company_id = {$company_id}
                             GROUP BY 
                                 t.year_num, t.week_num, t.driver_1 
                             ORDER BY t.year_num, t.week_num, t.driver_1");
@@ -468,6 +492,8 @@ if (!function_exists('get_data_trips_driver')) {
 
 if (!function_exists('get_data_mpg_vehicle')) {
     function get_data_mpg_vehicle($search) {
+        $company_id = Auth::user()->company_id;
+
         $week_miles = DB::select("
                                 SELECT 
                                     year_num,
@@ -481,7 +507,8 @@ if (!function_exists('get_data_mpg_vehicle')) {
                                     CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) <= 
                                     CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                     CONCAT(t.year_num, (CASE WHEN t.week_num < 10 THEN CONCAT('0', t.week_num) ELSE t.week_num END)) >= 
-                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                    t.company_id = {$company_id}
                                 GROUP BY year_num, week_num, vehicle
                                 ORDER BY year_num ASC, week_num ASC");
         
@@ -498,7 +525,8 @@ if (!function_exists('get_data_mpg_vehicle')) {
                                     CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
                                     CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                     CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
-                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                    CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                    company_id = {$company_id}
                                 GROUP BY year_num, week_num, vehicle
                                 ORDER BY year_num ASC, week_num ASC");
         
@@ -582,6 +610,8 @@ if (!function_exists('get_data_mpg_vehicle')) {
 
 if (!function_exists('get_data_fuelcost_total')) {
     function get_data_fuelcost_total($search) {
+        $company_id = Auth::user()->company_id;
+
         $weeks = DB::select("
                             SELECT 
                                 year_num,
@@ -594,7 +624,8 @@ if (!function_exists('get_data_fuelcost_total')) {
                                 CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) <= 
                                 CONCAT({$search->to_year_num}, (CASE WHEN {$search->to_week_num} < 10 THEN CONCAT('0', {$search->to_week_num}) ELSE {$search->to_week_num} END)) AND 
                                 CONCAT(year_num, (CASE WHEN week_num < 10 THEN CONCAT('0', week_num) ELSE week_num END)) >= 
-                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END))
+                                CONCAT({$search->from_year_num}, (CASE WHEN {$search->from_week_num} < 10 THEN CONCAT('0', {$search->from_week_num}) ELSE {$search->from_week_num} END)) AND
+                                company_id = {$company_id}
                             GROUP BY year_num, week_num
                             ORDER BY year_num ASC, week_num ASC");
 
@@ -632,7 +663,7 @@ if (!function_exists('get_companies_by_user')) {
     }
 }
 
-if (!function_exists('get_company_by_id')) {
+if (!function_exists('get_company_name_by_id')) {
     function get_company_name_by_id($company_id) {
         $company = DB::table('companies')->where('id', $company_id)->get()->first();
         if ($company) {
@@ -651,5 +682,47 @@ if (!function_exists('get_company_logo_by_id')) {
         } else {
             return '';
         }
+    }
+}
+
+if (!function_exists('delete_permissions_by_user')) {
+    function delete_permissions_by_user($user_id) {
+        if ($user_id) {
+            return DB::table('user_permission')->where('user_id', $user_id)->delete();
+        }
+
+        return false;
+    }
+}
+
+if (!function_exists('delete_tasks_by_user')) {
+    function delete_tasks_by_user($user_id) {
+        if ($user_id) {
+            $res = DB::table('user_task')
+                        ->where('user_id', $user_id)
+                        ->delete();
+            $res = DB::table('tasks')
+                        ->where('user_id', $user_id)
+                        ->update(['user_id' => null]);
+            $res = DB::table('tasks')
+                        ->where('owner_id', $user_id)
+                        ->update(['owner_id' => null]);
+            
+            return true;
+        }
+
+        return false;
+    }
+}
+
+if (!function_exists('delete_tasks_by_task')) {
+    function delete_tasks_by_task($task_id) {
+        if ($task_id) {
+            $res = DB::table('user_task')->where('task_id', $task_id)->delete();
+
+            return true;
+        }
+
+        return false;
     }
 }
