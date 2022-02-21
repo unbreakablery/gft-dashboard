@@ -31,6 +31,14 @@
                             <p style="margin-bottom: 0;"><i class="fa fa-fw fa-info-circle"></i> {!! session('success') !!}</p>
                         </div>
                     @endif
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissable" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <p style="margin-bottom: 0;"><i class="fa fa-fw fa-info-circle"></i> {!! session('error') !!}</p>
+                        </div>
+                    @endif
                     <div class="table-responsive push text-right">
                         <button class="btn btn-dark" id="add-link">
                             <i class="fa fa-plus"></i> Add Link

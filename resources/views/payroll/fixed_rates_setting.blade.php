@@ -83,6 +83,16 @@ jQuery(function($){
         });
         $(document).on('click', 'button.remove-fixed-rate', function() {
             $(this).closest('tr').remove();
+
+            if ($('table#rates-table tbody tr').length == 0) {
+                $("table#rates-table tbody").append(
+                    '<tr id="no-fixed-rates">' +
+                    '<td class="text-center" colspan="4">' +
+                    'No Fixed Rates' +
+                    '</td>' +
+                    '</tr>'
+                );
+            }
         });
     });
 });

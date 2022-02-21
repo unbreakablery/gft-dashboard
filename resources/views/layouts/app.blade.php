@@ -58,7 +58,7 @@
                             Crafted with <i class="fa fa-heart text-danger"></i> by <a class="font-w600" href="https://github.com/unbreakablery" target="_blank">{{ env('AUTHOR') }}</a>
                         </div>
                         <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-left">
-                            <a class="font-w600" href="{{ route('dashboard') }}" target="_blank">{{ config('app.name') }}</a> &copy; <span data-toggle="year-copy"></span>
+                            <a class="font-w600" href="https://www.groundforcetrucking.com/" target="_blank">{{ config('app.name') }}</a> &copy; <span data-toggle="year-copy"></span>
                         </div>
                     </div>
                 </div>

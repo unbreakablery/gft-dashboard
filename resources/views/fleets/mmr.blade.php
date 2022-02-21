@@ -253,6 +253,16 @@ jQuery(function($){
         });
         $(document).on('click', 'button.remove-maintenance', function() {
             $(this).closest('tr').remove();
+
+            if ($('table#mmr-table tbody tr').length == 0) {
+                $("table#mmr-table tbody").append(
+                    '<tr id="no-maintenances">' +
+                    '<td class="text-center" colspan="7">' +
+                    'No Tractors / Maintenances' +
+                    '</td>' +
+                    '</tr>'
+                );
+            }
         });
         $(document).on('change', 'input[type=number][name="current-mileage[]"]', function() {
             var cValue = $(this).val();

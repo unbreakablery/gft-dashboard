@@ -182,7 +182,7 @@
                     </ul>
                 </li>
                 @endcan
-                @can('manage-dashboard')
+                @can('manage-kpi')
                 <li class="nav-main-item open">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
                         <i class="nav-main-link-icon fas fa-tachometer-alt"></i>
