@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>U.S. Monthly Maintenance Record, MGRA-355</title>
+    <title>U.S. Monthly Maintenance Record, MGBA-355</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
 </head>
 <style type="text/css">
@@ -154,7 +154,7 @@
                     This form for service providers is accessed through mybizaccount.fedex.com
                 </td>
                 <td class="w-30 f-13 text-right" style="border-top: 1px solid #000;">
-                    Page 1 of 1    
+                    Page 1 of 1
                 </td>
             </tr>
         </table>
