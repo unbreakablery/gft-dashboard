@@ -31,11 +31,12 @@ class DriversImport implements ToArray, WithEvents
         for ($i = $start; $i < count($array); $i++) {
             $driver_id          = (string)$array[$i][0];
             $driver_name        = (string)$array[$i][1];
-            $phone              = (string)$array[$i][2];
-            $license            = (string)$array[$i][3];
-            $address            = (string)$array[$i][4];
-            $price_per_mile     = $array[$i][5];
-            $work_status        = $array[$i][6];
+            $email              = (string)$array[$i][2];
+            $phone              = (string)$array[$i][3];
+            $license            = (string)$array[$i][4];
+            $address            = (string)$array[$i][5];
+            $price_per_mile     = $array[$i][6];
+            $work_status        = $array[$i][7];
 
             $drivers = Linehaul_Drivers::where('driver_id', $driver_id)
                                         ->get()
@@ -47,6 +48,7 @@ class DriversImport implements ToArray, WithEvents
                 Linehaul_Drivers::insert([
                     'driver_id'         => $driver_id,
                     'driver_name'       => $driver_name,
+                    'email'             => $email,
                     'phone'             => $phone,
                     'license'           => $license,
                     'address'           => $address,
@@ -60,6 +62,7 @@ class DriversImport implements ToArray, WithEvents
 
                 $d->driver_id       = $driver_id;
                 $d->driver_name     = $driver_name;
+                $d->email           = $email;
                 $d->phone           = $phone;
                 $d->license         = $license;
                 $d->address         = $address;

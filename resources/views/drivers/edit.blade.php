@@ -57,6 +57,12 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td class="font-w800 text-right" style="width: 20%;">Email<span class="text-danger">*</span> : </td>
+                                        <td class="text-left" style="width: 80%;">
+                                            <input type="email" class="form-control" name="email" value="@if (isset($driver)){{ $driver->email }}@endif" placeholder="Enter driver email.." required/>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td class="font-w800 text-right" style="width: 20%;">Phone # : </td>
                                         <td class="text-left" style="width: 80%;">
                                             <div class="input-group">

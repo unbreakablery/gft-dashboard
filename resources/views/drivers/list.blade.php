@@ -75,7 +75,8 @@
                                     </th>
                                     <th class="text-center" style="width: 80px;">#</th>
                                     <th class="text-center" style="width: 10%;">Driver ID</th>
-                                    <th class="text-center" style="width: 25%;">Name</th>
+                                    <th class="text-center" style="width: 15%;">Name</th>
+                                    <th class="text-center" style="width: 15%;">Email</th>
                                     <th class="text-center" style="width: 10%;">Phone</th>
                                     <th class="text-center" style="width: 10%;">License</th>
                                     <th class="text-center">Address</th>
@@ -98,6 +99,9 @@
                                         @if ($driver->work_status == 0)
                                         <span class="font-w600 badge badge-pill badge-danger">No longer working</span>
                                         @endif
+                                    </td>
+                                    <td class="font-w600 font-size-sm text-center">
+                                        {{ $driver->email }}
                                     </td>
                                     <td class="font-w600 font-size-sm text-center">
                                         <span class="badge badge-pill badge-violet">{{ $driver->phone ? '+'.$driver->phone : '' }}</span>
@@ -155,6 +159,10 @@
                                                 <tr>
                                                     <td class="font-w600 text-right">Driver Name : </td>
                                                     <td class="text-left" id="t_driver_name"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="font-w600 text-right">Email : </td>
+                                                    <td class="text-left" id="t_email"></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-w600 text-right">Phone # : </td>
@@ -250,6 +258,7 @@ jQuery(function($){
 
             $('#t_driver_id').html('');
             $('#t_driver_name').html('');
+            $('#t_email').html('');
             $('#t_phone').html('');
             $('#t_license').html('');
             $('#t_address').html('');
@@ -272,6 +281,7 @@ jQuery(function($){
                         
                         $('#t_driver_id').html(data.driver.driver_id);
                         $('#t_driver_name').html(data.driver.driver_name);
+                        $('#t_email').html(data.driver.email);
                         $('#t_phone').html('<span class="badge badge-pill badge-violet">' + (data.driver.phone ? '+' + data.driver.phone : '' )+ '</span>');
                         $('#t_license').html('<span class="badge badge-success">' + (data.driver.license ? data.driver.license : '') + '</span>');
                         $('#t_address').html(data.driver.address);

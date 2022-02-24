@@ -17,6 +17,7 @@ class CreateLinehaulDriversTable extends Migration
             $table->id();
             $table->string('driver_id');
             $table->string('driver_name');
+            $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('license')->nullable();
             $table->string('address')->nullable();

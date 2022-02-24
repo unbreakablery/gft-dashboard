@@ -94,6 +94,7 @@ class DriverController extends Controller
 
         $driver->driver_id          = $request->input('driver_id');
         $driver->driver_name        = $request->input('driver_name');
+        $driver->email              = $request->input('email');
         $driver->phone              = $request->input('phone');
         $driver->license            = $request->input('license');
         $driver->address            = $request->input('address');
