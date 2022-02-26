@@ -127,7 +127,7 @@
                             @endforeach
                             @else
                                 <tr>
-                                    <td colspan="7" class="font-w600 font-size-sm text-center">No Drivers</td>
+                                    <td colspan="9" class="font-w600 font-size-sm text-center">No Drivers</td>
                                 </tr>
                             @endif    
                             </tbody>
