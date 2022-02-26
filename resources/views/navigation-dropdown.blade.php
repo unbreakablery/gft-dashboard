@@ -140,7 +140,7 @@
                     </ul>
                 </li>
                 @endcan
-                @canany(['manage-payroll', 'manage-payroll-setting'])
+                @canany(['manage-payroll', 'manage-payroll-setting', 'manage-global-setting'])
                 <li class="nav-main-item @if(request()->segment(1) == 'payroll'){{ 'open' }}@endif">
                     <a class="nav-main-link nav-main-link-submenu" href="#" data-toggle="submenu" aria-haspopup="true" aria-expanded="true">
                         <i class="nav-main-link-icon fas fa-money-check-alt"></i>
@@ -154,11 +154,25 @@
                             </a>
                         </li>
                         @endcan
+                        @can('manage-global-setting')
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="/payroll">
-                                <span class="nav-main-link-name">Payroll Per Driver</span>
+                            <a class="nav-main-link" href="/payroll/setting">
+                                <span class="nav-main-link-name">Payroll Setting</span>
                             </a>
                         </li>
+                        @endcan
+                        @can('manage-payroll')
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/payroll/drivers">
+                                <span class="nav-main-link-name">Driver Earnings</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="/payroll">
+                                <span class="nav-main-link-name">Company Payroll</span>
+                            </a>
+                        </li>
+                        @endcan
                     </ul>
                 </li>
                 @endcanany

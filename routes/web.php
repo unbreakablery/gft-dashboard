@@ -228,6 +228,18 @@ Route::middleware(['auth:sanctum', 'verified'])->post('payroll/fixed-rates/save'
 Route::middleware(['auth:sanctum', 'verified'])->get('payroll/work-status/save/{id}', [PayrollController::class, 'save_workstatus'], function () {
     return route('login');
 })->name('payroll-workstatus-save');
+Route::middleware(['auth:sanctum', 'verified'])->get('payroll/drivers', [PayrollController::class, 'get_drivers'], function () {
+    return route('login');
+})->name('payroll-drivers');
+Route::middleware(['auth:sanctum', 'verified'])->get('payroll/driver-earnings-report/{id}/{from_date}/{to_date}', [PayrollController::class, 'get_driver_earnings_report'], function () {
+    return route('login');
+})->name('payroll-get-driver-earnings-report');
+Route::middleware(['auth:sanctum', 'verified'])->post('payroll/send-email', [PayrollController::class, 'send_report_email'], function () {
+    return route('login');
+})->name('payroll-send-report-email');
+Route::middleware(['auth:sanctum', 'verified'])->post('payroll/driver-earnings-report', [PayrollController::class, 'send_bulk_report_emails'], function () {
+    return route('login');
+})->name('payroll-send-bulk-reports');
 
 // Utils
 Route::middleware(['auth:sanctum', 'verified'])->get('util/ext-links', [UtilController::class, 'get_ext_links'], function () {
@@ -254,7 +266,6 @@ Route::middleware(['auth:sanctum', 'verified'])->get('util/ext-links/truncate', 
 Route::middleware(['auth:sanctum', 'verified'])->post('util/ext-links/upload', [UtilController::class, 'upload_ext_links'], function () {
     return route('login');
 });
-
 Route::middleware(['auth:sanctum', 'verified'])->get('util/download-data', function () {
     return view('util.download_data.search_form');
 })->name('util.download-data');
@@ -388,3 +399,12 @@ Route::middleware(['auth:sanctum', 'verified'])->get('task/remove/{id}', [TaskCo
 Route::middleware(['auth:sanctum', 'verified'])->post('task/change-status', [TaskController::class, 'changeStatus'], function () {
     return route('login');
 })->name('task-change-status');
+
+// global setting
+Route::middleware(['auth:sanctum', 'verified'])->get('payroll/setting', [PayrollController::class, 'get_setting'], function () {
+    return route('login');
+})->name('payroll-get-setting');
+Route::middleware(['auth:sanctum', 'verified'])->post('payroll/save-setting', [PayrollController::class, 'save_setting'], function () {
+    return route('login');
+})->name('payroll-save-setting');
+
