@@ -79,6 +79,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @if (isset($payrolls) && count($payrolls) > 0)
                     @foreach ($payrolls as $idx => $p)
                     <tr>
                         <td class="text-center">
@@ -113,6 +114,11 @@
                         </td>
                     </tr>
                     @endforeach
+                    @else
+                    <tr>
+                        <td colspan="9" class="font-w600 font-size-sm text-center">No Drivers</td>
+                    </tr>
+                    @endif
                 </tbody>
             </table>
 
