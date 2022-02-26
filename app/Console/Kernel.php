@@ -25,7 +25,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('send:weekly_driver_earnings_report')
-                ->daily();
+                ->daily()
+                ->runInBackground();
     }
 
     /**
