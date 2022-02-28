@@ -22,6 +22,7 @@ mix.scripts([
     'public/js/src/oneui.core.min.js',
     'public/js/src/oneui.app.min.js',
     'public/js/src/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js',
+    'public/js/src/plugins/bootstrap-notify/bootstrap-notify.min.js',
     'public/js/lodash.min.js',
     'public/js/menu.js',
 ], 'public/js/core.js');
