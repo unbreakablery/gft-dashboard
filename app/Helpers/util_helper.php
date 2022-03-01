@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+use Carbon\Carbon;
+
 if (!function_exists('get_data_compare')) {
     function get_data_compare($search, $compare_list) {
         $company_id = Auth::user()->company_id;
@@ -724,5 +726,76 @@ if (!function_exists('delete_tasks_by_task')) {
         }
 
         return false;
+    }
+}
+
+if (!function_exists('get_day_of_week_from_string')) {
+    function get_day_of_week_from_string($str = 'friday') {
+        switch(strtolower($str)) {
+            case "monday":
+                return 1;
+            case "tuesday":
+                return 2;
+            case "wednesday":
+                return 3;
+            case "thursday":
+                return 4;
+            case "friday":
+                return 5;
+            case "saturday":
+                return 6;
+            case "sunday":
+                return 7;
+        }
+
+        return 0;
+    }
+}
+
+if (!function_exists('get_to_date')) {
+    /*
+    * @param int $payment_date: 1-Monday and 7-Saturday
+    * @return to_date from today
+    */
+    function get_to_date($payment_date = 5, $format = null) {
+        $today = Carbon::now();
+
+        $today_date = ($today->dayOfWeek != 0) ? $today->dayOfWeek : 7; // 1-Monday and 7-Saturday
+
+        if ($today_date <= $payment_date) {
+            $date = $today->subDays(2 + $today_date);
+            return (!empty($format)) ? $date->format($format) : $date;
+        }
+
+        $date = $today->subDays($today_date - $payment_date);
+        return (!empty($format)) ? $date->format($format) : $date;
+    }
+}
+
+if (!function_exists('get_from_date')) {
+    /*
+    * @param int $payment_date: 1-Monday and 7-Saturday
+    * @return from_date from today
+    */
+    function get_from_date($payment_date = 5, $format = null) {
+        $date = get_to_date($payment_date);
+
+        return (!empty($format)) ? $date->subDays(6)->format($format) : $date->subDays(6);
+    }
+}
+
+if (!function_exists('get_payment_date')) {
+    /*
+    * @param int $payment_date: 1-Monday and 7-Saturday
+    * @return from_date from today
+    */
+    function get_payment_date($payment_date = 5, $format = null) {
+        $date = get_to_date($payment_date);
+
+        if (($date->dayOfWeek != 0 ? $date->dayOfWeek : 7) == $payment_date) {
+            $date = $date->addDays(7);
+        }
+
+        return (!empty($format)) ? $date->addDays((2 + $payment_date) % 7)->format($format) : $date->addDays(2 + $payment_date);
     }
 }
