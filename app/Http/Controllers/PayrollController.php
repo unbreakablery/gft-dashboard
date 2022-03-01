@@ -175,16 +175,23 @@ class PayrollController extends Controller
         ]);
     }
 
-    public function get_rates()
+    public function get_rates(Request $request)
     {
         $this->authorize('manage-payroll-setting');
 
+        $driver_id = $request->input('driver-id') ?? '';
+        $driver_name = $request->input('driver-name') ?? '';
+        $min_rate = $request->input('min-rate') ?? 0;
+        $max_rate = $request->input('max-rate') ?? 1000000;
+
         $rates = Linehaul_Drivers::orderBy('work_status', 'desc')
+                                ->where('driver_id', 'like', '%' . $driver_id . '%')
+                                ->where('driver_name', 'like', '%' . $driver_name . '%')
+                                ->where('price_per_mile', '>=', $min_rate)
+                                ->where('price_per_mile', '<=', $max_rate)
                                 ->get()
                                 ->all();
-        return view('payroll.rates', [
-            'rates' => $rates
-        ]);
+        return view('payroll.rates', compact('rates', 'driver_id', 'driver_name', 'min_rate', 'max_rate'));
     }
 
     public function get_rate(Request $request)
@@ -297,12 +304,17 @@ class PayrollController extends Controller
                                 ->where('key', 'delivery_date')
                                 ->get()
                                 ->first();
-        
-        if (!$sending_method || !$delivery_date) {
+
+        $payment_date = GlobalSetting::where('module', 'payroll')
+                                ->where('key', 'payment_date')
+                                ->get()
+                                ->first();
+
+        if ($sending_method == null) {
             $request->session()->flash('status', null);
-            $request->session()->flash('error', '<strong>Payroll Setting</strong> not saved yet!');
+            $request->session()->flash('error', '<strong>Payroll Report Setting</strong> not saved yet!');
         }
-        return view('payroll.payroll_setting', compact('sending_method', 'delivery_date')); 
+        return view('payroll.payroll_setting', compact('sending_method', 'delivery_date', 'payment_date')); 
     }
 
     public function save_setting(Request $request)
@@ -311,6 +323,7 @@ class PayrollController extends Controller
 
         $sm = $request->input('sending-method') ?? '0';
         $dd = $request->input('delivery-date') ?? 'Monday';
+        $pd = $request->input('payment-date') ?? 'Friday';
 
         // if sending_method = '1', automatically sends email with payroll earnings to drivers
         // if sending_method = '0', maually sends email with payroll earnings to drivers
@@ -320,6 +333,10 @@ class PayrollController extends Controller
                                 ->first();
         $delivery_date = GlobalSetting::where('module', 'payroll')
                                 ->where('key', 'delivery_date')
+                                ->get()
+                                ->first();
+        $payment_date = GlobalSetting::where('module', 'payroll')
+                                ->where('key', 'payment_date')
                                 ->get()
                                 ->first();
         
@@ -342,8 +359,19 @@ class PayrollController extends Controller
             $delivery_date->key = 'delivery_date';
             $delivery_date->value = ($sm != '0') ? $dd : null;
         }
+
+        if ($payment_date) {
+            $payment_date->value = $pd;
+        } else {
+            $payment_date = new GlobalSetting();
+            $payment_date->company_id = Auth::user()->company_id;
+            $payment_date->module = 'payroll';
+            $payment_date->key = 'payment_date';
+            $payment_date->value = $pd;
+        }
         $sending_method->save();
         $delivery_date->save();
+        $payment_date->save();
 
         $request->session()->flash('error', null);
         $request->session()->flash('status', '<strong>Payroll Setting</strong> saved successfully!');
@@ -355,6 +383,8 @@ class PayrollController extends Controller
     {
         $this->authorize('manage-payroll');
 
+        $driver_name = $request->input('driver-name') ?? '';
+
         $sending_method = GlobalSetting::where('module', 'payroll')
                                     ->where('key', 'sending_method')
                                     ->get()
@@ -362,22 +392,34 @@ class PayrollController extends Controller
                                     
         $available = true;
         if (!$sending_method) {
-            $request->session()->flash('error', '<strong>Payroll Setting</strong> not saved yet!');
+            $request->session()->flash('error', '<strong>Payroll Report Setting</strong> not saved yet!');
             $available = false;
         } else if ($sending_method->value == '1') {
             $request->session()->flash('error', '<strong>Driver Payroll Report</strong> will be sent weekly automatically!');
             $available = false;
         }
 
+        $payment_date = GlobalSetting::where('module', 'payroll')
+                                    ->where('key', 'payment_date')
+                                    ->get()
+                                    ->first();
+        
+        if (!$payment_date) {
+            $payment_date = 5;
+        } else {
+            $payment_date = get_day_of_week_from_string($payment_date->value);
+        }
+
         $drivers = Linehaul_Drivers::where('work_status', 1)
+                                    ->where('driver_name', 'like', '%' . $driver_name . '%')
                                     ->get()
                                     ->all();
         
 
-        return view('payroll.earnings', compact('drivers', 'available'));
+        return view('payroll.earnings', compact('drivers', 'available', 'payment_date', 'driver_name'));
     }
 
-    protected function get_payroll_report($id, $from_date, $to_date)
+    protected function get_payroll_report($id, $from_date, $to_date, $payment_date)
     {
         $fixed_rates = FixedRateSetting::all();
         $driver = Linehaul_Drivers::find($id);
@@ -406,6 +448,7 @@ class PayrollController extends Controller
                             ->all();
         
         $new_trips = [];
+        $fr_trips_num = 0;
         foreach ($trips as $t) {
             $new_trip = new stdClass();
             $new_trip->date = Carbon::createFromFormat('Y-m-d', $t->date)->format('m/d/Y');
@@ -413,6 +456,8 @@ class PayrollController extends Controller
             $new_trip->destination = $t->leg_dest;
             $new_trip->miles = $t->miles_qty;
             $new_trip->value = 0;
+            $new_trip->pay_rate = 0;
+            $new_trip->pay_rate_unit = '';
             
             $flag = false;
             foreach ($fixed_rates as $r) {
@@ -422,6 +467,11 @@ class PayrollController extends Controller
 
                     $new_trip->value = $r->fixed_rate;
 
+                    $new_trip->pay_rate = $r->fixed_rate;
+                    $new_trip->pay_rate_unit = '$';
+
+                    $fr_trips_num++;
+
                     $flag = true;
                     break;
                 }
@@ -430,8 +480,11 @@ class PayrollController extends Controller
             // in case miles is not in mileage for fixed rate
             if (!$flag) {
                 $payroll->other_miles += $t->miles_qty;
-
+                
                 $new_trip->value = $t->miles_qty * $driver->price_per_mile;
+
+                $new_trip->pay_rate = $driver->price_per_mile;
+                $new_trip->pay_rate_unit = '';
             }
 
             $new_trips[] = $new_trip;
@@ -441,10 +494,11 @@ class PayrollController extends Controller
         $payroll->total_miles = $payroll->fr_miles + $payroll->other_miles;
         $payroll->total_price = $payroll->fr_price + $payroll->other_price;
         $payroll->trips = $new_trips;
+        $payroll->fr_trips_num = $fr_trips_num;
         $payroll->trips_num = count($new_trips);
         
         $payroll->company = $company;
-        $payroll->payment_date = Carbon::createFromFormat('Y-m-d', $today)->format('m/d/Y');
+        $payroll->payment_date = Carbon::createFromFormat('Y-m-d', $payment_date)->format('m/d/Y');
         $payroll->from_date = Carbon::createFromFormat('Y-m-d', $from_date)->format('m/d/Y');
         $payroll->to_date = Carbon::createFromFormat('Y-m-d', $to_date)->format('m/d/Y');
 
@@ -458,15 +512,16 @@ class PayrollController extends Controller
         $id = $request->route()->parameter('id');
         $from_date = $request->route()->parameter('from_date');
         $to_date = $request->route()->parameter('to_date');
+        $payment_date = $request->route()->parameter('payment_date');
                 
         if (!$id || !$from_date || !$to_date || $from_date > $to_date) {
             $request->session()->flash('error', 'Input Error!');
             return back()->withInput();
         }
 
-        $payroll = $this->get_payroll_report($id, $from_date, $to_date);
+        $payroll = $this->get_payroll_report($id, $from_date, $to_date, $payment_date);
 
-        return view('payroll.earnings_report', compact('payroll', 'from_date', 'to_date'));
+        return view('payroll.earnings_report', compact('payroll', 'from_date', 'to_date', 'payment_date'));
     }
 
     public function send_report_email(Request $request)
@@ -476,16 +531,18 @@ class PayrollController extends Controller
         $id = $request->input('driver-id');
         $from_date = $request->input('from-date');
         $to_date = $request->input('to-date');
+        $payment_date = $request->input('payment-date');
 
         if (!$id || !$from_date || !$to_date || $from_date > $to_date) {
             $request->session()->flash('error', 'Input Error!');
             return back()->withInput();
         }
 
-        $payroll = $this->get_payroll_report($id, $from_date, $to_date);
+        $payroll = $this->get_payroll_report($id, $from_date, $to_date, $payment_date);
 
         if ($payroll->email) {
             Mail::to($payroll->email)->send(new DriverEarningsReportMail($payroll));
+            $request->session()->flash('email_sent');
             $request->session()->flash('status', "Driver Payroll Report sent to <strong>{$payroll->driver_name}</strong> successfully!");
         } else {
             $request->session()->flash('error', "<strong>{$payroll->driver_name}</strong> has not his email address yet!");
@@ -528,6 +585,7 @@ class PayrollController extends Controller
                                 ->all();
             
             $new_trips = [];
+            $fr_trips_num = 0;
             foreach ($trips as $t) {
                 $new_trip = new stdClass();
                 $new_trip->date = Carbon::createFromFormat('Y-m-d', $t->date)->format('m/d/Y');
@@ -535,6 +593,8 @@ class PayrollController extends Controller
                 $new_trip->destination = $t->leg_dest;
                 $new_trip->miles = $t->miles_qty;
                 $new_trip->value = 0;
+                $new_trip->pay_rate = 0;
+                $new_trip->pay_rate_unit = '';
                 
                 $flag = false;
                 foreach ($fixed_rates as $r) {
@@ -543,6 +603,11 @@ class PayrollController extends Controller
                         $payroll->fr_price += $r->fixed_rate;
 
                         $new_trip->value = $r->fixed_rate;
+
+                        $new_trip->pay_rate = $r->fixed_rate;
+                        $new_trip->pay_rate_unit = '$';
+
+                        $fr_trips_num++;
 
                         $flag = true;
                         break;
@@ -554,6 +619,9 @@ class PayrollController extends Controller
                     $payroll->other_miles += $t->miles_qty;
 
                     $new_trip->value = $t->miles_qty * $d->price_per_mile;
+
+                    $new_trip->pay_rate = $d->price_per_mile;
+                    $new_trip->pay_rate_unit = '';
                 }
 
                 $new_trips[] = $new_trip;
@@ -563,6 +631,7 @@ class PayrollController extends Controller
             $payroll->total_miles = $payroll->fr_miles + $payroll->other_miles;
             $payroll->total_price = $payroll->fr_price + $payroll->other_price;
             $payroll->trips = $new_trips;
+            $payroll->fr_trips_num = $fr_trips_num;
             $payroll->trips_num = count($new_trips);
             
             $payroll->company = $company;
@@ -574,7 +643,8 @@ class PayrollController extends Controller
                 Mail::to($d->email)->send(new DriverEarningsReportMail($payroll));
             }
         }
-
+        
+        $request->session()->flash('email_sent');
         $request->session()->flash('status', "Driver Payroll Reports sent to chosen drivers successfully!");
 
         return redirect('/payroll/drivers');

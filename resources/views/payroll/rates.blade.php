@@ -8,12 +8,14 @@
 <div class="bg-body-light">
     <div class="content content-full">
         <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
-            <h1 class="d-flex flex-sm-fill h3 my-2 text-primary align-items-center font-w700">
-                <span class="item item-circle bg-primary-lighter mr-sm-3">
-                    <i class="fa fa-cogs text-primary"></i>
-                </span>
-                <span class="">Rates</span>
-            </h1>
+            <nav class="flex-sm-00-auto ml-sm-3" aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-alt">
+                    <li class="breadcrumb-item"><h3 class="font-w700 mb-0">Payroll</h3></li>
+                    <li class="breadcrumb-item" aria-current="page">
+                        <a class="link-fx text-primary font-w700 h3" href="">Rates</a>
+                    </li>
+                </ol>
+            </nav>
         </div>
     </div>
 </div>
@@ -47,10 +49,49 @@
                         <i class="fa fa-info-circle"></i> You can set fixed rates per mileage <strong>(it will affect globally.)</strong> and prices per mile for each driver.
                     </p>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 text-right">
-                    <button type="button" class="btn btn-success fixed-rates-setting"><i class="fa fa-cog"></i> Fixed Rate Setting</button>
-                </div>
             </div>
+
+            <form action="/payroll/rates" method="POST" autocomplete="off">
+                @csrf
+                <div class="row">
+                    <div class="col-lg-2 col-md-2">
+                        <div class="form-group">
+                            <label for="driver-id">Driver ID :</label>
+                            <input type="text" name="driver-id" id="driver-id" class="form-control" value="{{ $driver_id }}"/>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2">
+                        <div class="form-group">
+                            <label for="driver-name">Driver Name :</label>
+                            <input type="text" name="driver-name" id="driver-name" class="form-control" value="{{ $driver_name }}"/>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2">
+                        <div class="form-group">
+                            <label for="min-rate">Min Rate :</label>
+                            <input type="number" name="min-rate" id="min-rate" class="form-control" min="0" step="0.0001" value="{{ $min_rate }}"/>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2">
+                        <div class="form-group">
+                            <label for="max-rate">Max Rate :</label>
+                            <input type="number" name="max-rate" id="max-rate" class="form-control" min="0" max="1000000" step="0.0001" value="{{ $max_rate }}"/>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2">
+                        <div class="form-group">
+                            <label for="search-driver">&nbsp;</label>
+                            <button class="form-control btn btn-primary ml-auto mr-3" id="search-driver" name="search-driver"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2">
+                        <div class="form-group">
+                            <label for="fixed-rates-setting">&nbsp;</label>
+                            <button type="button" class="form-control btn btn-success fixed-rates-setting" id="fixed-rates-setting" name="fixed-rates-setting"><i class="fa fa-cog"></i> Fixed Rate Setting</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
             
             <table class="table table-bordered table-striped table-vcenter table-dark">
                 <thead>

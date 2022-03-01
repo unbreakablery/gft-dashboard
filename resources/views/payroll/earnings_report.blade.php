@@ -18,6 +18,7 @@
                             <input type="hidden" name="driver-id" value="{{ $payroll->id }}" />
                             <input type="hidden" name="from-date" value="{{ $from_date }}" />
                             <input type="hidden" name="to-date" value="{{ $to_date }}" />
+                            <input type="hidden" name="payment-date" value="{{ $payment_date }}" />
                         </form>
                         <div class="text-center mb-5">
                             <p class="mb-2">
@@ -64,7 +65,7 @@
                             <table class="table table-bordered table-striped table-dark table-vcenter">
                                 <tbody>
                                     <tr>
-                                        <td style="width: 250px;" rowspan="3">
+                                        <td style="width: 350px;" rowspan="3">
                                             <img src="{{ asset('storage/uploads/company/' . $payroll->company->logo) }}"
                                                 alt="Company Logo"
                                                 title="{{ $payroll->company->brand }}"
@@ -76,15 +77,15 @@
                                             <p class="mb-0">{{ 'Driver Payroll Report' }}</p>
                                         </td>
                                         <td class="text-right font-weight-bolder" style="width: 135px;">Date:</td>
-                                        <td class="font-weight-bolder" style="width: 115px;">{{ $payroll->payment_date }}</td>
+                                        <td class="font-weight-bolder" style="width: 215px;">{{ $payroll->from_date }} - {{ $payroll->to_date }}</td>
                                     </tr>
                                     <tr>
                                         <td></td>
                                         <td></td>
                                     </tr>
                                     <tr>
-                                        <td class="text-right font-weight-bolder">Week ending:</td>
-                                        <td class="font-weight-bolder">{{ $payroll->to_date }}</td>
+                                        <td class="text-right font-weight-bolder"></td>
+                                        <td class="font-weight-bolder"></td>
                                     </tr>
                                     <tr class="font-weight-bolder weak-gray">
                                         <td colspan="4">Payment Date: {{ $payroll->payment_date }}</td>
@@ -99,9 +100,9 @@
                                         <th class="text-center">Driver ID</th>
                                         <th class="text-center">Driver Name</th>
                                         <th class="text-center"># of Trips</th>
+                                        <th class="text-center">Metro $</th>
                                         <th class="text-center">Miles Driven</th>
-                                        <th class="text-center">FR</th>
-                                        <th class="text-center">Other</th>
+                                        <th class="text-center">$/Mile</th>
                                         <th class="text-center">Total</th>
                                     </tr>
                                 </thead>
@@ -109,9 +110,9 @@
                                     <tr class="weak-gray">
                                         <td class="text-center">{{ $payroll->driver_id }}</td>
                                         <td class="text-center">{{ $payroll->driver_name }}</td>
-                                        <td class="text-center">{{ $payroll->trips_num }}</td>
-                                        <td class="text-center">{{ $payroll->total_miles }}</td>
+                                        <td class="text-center">{{ $payroll->fr_trips_num }}</td>
                                         <td class="text-center">${{ number_format($payroll->fr_price, 2) }}</td>
+                                        <td class="text-center">{{ $payroll->other_miles }}</td>
                                         <td class="text-center">${{ number_format($payroll->other_price, 2) }}</td>
                                         <td class="text-center">${{ number_format($payroll->total_price, 2) }}</td>
                                     </tr>
@@ -140,6 +141,7 @@
                                         <th>Origin</th>
                                         <th>Destination</th>
                                         <th class="text-right">Miles</th>
+                                        <th class="text-right">Pay Rate</th>
                                         <th class="text-right">Payroll Value</th>
                                     </tr>
                                 </thead>
@@ -151,6 +153,7 @@
                                         <td>{{ $trip->origin }}</td>
                                         <td>{{ $trip->destination }}</td>
                                         <td class="text-right">{{ number_format($trip->miles, 2) }}</td>
+                                        <td class="text-right">{{ $trip->pay_rate_unit }}{{ number_format($trip->pay_rate, 2) }}</td>
                                         <td class="text-right">${{ number_format($trip->value, 2) }}</td>
                                     </tr>
                                     @endforeach
@@ -160,7 +163,7 @@
                                     </tr>
                                     @endif
                                     <tr>
-                                        <td colspan="4" class="font-weight-bolder">Total</td>
+                                        <td colspan="5" class="font-weight-bolder">Total</td>
                                         <td  class="text-right font-weight-bolder">
                                             ${{ number_format($payroll->total_price, 2) }}
                                         </td>
@@ -203,18 +206,30 @@ jQuery(function($){
         }
 
         $('#btn-send-email').click(function() {
-            var id = $(this).attr('data-id');
+            Swal.fire({
+                    title: 'Are you sure?',
+                    html: "Do you want to send payroll report to driver - {{ $payroll->driver_name }}?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Send!'
+                }).then((result) => {
+                    if (result.value) {
+                        var id = $(this).attr('data-id');
             
-            if (!id) {
-                Swal.fire(
-                    "Warning",
-                    "Can't get ID for driver!",
-                    "warning"
-                );
-                return false;
-            }
+                        if (!id) {
+                            Swal.fire(
+                                "Warning",
+                                "Can't get ID for driver!",
+                                "warning"
+                            );
+                            return false;
+                        }
 
-            $('#send-email-form').submit();
+                        $('#send-email-form').submit();
+                    }
+                });
         });
     });
 });

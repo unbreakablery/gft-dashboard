@@ -34,15 +34,15 @@
                     <p>{{ 'Driver Payroll Report' }}</p>
                 </td>
                 <td style="text-align: right !important; font-weight: bold !important;">Date:</td>
-                <td style="font-weight: bold !important;">{{ $payroll->payment_date }}</td>
+                <td style="font-weight: bold !important;">{{ $payroll->from_date }} - {{ $payroll->to_date }}</td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
             </tr>
             <tr>
-                <td style="text-align: right !important; font-weight: bold !important;">Week ending:</td>
-                <td style="font-weight: bold !important;">{{ $payroll->to_date }}</td>
+                <td style="text-align: right !important; font-weight: bold !important;"></td>
+                <td style="font-weight: bold !important;"></td>
             </tr>
             <tr style="background-color: #3e444a !important; font-weight: bold !important;">
                 <td colspan="4">Payment Date: {{ $payroll->payment_date }}</td>
@@ -55,9 +55,9 @@
             	<th style="text-align: center !important;">Driver ID</th>
                 <th style="text-align: center !important;">Driver Name</th>
                 <th style="text-align: center !important;"># of Trips</th>
+                <th style="text-align: center !important;">Metro $</th>
                 <th style="text-align: center !important;">Miles Driven</th>
-                <th style="text-align: center !important;">FR</th>
-                <th style="text-align: center !important;">Other</th>
+                <th style="text-align: center !important;">$/Mile</th>
                 <th style="text-align: center !important;">Total</th>
             </tr>
         </thead>
@@ -65,9 +65,9 @@
         	<tr style="background-color: #3e444a !important;">
                 <td style="text-align: center !important;">{{ $payroll->driver_id }}</td>
                 <td style="text-align: center !important;">{{ $payroll->driver_name }}</td>
-                <td style="text-align: center !important;">{{ $payroll->trips_num }}</td>
-                <td style="text-align: center !important;">{{ $payroll->total_miles }}</td>
+                <td style="text-align: center !important;">{{ $payroll->fr_trips_num }}</td>
                 <td style="text-align: center !important;">${{ number_format($payroll->fr_price, 2) }}</td>
+                <td style="text-align: center !important;">{{ $payroll->other_miles }}</td>
                 <td style="text-align: center !important;">${{ number_format($payroll->other_price, 2) }}</td>
                 <td style="text-align: center !important;">${{ number_format($payroll->total_price, 2) }}</td>
             </tr>
@@ -92,6 +92,7 @@
                 <th>Origin</th>
                 <th>Destination</th>
                 <th style="text-align: right !important;">Miles</th>
+                <th style="text-align: right !important;">Pay Rate</th>
                 <th style="text-align: right !important;">Payroll Value</th>
             </tr>
         </thead>
@@ -102,11 +103,12 @@
                 <td>{{ $trip->origin }}</td>
                 <td>{{ $trip->destination }}</td>
                 <td style="text-align: right !important;">{{ number_format($trip->miles, 2) }}</td>
+                <td style="text-align: right !important;">{{ $trip->pay_rate_unit }}{{ number_format($trip->pay_rate, 2) }}</td>
                 <td style="text-align: right !important;">${{ number_format($trip->value, 2) }}</td>
             </tr>
             @endforeach
             <tr>
-                <td colspan="4" style="font-weight: bold !important;">Total</td>
+                <td colspan="5" style="font-weight: bold !important;">Total</td>
                 <td  style="text-align: right !important; font-weight: bold !important;">
                     ${{ number_format($payroll->total_price, 2) }}
                 </td>

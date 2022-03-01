@@ -11,12 +11,14 @@
 <div class="bg-body-light">
     <div class="content content-full">
         <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
-            <h1 class="d-flex flex-sm-fill h3 my-2 text-primary align-items-center font-w700">
-                <span class="item item-circle bg-primary-lighter mr-sm-3">
-                    <i class="fas fa-envelope text-primary"></i>
-                </span>
-                <span class="">Driver Payroll Report</span>
-            </h1>
+            <nav class="flex-sm-00-auto ml-sm-3" aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-alt">
+                    <li class="breadcrumb-item"><h3 class="font-w700 mb-0">Payroll</h3></li>
+                    <li class="breadcrumb-item" aria-current="page">
+                        <a class="link-fx text-primary font-w700 h3" href="">Send Report Email</a>
+                    </li>
+                </ol>
+            </nav>
         </div>
     </div>
 </div>
@@ -26,8 +28,8 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="block block-themed">
-                <div class="block-header bg-primary">
-                    <h3 class="block-title">Drivers List</h3>
+                <div class="block-header">
+                    <h3 class="block-title">Driver Payroll Report Settings</h3>
                 </div>
                 <div class="block-content">
                     @if (session('status'))
@@ -58,17 +60,37 @@
                         <div class="row">
                             <div class="col-lg-2 col-md-2">
                                 <div class="form-group">
-                                    <label for="frpm-date">From <span class="text-danger">*</span> :</label>
+                                    <label for="driver-name">Driver Name :</label>
+                                    <input type="text"
+                                            class="form-control"
+                                            name="driver-name"
+                                            id="driver-name"
+                                            value="{{ $driver_name }}"
+                                    />
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2">
+                                <div class="form-group">
+                                    <label for="search-drivers">&nbsp;</label>
+                                    <button type="button" class="form-control btn btn-primary ml-auto mr-3" id="search-drivers" name="search-drivers">
+                                        <i class="fa fa-search"></i> Search
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2">
+                                <div class="form-group">
+                                    <label for="from-date">From <span class="text-danger">*</span> :</label>
                                     <input type="text"
                                             class="js-datepicker form-control"
                                             name="from-date"
                                             id="from-date"
-                                            value="{{ date('Y-m-d') }}"
+                                            value="{{ get_from_date($payment_date, 'Y-m-d') }}"
                                             data-week-start="0"
                                             data-autoclose="true"
                                             data-today-highlight="true"
                                             data-date-format="yyyy-mm-dd"
                                             placeholder="yyyy-mm-dd"
+                                            required
                                     />
                                 </div>
                             </div>
@@ -79,16 +101,36 @@
                                             class="js-datepicker form-control"
                                             name="to-date"
                                             id="to-date"
-                                            value="{{ date('Y-m-d') }}"
+                                            value="{{ get_to_date($payment_date, 'Y-m-d') }}"
                                             data-week-start="0"
                                             data-autoclose="true"
                                             data-today-highlight="true"
                                             data-date-format="yyyy-mm-dd"
                                             placeholder="yyyy-mm-dd"
+                                            required
                                     />
                                     
                                 </div>
                             </div>
+                            <div class="col-lg-2 col-md-2">
+                                <div class="form-group">
+                                    <label for="payment-date">Payment Date <span class="text-danger">*</span> :</label>
+                                    <input type="text"
+                                            class="js-datepicker form-control"
+                                            name="payment-date"
+                                            id="payment-date"
+                                            value="{{ get_payment_date($payment_date, 'Y-m-d') }}"
+                                            data-week-start="0"
+                                            data-autoclose="true"
+                                            data-today-highlight="true"
+                                            data-date-format="yyyy-mm-dd"
+                                            placeholder="yyyy-mm-dd"
+                                            required
+                                    />
+                                    
+                                </div>
+                            </div>
+                            @if ($available)
                             <div class="col-lg-2 col-md-2">
                                 <div class="form-group">
                                     <label for="send-bulk-reports">&nbsp;</label>
@@ -97,6 +139,7 @@
                                     </button>
                                 </div>
                             </div>
+                            @endif
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped table-dark table-vcenter" id="drivers-table">
@@ -171,11 +214,18 @@
 <script type="text/javascript">
 jQuery(function($){
     One.helpers(['datepicker']);
-
+    
     $(document).ready(function() {
+        var email_sent = "{{ session('email_sent') }}";
+        if (email_sent == "1") {
+            One.helpers('notify', {from: 'top', align: 'right', message: 'Driver Payroll Report sent successfully!'});
+        }
+        
         function checkTimeFrame() {
             var from_date = $('#from-date').val();
             var to_date = $('#to-date').val();
+            var payment_date = $('#payment-date').val();
+
             if (!from_date || !to_date) {
                 return {
                             'type': false,
@@ -193,33 +243,47 @@ jQuery(function($){
                 'type': true,
                 'message': "Passed Validation!",
                 'from_date': from_date,
-                'to_date': to_date
+                'to_date': to_date,
+                'payment_date': payment_date
             }
         }
 
         $('button#send-bulk-reports').click(function() {
-            var drivers = $('input[type=checkbox][name="checked-drivers[]"]:checked');
-            if (!drivers || drivers.length == 0) {
-                Swal.fire(
-                    "Warning",
-                    "Please choose drivers.",
-                    "warning"
-                );
+            Swal.fire({
+                    title: 'Are you sure?',
+                    html: "Do you want to send payroll report to chosen drivers?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Send!'
+                }).then((result) => {
+                    if (result.value) {
+                        var drivers = $('input[type=checkbox][name="checked-drivers[]"]:checked');
+                        if (!drivers || drivers.length == 0) {
+                            Swal.fire(
+                                "Warning",
+                                "Please choose drivers.",
+                                "warning"
+                            );
 
-                return false;
-            }
+                            return false;
+                        }
 
-            var result = checkTimeFrame();
-            if (result.type === false) {
-                Swal.fire(
-                    "Warning",
-                    result.message,
-                    "warning"
-                );
-                return false;
-            }
+                        var result = checkTimeFrame();
+                        if (result.type === false) {
+                            Swal.fire(
+                                "Warning",
+                                result.message,
+                                "warning"
+                            );
+                            return false;
+                        }
 
-            $('#report-form').submit();
+                        $('#report-form').attr('action', '/payroll/driver-earnings-report');
+                        $('#report-form').submit();
+                    }
+            });
         });
 
         $('button.view-report').click(function() {
@@ -246,7 +310,8 @@ jQuery(function($){
 
             location.href = "/payroll/driver-earnings-report/" + id 
                             + "/" + result.from_date 
-                            + "/" + result.to_date;
+                            + "/" + result.to_date
+                            + "/" + result.payment_date;
         });
 
         $('input[type=checkbox][name=all-check]').click(function() {
@@ -256,6 +321,10 @@ jQuery(function($){
             }
         });
         
+        $('button#search-drivers').click(function() {
+            $('form#report-form').attr('action', '/payroll/drivers');
+            $('form#report-form').submit();
+        });
     });
 });
 </script>

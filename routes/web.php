@@ -210,6 +210,9 @@ Route::middleware(['auth:sanctum', 'verified'])->get('payroll/get/{id}/{year}/{w
 Route::middleware(['auth:sanctum', 'verified'])->get('payroll/rates', [PayrollController::class, 'get_rates'], function () {
     return route('login');
 })->name('get-rates');
+Route::middleware(['auth:sanctum', 'verified'])->post('payroll/rates', [PayrollController::class, 'get_rates'], function () {
+    return route('login');
+});
 Route::middleware(['auth:sanctum', 'verified'])->post('payroll/rate/save', [PayrollController::class, 'save_rate'], function () {
     return route('login');
 });
@@ -231,7 +234,10 @@ Route::middleware(['auth:sanctum', 'verified'])->get('payroll/work-status/save/{
 Route::middleware(['auth:sanctum', 'verified'])->get('payroll/drivers', [PayrollController::class, 'get_drivers'], function () {
     return route('login');
 })->name('payroll-drivers');
-Route::middleware(['auth:sanctum', 'verified'])->get('payroll/driver-earnings-report/{id}/{from_date}/{to_date}', [PayrollController::class, 'get_driver_earnings_report'], function () {
+Route::middleware(['auth:sanctum', 'verified'])->post('payroll/drivers', [PayrollController::class, 'get_drivers'], function () {
+    return route('login');
+});
+Route::middleware(['auth:sanctum', 'verified'])->get('payroll/driver-earnings-report/{id}/{from_date}/{to_date}/{payment_date}', [PayrollController::class, 'get_driver_earnings_report'], function () {
     return route('login');
 })->name('payroll-get-driver-earnings-report');
 Route::middleware(['auth:sanctum', 'verified'])->post('payroll/send-email', [PayrollController::class, 'send_report_email'], function () {
