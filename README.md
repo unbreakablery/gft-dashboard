@@ -1,4 +1,4 @@
-# Dashboard For GroundForceTrucking
+# MVP Project for multiple companies
 
 This project was built by Laravel 8.
 
@@ -9,7 +9,12 @@ This project was built by Laravel 8.
 - Highcharts.js v8.2.2
 - Maatwebsite/Excel && PHPOffice/Excel
 - Bootstrap 4 & OneUI template
+- Twilio SDK & APIs
 
 Features:
+- Ability to support multiple companies
 - Importing / Exporting data from Excel/Database to Database/Excel
 - Bar/Column, Line, Pie, Combined Charts by Highcharts
+- Communication by Twilio
+- Scheduled Tasks
+- Auto emailing with attachments
