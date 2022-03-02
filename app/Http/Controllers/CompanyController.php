@@ -92,6 +92,8 @@ class CompanyController extends Controller
                 $clean_name = strtolower($string);
                 $filename = $clean_name . '_' . uniqid() . '.' . $path_parts['extension'];
                 $path = $file->storeAs('public/uploads/company', $filename);
+            } else {
+                $filename = $company->logo;
             }
 
             $company->name = $name;
@@ -117,6 +119,8 @@ class CompanyController extends Controller
                 $clean_name = strtolower($string);
                 $filename = $clean_name . '_' . uniqid() . '.' . $path_parts['extension'];
                 $path = $file->storeAs('public/uploads/company', $filename);
+            } else {
+                $filename = null;
             }
             
             $company = Company::create([
