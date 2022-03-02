@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Linehaul_Drivers;
 
@@ -16,18 +17,15 @@ class DriverController extends Controller
     {
         $this->authorize('manage-driver');
 
-        $status = ['active' => 1, 'inactive' => 0];
-        $work_status = $request->route()->parameter('status');
+        $work_status = $request->input('work-status') ?? 1;
+        $driver_name = $request->input('driver-name') ?? '';
         
-        if (!isset($status[$work_status]) || $status[$work_status] === null) {
-            $drivers = Linehaul_Drivers::all();
-        } else {
-            $drivers = Linehaul_Drivers::where('work_status', $status[$work_status])
+        $drivers = Linehaul_Drivers::where('work_status', $work_status)
+                                    ->where('driver_name', 'like', '%' . $driver_name . '%')
                                     ->get()
                                     ->all();
-        }
-        
-        return view('drivers.list', compact('drivers'));
+                
+        return view('drivers.list', compact('drivers', 'driver_name', 'work_status'));
     }
 
     public function getDriver(Request $request)
@@ -69,7 +67,11 @@ class DriverController extends Controller
         $this->authorize('manage-driver');
 
         $id = $request->route()->parameter('id');
-        $res = Linehaul_Drivers::find($id)->delete();
+        $driver = Linehaul_Drivers::find($id);
+
+        Storage::delete('public/uploads/driver/' . $driver->photo);
+
+        $res = $driver->delete();
 
         if ($res) {
             $request->session()->flash('success', 'Driver removed successfully. (Id: ' . $id . ')');
@@ -82,7 +84,7 @@ class DriverController extends Controller
     public function saveDriver(Request $request)
     {
         $this->authorize('manage-driver');
-
+        
         $id = $request->input('id');
 
         if ($id) {
@@ -100,18 +102,44 @@ class DriverController extends Controller
         $driver->address            = $request->input('address');
         $driver->price_per_mile     = $request->input('price_per_mile');
         $driver->work_status        = $request->input('work_status');
-        
+
         $existed = Linehaul_Drivers::where('driver_id', $request->input('driver_id'))
                                     ->get()
                                     ->all();
 
         if (!$existed || $id == $existed[0]->id) {
             // save driver info
+            if($request->hasfile('photo')) {
+                //delete old photo
+                if (isset($driver->photo) && $driver->photo) {
+                    Storage::delete('public/uploads/driver/' . $driver->photo);
+                }
+                
+                $file = $request->file('photo');
+            
+                $path_parts = pathinfo($file->getClientOriginalName());
+                
+                $string = preg_replace(array('/\s+/', '/\.[\.]+/', '/[^\w_\.\-]/'), array('_', '.', ''), $path_parts['filename']);
+                $clean_name = strtolower($string);
+                $filename = $clean_name . '_' . uniqid() . '.' . $path_parts['extension'];
+                $path = $file->storeAs('public/uploads/driver', $filename);
+            } else {
+                if (!$request->input('photo-link')) {
+                    Storage::delete('public/uploads/driver/' . $driver->photo);
+                    $filename = null;    
+                } else {
+                    $filename = $driver->photo;
+                }
+            }
+    
+            $driver->photo = $filename;
+
             $driver->save();
             $request->session()->flash('success', 'Driver info was saved successfully. (ID: ' . $driver->driver_id . ')');
             return redirect('drivers');
         } else {
             // in case exists the driver with the same driver id
+            $driver->photo = null;
             $request->session()->flash('error', 'Exists already the driver with the same driver ID (' . $request->input('driver_id') . ')');
             return view('drivers.edit', compact('driver', $driver));
         }        
@@ -120,7 +148,7 @@ class DriverController extends Controller
     public function removeBulkDrivers(Request $request)
     {
         $this->authorize('manage-driver');
-
+        
         $checkedDrivers = $request->input('checked-drivers');
         $res = Linehaul_Drivers::destroy($checkedDrivers);
         

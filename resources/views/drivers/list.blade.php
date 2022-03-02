@@ -11,16 +11,17 @@
 <div class="bg-body-light">
     <div class="content content-full">
         <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
-            <h1 class="d-flex flex-sm-fill h3 my-2 text-primary align-items-center font-w700">
-                <span class="item item-circle bg-primary-lighter mr-sm-3">
-                    <i class="fas fa-user-tie text-primary"></i>
-                </span>
-                <span class="">Drivers</span>
-            </h1>
+            <nav class="flex-sm-00-auto ml-sm-3" aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-alt">
+                    <li class="breadcrumb-item"><h3 class="font-w700 mb-0">Drivers</h3></li>
+                    <li class="breadcrumb-item" aria-current="page">
+                        <a class="link-fx text-primary font-w700 h3" href="">Manage Drivers</a>
+                    </li>
+                </ol>
+            </nav>
         </div>
     </div>
 </div>
-<!-- END Hero -->
 
 <!-- Page Content -->
 <div class="content">
@@ -47,24 +48,61 @@
                             <p class="mb-0"><i class="fa fa-fw fa-info-circle"></i> {!! session('error') !!}</p>
                         </div>
                     @endif
-                    <form action="/drivers/remove-bulk" method="POST">
+                    <form method="POST" id="drivers-form" autocomplete="off">
                     @csrf
-                    <div class="table-responsive push text-right">
-                        <button type="button" class="btn btn-primary" id="show-active-drivers">
-                            <i class="fa fa-search"></i> Show Active Drivers
-                        </button>
-                        <button type="button" class="btn btn-secondary" id="show-inactive-drivers">
-                            <i class="fa fa-search"></i> Show Inactive Drivers
-                        </button>
-                        <button type="button" class="btn btn-dark" id="add-driver">
-                            <i class="fa fa-plus"></i> Add Driver
-                        </button>
-                        <button type="button" class="btn btn-success" id="add-bulk-drivers">
-                            <i class="fa fa-upload"></i> Add Bulk Drivers
-                        </button>
-                        <button type="submit" class="btn btn-danger" id="remove-bulk-drivers">
-                            <i class="fa fa-trash"></i> Remove Bulk Drivers
-                        </button>
+                    <div class="row">
+                        <div class="col-lg-2 col-md-2">
+                            <div class="form-group">
+                                <label for="driver-name">Driver Name :</label>
+                                <input type="text"
+                                        class="form-control"
+                                        name="driver-name"
+                                        id="driver-name"
+                                        value="@if (isset($driver_name)){{ $driver_name }}@endif"
+                                />
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2">
+                            <div class="form-group">
+                                <label for="work-status">Work Status :</label>
+                                <select class="form-control" id="work-status" name="work-status" required>
+                                    <option value="1" @if (isset($work_status) && $work_status == 1) selected @endif>Working now</option>
+                                    <option value="0" @if (isset($work_status) && $work_status == 0) selected @endif>Not longer working</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2">
+                            <div class="form-group">
+                                <label for="search-drivers">&nbsp;</label>
+                                <button type="button" class="form-control btn btn-primary ml-auto mr-3" id="search-drivers" name="search-drivers">
+                                    <i class="fa fa-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2">
+                            <div class="form-group">
+                                <label for="add-driver">&nbsp;</label>
+                                <button type="button" class="form-control btn btn-dark ml-auto mr-3" id="add-driver" name="add-driver">
+                                    <i class="fa fa-plus"></i> Add Driver
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2">
+                            <div class="form-group">
+                                <label for="add-bulk-drivers">&nbsp;</label>
+                                <button type="button" class="form-control btn btn-success ml-auto mr-3" id="add-bulk-drivers" name="add-bulk-drivers">
+                                    <i class="fa fa-upload"></i> Add Bulk Drivers
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2">
+                            <div class="form-group">
+                                <label for="remove-bulk-drivers">&nbsp;</label>
+                                <button type="button" class="form-control btn btn-danger ml-auto mr-3" id="remove-bulk-drivers" name="remove-bulk-drivers">
+                                    <i class="fa fa-trash"></i> Remove Bulk Drivers
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-dark table-vcenter" id="drivers-table">
@@ -73,7 +111,8 @@
                                     <th class="text-center" style="width: 20px;">
                                         <input type="checkbox" name="all-check" id="all-check">
                                     </th>
-                                    <th class="text-center" style="width: 80px;">#</th>
+                                    <th class="text-center" style="width: 50px;">#</th>
+                                    <th class="text-center" style="width: 100px;"><i class="far fa-user"></i></th>
                                     <th class="text-center" style="width: 10%;">Driver ID</th>
                                     <th class="text-center" style="width: 15%;">Name</th>
                                     <th class="text-center" style="width: 15%;">Email</th>
@@ -91,6 +130,13 @@
                                         <input type="checkbox" name="checked-drivers[]" value="{{ $driver->id }}" />
                                     </td>
                                     <td class="font-w600 font-size-sm text-center">{{ $idx + 1 }}</td>
+                                    <td class="text-center">
+                                        @if ($driver->photo)
+                                        <img class="img-avatar img-avatar48" src="{{ asset('storage/uploads/driver/' . $driver->photo) }}" alt="">
+                                        @else
+                                        <img class="img-avatar img-avatar48" src="{{ asset('media/photos/drivers/default.jpg') }}" alt="">
+                                        @endif
+                                    </td>
                                     <td class="font-w600 font-size-sm text-center">
                                         <strong class="text-primary">{{ $driver->driver_id }}</strong>
                                     </td>
@@ -127,7 +173,7 @@
                             @endforeach
                             @else
                                 <tr>
-                                    <td colspan="9" class="font-w600 font-size-sm text-center">No Drivers</td>
+                                    <td colspan="10" class="font-w600 font-size-sm text-center">No Drivers</td>
                                 </tr>
                             @endif    
                             </tbody>
@@ -159,6 +205,10 @@
                                                 <tr>
                                                     <td class="font-w600 text-right">Driver Name : </td>
                                                     <td class="text-left" id="t_driver_name"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="font-w600 text-right">Photo : </td>
+                                                    <td class="text-left" id="t_photo"></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-w600 text-right">Email : </td>
@@ -249,6 +299,7 @@
         </div>
     </div>
 </div>
+<script src="{{ mix('js/check-st.js') }}" ></script>
 <script type="text/javascript">
 jQuery(function($){
     $(document).ready(function() {
@@ -258,6 +309,7 @@ jQuery(function($){
 
             $('#t_driver_id').html('');
             $('#t_driver_name').html('');
+            $('#t_photo').html('');
             $('#t_email').html('');
             $('#t_phone').html('');
             $('#t_license').html('');
@@ -281,6 +333,11 @@ jQuery(function($){
                         
                         $('#t_driver_id').html(data.driver.driver_id);
                         $('#t_driver_name').html(data.driver.driver_name);
+                        if (data.driver.photo) {
+                            $('#t_photo').html('<img src="/storage/uploads/driver/' + data.driver.photo + '" width="150" height="150" />');
+                        } else {
+                            $('#t_photo').html('<img src="/media/photos/drivers/default.jpg" width="150" height="150" />');
+                        }
                         $('#t_email').html(data.driver.email);
                         $('#t_phone').html('<span class="badge badge-pill badge-violet">' + (data.driver.phone ? '+' + data.driver.phone : '' )+ '</span>');
                         $('#t_license').html('<span class="badge badge-success">' + (data.driver.license ? data.driver.license : '') + '</span>');
@@ -308,8 +365,20 @@ jQuery(function($){
             location.href = '/drivers/edit/' + id;
         });
         $('button.remove-driver').click(function() {
-            var id = $(this).data('id');
-            location.href = '/drivers/remove/' + id;
+            Swal.fire({
+                title: 'Are you sure?',
+                html: "Do you want to remove this driver?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Remove!'
+            }).then((result) => {
+                if (result.value) {
+                    var id = $(this).data('id');
+                    location.href = '/drivers/remove/' + id;
+                }
+            });
         });
         $('button#add-driver').click(function() {
             location.href = '/drivers/add';
@@ -323,11 +392,36 @@ jQuery(function($){
                 drivers[i].checked = this.checked;
             }
         });
-        $('button#show-active-drivers').click(function() {
-            location.href = '/drivers/search/active';
+        $('button#search-drivers').click(function() {
+            $('form#drivers-form').attr('action', '/drivers');
+            $('form#drivers-form').submit();
         });
-        $('button#show-inactive-drivers').click(function() {
-            location.href = '/drivers/search/inactive';
+        $('button#remove-bulk-drivers').click(function() {
+            var drivers = $('input[type=checkbox][name="checked-drivers[]"]:checked');
+            if (!drivers || drivers.length == 0) {
+                Swal.fire(
+                    "Warning",
+                    "Please choose drivers.",
+                    "warning"
+                );
+
+                return false;
+            }
+
+            Swal.fire({
+                title: 'Are you sure?',
+                html: "Do you want to remove chosen drivers?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Remove!'
+            }).then((result) => {
+                if (result.value) {
+                    $('form#drivers-form').attr('action', '/drivers/remove-bulk');
+                    $('form#drivers-form').submit();
+                }
+            });
         });
     });
 });

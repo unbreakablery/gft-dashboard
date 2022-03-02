@@ -324,7 +324,7 @@ Route::middleware(['auth:sanctum', 'verified'])->post('schedule/send-sms', [Week
 Route::middleware(['auth:sanctum', 'verified'])->get('drivers', [DriverController::class, 'getDrivers'], function () {
     return route('login');
 })->name('drivers');
-Route::middleware(['auth:sanctum', 'verified'])->get('drivers/search/{status}', [DriverController::class, 'getDrivers'], function () {
+Route::middleware(['auth:sanctum', 'verified'])->post('drivers', [DriverController::class, 'getDrivers'], function () {
     return route('login');
 });
 Route::middleware(['auth:sanctum', 'verified'])->post('drivers/get', [DriverController::class, 'getDriver'], function () {

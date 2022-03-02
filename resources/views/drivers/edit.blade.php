@@ -3,12 +3,14 @@
 <div class="bg-body-light">
     <div class="content content-full">
         <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
-            <h1 class="d-flex flex-sm-fill h3 my-2 text-primary align-items-center font-w700">
-                <span class="item item-circle bg-primary-lighter mr-sm-3">
-                    <i class="fa fa-user text-primary"></i>
-                </span>
-                <span class="">Edit Driver</span>
-            </h1>
+            <nav class="flex-sm-00-auto ml-sm-3" aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-alt">
+                    <li class="breadcrumb-item"><h3 class="font-w700 mb-0">Drivers</h3></li>
+                    <li class="breadcrumb-item" aria-current="page">
+                        <a class="link-fx text-primary font-w700 h3" href="">Edit Driver</a>
+                    </li>
+                </ol>
+            </nav>
         </div>
     </div>
 </div>
@@ -30,7 +32,7 @@
                             <p class="font-w600 m-1"><i class="fa fa-fw fa-times-circle"></i> {{ session('error') }}</p>
                         </div>
                     @endif
-                    <form class="js-validation" action="/drivers/save" method="POST" id="driver-form" autocomplete="off">
+                    <form class="js-validation" action="/drivers/save" method="POST" id="driver-form" autocomplete="off" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="id" value="@if (isset($driver)){{ $driver->id }}@endif" />
                         <div class="table-responsive push text-right">
@@ -54,6 +56,19 @@
                                         <td class="font-w800 text-right" style="width: 20%;">Driver Name<span class="text-danger">*</span> : </td>
                                         <td class="text-left" style="width: 80%;">
                                             <input type="text" class="form-control" name="driver_name" value="@if (isset($driver)){{ $driver->driver_name }}@endif" placeholder="Enter driver name.." required/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-w800 text-right" style="width: 20%;">Photo : </td>
+                                        <td class="text-left" style="width: 80%;">
+                                            <input type="file" id="photo" name="photo" accept="image/*" onchange="readURL(this);" />
+                                            <input type="hidden" id="photo-link" name="photo-link" value="@if (isset($driver)){{ $driver->photo }}@endif" />
+                                            @if (isset($driver) && $driver->photo)
+                                            <img id="blah" src="{{ asset('storage/uploads/driver/' . $driver->photo) }}" alt="" width="150" height="150" />
+                                            @else
+                                            <img id="blah" src="{{ asset('media/photos/drivers/default.jpg') }}" alt="" width="150" height="150" />
+                                            @endif
+                                            <button type="button" class="btn btn-sm btn-danger ml-3 remove-photo">Remove Photo</button>
                                         </td>
                                     </tr>
                                     <tr>
@@ -115,10 +130,29 @@
     </div>
 </div>
 <script type="text/javascript">
-jQuery(function($){
-    $('button.view-drivers').click(function() {
-        location.href = "/drivers";
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#blah').attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            $('#blah').attr('src', '');
+        }
+    }
+    jQuery(function($){
+        $('button.view-drivers').click(function() {
+            location.href = "/drivers";
+        });
+
+        $('button.remove-photo').click(function() {
+            $('input#photo').val('');
+            $('input#photo-link').val('');
+            $('img#blah').attr('src', "{{ asset('media/photos/drivers/default.jpg') }}");
+        });
     });
-});
 </script>
 </x-app-layout>
