@@ -167,7 +167,7 @@
                                         </td>
                                         <td class="font-w600 font-size-sm text-center">{{ $idx + 1 }}</td>
                                         <td class="font-w600 font-size-sm text-center">
-                                            <strong class="text-primary">{{ $driver->driver_id }}</strong>
+                                            <a href="/drivers/edit/{{ $driver->id }}" target="_self"><strong class="text-primary">{{ $driver->driver_id }}</strong></a>
                                         </td>
                                         <td class="font-w600 font-size-sm text-left">
                                             {{ $driver->driver_name }}

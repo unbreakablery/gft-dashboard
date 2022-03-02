@@ -132,7 +132,25 @@
 <script type="text/javascript">
 jQuery(function($){
     $(document).ready(function() {
-        
+        moment.updateLocale("en", { week: {
+            dow: 6, // First day of week is Saturday
+            doy: 12 // First week of year must contain 1 January (7 + 6 - 1)
+        }});
+        var dateformat = "YYYY/MM/DD";
+        function getWeekDaysByWeekNumber(year, weeknumber)
+        {
+            var date = moment().year(year).isoWeek(weeknumber||1).startOf("week"), weeklength=7, result=[];
+            while(weeklength--)
+            {
+                result.push(date.format(dateformat));
+                date.add(1,"day")
+            }
+            return result;
+        }
+
+        console.log(getWeekDaysByWeekNumber(2020, 1))
+        console.log(getWeekDaysByWeekNumber(2021, 1))
+        console.log(getWeekDaysByWeekNumber(2022, 1))
     });
 });
 </script>
