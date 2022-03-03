@@ -13,7 +13,7 @@
             <div class="content content-full">
                 <div class="row justify-content-center">
                     <div class="col-md-12 col-lg-10 col-xl-10 py-2">
-                        <form action="/payroll/send-email" id="send-email-form" method="POST">
+                        <form action="" id="send-email-form" method="POST">
                             @csrf
                             <input type="hidden" name="driver-id" value="{{ $payroll->id }}" />
                             <input type="hidden" name="from-date" value="{{ $from_date }}" />
@@ -25,7 +25,7 @@
                                 <i class="fa fa-2x fa-file-invoice-dollar text-primary"></i>
                             </p>
                             <h1 class="h3 mb-1 font-w600 text-uppercase">
-                                Driver Payroll Report
+                                Driver Earnings Report
                             </h1>
                         </div>
                         <div class="d-flex justify-content-end">
@@ -42,6 +42,9 @@
                             @endcan
                             <a class="btn btn-lg btn-alt-success" href="javascript:void(0);" id="btn-send-email" data-id="{{ $payroll->id }}">
                                 <i class="fa fa-envelope"></i> <span class="d-none d-sm-inline-block ml-1">Send Email</span>
+                            </a>
+                            <a class="btn btn-lg btn-alt-success" href="javascript:void(0);" id="btn-download-pdf" data-id="{{ $payroll->id }}">
+                                <i class="fa fa-file-pdf"></i> <span class="d-none d-sm-inline-block ml-1">Download PDF</span>
                             </a>
                         </div>
                         @can('manage-payroll-setting')
@@ -74,7 +77,7 @@
                                         </td>
                                         <td rowspan="3" class="text-center font-weight-bolder font-size-h3">
                                             <p>{{ $payroll->company->name }}</p>
-                                            <p class="mb-0">{{ 'Driver Payroll Report' }}</p>
+                                            <p class="mb-0">{{ 'Driver Earnings Report' }}</p>
                                         </td>
                                         <td class="text-right font-weight-bolder" style="width: 135px;">Date:</td>
                                         <td class="font-weight-bolder" style="width: 215px;">{{ $payroll->from_date }} - {{ $payroll->to_date }}</td>
@@ -124,7 +127,7 @@
                                 <tbody>
                                     <tr>
                                         <td class="text-center font-weight-bolder font-size-h3">
-                                            {{ __('Driver Payroll Report Detail') }}
+                                            {{ __('Driver Earnings Report Detail') }}
                                         </td>
                                     </tr>
                                     <tr>
@@ -159,7 +162,7 @@
                                     @endforeach
                                     @else
                                     <tr class="weak-gray">
-                                        <td class="text-center" colspan="5">No Trips</td>
+                                        <td class="text-center" colspan="6">No Trips</td>
                                     </tr>
                                     @endif
                                     <tr>
@@ -226,7 +229,35 @@ jQuery(function($){
                             );
                             return false;
                         }
+                        $('#send-email-form').attr('action', '/payroll/send-email');
+                        $('#send-email-form').submit();
+                    }
+                });
+        });
 
+        $('#btn-download-pdf').click(function() {
+            Swal.fire({
+                    title: 'Are you sure?',
+                    html: "Do you want to download payroll report for {{ $payroll->driver_name }}?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Download!'
+                }).then((result) => {
+                    if (result.value) {
+                        var id = $(this).attr('data-id');
+            
+                        if (!id) {
+                            Swal.fire(
+                                "Warning",
+                                "Can't get ID for driver!",
+                                "warning"
+                            );
+                            return false;
+                        }
+
+                        $('#send-email-form').attr('action', '/payroll/download-report');
                         $('#send-email-form').submit();
                     }
                 });

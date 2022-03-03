@@ -243,6 +243,9 @@ Route::middleware(['auth:sanctum', 'verified'])->get('payroll/driver-earnings-re
 Route::middleware(['auth:sanctum', 'verified'])->post('payroll/send-email', [PayrollController::class, 'send_report_email'], function () {
     return route('login');
 })->name('payroll-send-report-email');
+Route::middleware(['auth:sanctum', 'verified'])->post('payroll/download-report', [PayrollController::class, 'download_report_pdf'], function () {
+    return route('login');
+})->name('payroll-download-report-pdf');
 Route::middleware(['auth:sanctum', 'verified'])->post('payroll/driver-earnings-report', [PayrollController::class, 'send_bulk_report_emails'], function () {
     return route('login');
 })->name('payroll-send-bulk-reports');

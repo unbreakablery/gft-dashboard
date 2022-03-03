@@ -31,7 +31,7 @@
                 </td>
                 <td rowspan="3" style="text-align: center !important; width: 30%; font-size: 20px !important; font-weight: bold !important;">
                     <p>{{ $payroll->company->name }}</p>
-                    <p>{{ 'Driver Payroll Report' }}</p>
+                    <p>{{ 'Driver Earnings Report' }}</p>
                 </td>
                 <td style="text-align: right !important; font-weight: bold !important;">Date:</td>
                 <td style="font-weight: bold !important;">{{ $payroll->from_date }} - {{ $payroll->to_date }}</td>
@@ -76,7 +76,7 @@
     <table style="margin-top: 5px !important;">
         <tr>
             <td style="text-align: center !important; font-size: 20px !important; font-weight: bold;">
-                {{ __('Driver Payroll Report Detail') }}
+                {{ __('Driver Earnings Report Detail') }}
             </td>
         </tr>
         <tr>

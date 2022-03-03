@@ -29,7 +29,7 @@
         <div class="col-lg-12">
             <div class="block block-themed">
                 <div class="block-header">
-                    <h3 class="block-title">Driver Payroll Report Settings</h3>
+                    <h3 class="block-title">Driver Earnings Report Settings</h3>
                 </div>
                 <div class="block-content">
                     @if (session('status'))

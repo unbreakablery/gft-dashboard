@@ -14,6 +14,8 @@ use App\Models\GlobalSetting;
 
 use App\Mail\DriverEarningsReportMail;
 
+use Barryvdh\DomPDF\Facade as PDF;
+
 use Carbon\Carbon;
 use stdClass;
 
@@ -648,5 +650,27 @@ class PayrollController extends Controller
         $request->session()->flash('status', "Driver Payroll Reports sent to chosen drivers successfully!");
 
         return redirect('/payroll/drivers');
+    }
+
+    public function download_report_pdf(Request $request)
+    {
+        $this->authorize('manage-payroll');
+
+        $id = $request->input('driver-id');
+        $from_date = $request->input('from-date');
+        $to_date = $request->input('to-date');
+        $payment_date = $request->input('payment-date');
+
+        if (!$id || !$from_date || !$to_date || $from_date > $to_date) {
+            $request->session()->flash('error', 'Input Error!');
+            return back()->withInput();
+        }
+
+        $payroll = $this->get_payroll_report($id, $from_date, $to_date, $payment_date);
+
+        $payroll = json_decode(json_encode($payroll), true);
+
+        $pdf = PDF::loadView('payroll.earnings_report_pdf', $payroll)->setPaper('Letter', 'landscape');
+        return $pdf->download($payroll['driver_name'] . '_' . $payroll['from_date'] . '-' . $payroll['to_date'] . '_GFT Driver Earnings Report.pdf');
     }
 }
