@@ -109,12 +109,12 @@
                         </li> -->
                         <li class="nav-main-item">
                             <a class="nav-main-link" href="/drivers/upload/scorecards">
-                                <span class="nav-main-link-name">Import Scorecards</span>
+                                <span class="nav-main-link-name">Upload Scorecards</span>
                             </a>
                         </li>
                         <li class="nav-main-item">
                             <a class="nav-main-link" href="/drivers/scorecards">
-                                <span class="nav-main-link-name">View Scorecards</span>
+                                <span class="nav-main-link-name">Manage Scorecards</span>
                             </a>
                         </li>
                     </ul>
@@ -129,12 +129,12 @@
                     <ul class="nav-main-submenu">
                         <li class="nav-main-item">
                             <a class="nav-main-link" href="/schedule/upload">
-                                <span class="nav-main-link-name">Upload Schedule</span>
+                                <span class="nav-main-link-name">Upload Schedules</span>
                             </a>
                         </li>
                         <li class="nav-main-item">
                             <a class="nav-main-link" href="/schedule/search">
-                                <span class="nav-main-link-name">View Schedule</span>
+                                <span class="nav-main-link-name">Manage Schedules</span>
                             </a>
                         </li>
                     </ul>

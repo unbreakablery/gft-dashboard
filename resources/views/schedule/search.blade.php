@@ -17,16 +17,17 @@
 <div class="bg-body-light">
     <div class="content content-full">
         <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
-            <h1 class="d-flex flex-sm-fill h3 my-2 text-primary align-items-center font-w700">
-                <span class="item item-circle bg-primary-lighter mr-sm-3">
-                    <i class="far fa-calendar text-primary"></i>
-                </span>
-                <span class="">Weekly Schedule</span>
-            </h1>
+            <nav class="flex-sm-00-auto ml-sm-3" aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-alt">
+                    <li class="breadcrumb-item"><h3 class="font-w700 mb-0">Weekly Schedule</h3></li>
+                    <li class="breadcrumb-item" aria-current="page">
+                        <a class="link-fx text-primary font-w700 h3" href="">Manage Schedules</a>
+                    </li>
+                </ol>
+            </nav>
         </div>
     </div>
 </div>
-<!-- END Hero -->
 
 <!-- Page Content -->
 <div class="content">
@@ -63,8 +64,8 @@
                             if (!isset($week_num)) {
                                 $week_num = Date("W");
                             }
-                            if (!isset($driver_id)) {
-                                $driver_id = '';
+                            if (!isset($driver_name)) {
+                                $driver_name = '';
                             }
                             @endphp
                             <label for="year-num">Year <span class="text-danger">*</span> :</label>
@@ -87,13 +88,13 @@
                     </div>
                     <div class="col-lg-4 col-md-4">
                         <div class="form-group">
-                            <label for="driver-id">Driver ID :</label>
+                            <label for="driver-name">Driver Name :</label>
                             <input type="text" 
                                 class="form-control" 
-                                name="driver-id" 
-                                id="driver-id" 
-                                value="{{ $driver_id }}"
-                                placeholder="Enter Driver ID.." 
+                                name="driver-name" 
+                                id="driver-name" 
+                                value="{{ $driver_name }}"
+                                placeholder="Enter Driver Name.." 
                             />
                         </div>
                     </div>

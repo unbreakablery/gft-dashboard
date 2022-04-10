@@ -47,16 +47,16 @@ class WeeklyScheduleController extends Controller
 
         $year_num = $request->input('year-num') ?? date("Y");
         $week_num = $request->input('week-num') ?? date("W");
-        $driver_id = $request->input('driver-id') ?? '';
+        $driver_name = $request->input('driver-name') ?? '';
 
         $schedules = WeeklySchedule::with('driver')
                                 ->where('year_num', $year_num)
                                 ->where('week_num', $week_num)
-                                ->where('driver_id', 'like', '%' . $driver_id . '%')
+                                ->where('driver_name', 'like', '%' . $driver_name . '%')
                                 ->get()
                                 ->all();
         
-        return view('schedule.search', compact('year_num', 'week_num', 'driver_id', 'schedules'));
+        return view('schedule.search', compact('year_num', 'week_num', 'driver_name', 'schedules'));
     }
 
     public function getSchedule(Request $request)
